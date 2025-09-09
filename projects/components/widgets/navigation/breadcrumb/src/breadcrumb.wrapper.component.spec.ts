@@ -13,15 +13,16 @@ import { ComponentTestBase, ITestComponentDef } from 'projects/components/base/s
 const markup = `<div wmBreadcrumb name="breadcrumb1" aria-label="breadcrumb"></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class BreadcrumbWrapperComponent {
     @ViewChild(BreadcrumbComponent, { static: true }) wmComponent: BreadcrumbComponent;
 }
 
 const testModuleDef = {
-    imports: [FormsModule, BreadcrumbComponent],
-    declarations: [BreadcrumbWrapperComponent],
+    imports: [FormsModule, BreadcrumbComponent,],
+    declarations: [],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         { provide: App, useValue: mockApp },

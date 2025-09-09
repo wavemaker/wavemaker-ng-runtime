@@ -16,6 +16,7 @@ jest.mock('lodash-es', () => ({
     debounce: jest.fn(fn => fn)
 }));
 @Component({
+        standalone: true,
     selector: 'test-dataset-aware-form',
     template: '<div></div>'
 })
@@ -31,7 +32,8 @@ describe('DatasetAwareFormComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestComponent],
+            imports: [TestComponent],
+            declarations: [],
             providers: [
                 { provide: Injector, useValue: { get: jest.fn() } },
                 { provide: ToDatePipe, useValue: {} },
@@ -137,7 +139,7 @@ describe('DatasetAwareFormComponent', () => {
     describe('onPropertyChange', () => {
         it('should call initDatasetItems for relevant property changes', () => {
             const spy = jest.spyOn(component as any, '_debouncedInitDatasetItems');
-            component.onPropertyChange('dataset', [{ id: 1, name: 'New Item' }], []);
+            component && component.onPropertyChange('dataset', [{ id: 1, name: 'New Item' }], []);
             expect(spy).toHaveBeenCalled();
         });
     });
@@ -304,34 +306,34 @@ describe('DatasetAwareFormComponent', () => {
             const relevantProps = ['dataset', 'datafield', 'displayfield', 'displaylabel', 'displayexpression', 'orderby', 'usekeys'];
 
             relevantProps.forEach(prop => {
-                component.onPropertyChange(prop, 'newValue', 'oldValue');
+                component && component.onPropertyChange(prop, 'newValue', 'oldValue');
                 expect(component['_debouncedInitDatasetItems']).toHaveBeenCalled();
             });
         });
 
         it('should call _onChange for required and datavalue properties', () => {
-            component.onPropertyChange('required', true, false);
+            component && component.onPropertyChange('required', true, false);
             expect(component['_onChange']).toHaveBeenCalledWith(component.datavalue);
 
-            component.onPropertyChange('datavalue', 'newValue', 'oldValue');
+            component && component.onPropertyChange('datavalue', 'newValue', 'oldValue');
             expect(component['_onChange']).toHaveBeenCalledWith(component.datavalue);
         });
 
         it('should call setGroupData for groupby and match properties if widgetType is not wm-search or wm-chips', () => {
             Object.defineProperty(component, 'widgetType', { writable: true, value: 'other-widget' });
-            component.onPropertyChange('groupby', 'newValue', 'oldValue');
+            component && component.onPropertyChange('groupby', 'newValue', 'oldValue');
             expect(component['setGroupData']).toHaveBeenCalled();
 
-            component.onPropertyChange('match', 'newValue', 'oldValue');
+            component && component.onPropertyChange('match', 'newValue', 'oldValue');
             expect(component['setGroupData']).toHaveBeenCalled();
         });
 
         it('should not call setGroupData for groupby and match properties if widgetType is wm-search or wm-chips', () => {
             Object.defineProperty(component, 'widgetType', { writable: true, value: 'wm-search' });
-            component.onPropertyChange('groupby', 'newValue', 'oldValue');
+            component && component.onPropertyChange('groupby', 'newValue', 'oldValue');
             expect(component['setGroupData']).not.toHaveBeenCalled();
             Object.defineProperty(component, 'widgetType', { writable: true, value: 'wm-chips' });
-            component.onPropertyChange('match', 'newValue', 'oldValue');
+            component && component.onPropertyChange('match', 'newValue', 'oldValue');
             expect(component['setGroupData']).not.toHaveBeenCalled();
         });
     });

@@ -1,15 +1,13 @@
 import { FormsModule } from '@angular/forms';
-import { ColorPickerModule, ColorPickerService } from 'ngx-color-picker';
+import { ColorPickerService, ColorPickerDirective } from 'ngx-color-picker';
 import { Component, ElementRef, Inject, Injector, Optional, ViewChild } from '@angular/core';
 import { CommonModule } from "@angular/common";
-import {NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel} from '@angular/forms';
-import {ColorPickerDirective} from 'ngx-color-picker';
+import { NG_VALIDATORS, NG_VALUE_ACCESSOR, NgModel } from '@angular/forms';
 
-import {addClass, removeClass} from '@wm/core';
-import {AUTOCLOSE_TYPE, IWidgetConfig, provideAs, provideAsWidgetRef, styler} from '@wm/components/base';
-import {BaseFormCustomComponent} from '@wm/components/input/base-form-custom';
-import {registerProps} from './color-picker.props';
-
+import { addClass, removeClass } from '@wm/core';
+import { AUTOCLOSE_TYPE, IWidgetConfig, provideAs, provideAsWidgetRef, styler } from '@wm/components/base';
+import { BaseFormCustomComponent } from '@wm/components/input/base-form-custom';
+import { registerProps } from './color-picker.props';
 
 const DEFAULT_CLS = 'input-group app-colorpicker';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -20,7 +18,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
     standalone: true,
-    imports: [CommonModule, ColorPickerModule, FormsModule],
+    imports: [CommonModule, FormsModule, ColorPickerDirective],
     selector: '[wmColorPicker]',
     templateUrl: './color-picker.component.html',
     providers: [
@@ -45,7 +43,6 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     public hint: string;
     public arialabel: string;
 
-
     @ViewChild(NgModel) ngModel: NgModel;
     @ViewChild('input', { static: true, read: ElementRef }) inputEl: ElementRef;
     @ViewChild(ColorPickerDirective) cpDirective: ColorPickerDirective;
@@ -55,7 +52,6 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
         styler(this.nativeElement, this);
     }
 
-    // To remove space occupied by colorpicker when it is closed
     public colorPickerToggleChange(isOpen: boolean) {
         const colorPickerContainer = this.nativeElement.querySelector(`.color-picker`) as HTMLElement;
         if (colorPickerContainer) {
@@ -64,26 +60,21 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     }
 
     colorPickerOpen(value: string) {
-        $('.hex-text input').attr('placeholder', 'Enter hex color code')
-        // Whenever autoclose property is set to 'always', adding the onclick listener to the colorPicker container to close the picker.
+        $('.hex-text input').attr('placeholder', 'Enter hex color code');
         if (this.autoclose === AUTOCLOSE_TYPE.ALWAYS) {
             const colorPickerContainer = this.nativeElement.querySelector(`.color-picker`) as HTMLElement;
             colorPickerContainer.onclick = () => this.cpDirective.closeDialog();
         }
     }
 
-    // This mehtod is used to show/open the colorpicker popup.
     open() {
         this.cpDirective.openDialog();
     }
 
-    // This mehtod is used to hide/close the colorpicker popup.
     close() {
         this.cpDirective.closeDialog();
     }
 
-
-    // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName !== 'change' && eventName !== 'blur') {
             super.handleEvent(this.inputEl.nativeElement, eventName, callback, locals);
@@ -91,7 +82,7 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
     }
 
     public handleChange(newVal: boolean) {
-        this.invokeOnChange(this.datavalue, {type: 'change'}, this.ngModel.valid);
+        this.invokeOnChange(this.datavalue, { type: 'change' }, this.ngModel.valid);
     }
 
     protected onPropertyChange(key: string, nv: any, ov: any) {
@@ -99,7 +90,6 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
             return;
         }
         if (key === 'required') {
-            /* WMS-18269 | Update Angular about the required attr value change */
             this._onChange(this.datavalue);
             return;
         }

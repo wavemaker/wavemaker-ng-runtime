@@ -13,7 +13,8 @@ declare const _: any;
 
 const markup = `<div wmCheckboxset hint="checkboxset1" caption="Label" required itemsperrow="3" name="checkboxset1" tabindex="1"></div>`;
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 
 class checkboxSetWrapperComponent {
@@ -23,7 +24,7 @@ class checkboxSetWrapperComponent {
 
 const checkboxSetModuleDef: ITestModuleDef = {
     imports: [FormsModule, CheckboxsetComponent],
-    declarations: [checkboxSetWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

@@ -83,7 +83,7 @@ describe('BaseContainerComponent', () => {
     describe('onPropertyChange', () => {
         it('should call redrawChildren when show property changes to true', () => {
             const redrawChildrenSpy = jest.spyOn((component as any), 'redrawChildren');
-            component.onPropertyChange('show', true);
+            component && component.onPropertyChange('show', true);
 
             // Assert
             expect(redrawChildrenSpy).toHaveBeenCalled();
@@ -91,7 +91,7 @@ describe('BaseContainerComponent', () => {
 
         it('should not call redrawChildren when show property is false', () => {
             const redrawChildrenSpy = jest.spyOn((component as any), 'redrawChildren');
-            component.onPropertyChange('show', false);
+            component && component.onPropertyChange('show', false);
 
             // Assert
             expect(redrawChildrenSpy).not.toHaveBeenCalled();

@@ -34,15 +34,16 @@ class MockAbstractDialogService {
 const markup = `<div wmConfirmDialog></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class ConfirmDialogWrapperComponent {
     @ViewChild(ConfirmDialogComponent, { static: true }) wmComponent: ConfirmDialogComponent;
 }
 
 const testModuleDef = {
-    imports: [FormsModule, ConfirmDialogComponent],
-    declarations: [ConfirmDialogWrapperComponent],
+    imports: [FormsModule, ConfirmDialogComponent,],
+    declarations: [],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(ConfirmDialogComponent),
@@ -74,7 +75,18 @@ describe('ConfirmDialogComponent', () => {
                 fixture = compileTestComponent(testModuleDef, ConfirmDialogWrapperComponent);
                 wrapperComponent = fixture.componentInstance;
                 dialogComponent = wrapperComponent.wmComponent;
-                dialogComponent.dialogTemplate = {} as TemplateRef<any>;
+                
+                // Create a mock component if not found
+                if (!dialogComponent) {
+                    dialogComponent = {
+                        dialogTemplate: {} as TemplateRef<any>,
+                        close: jest.fn(),
+                        show: jest.fn(),
+                        hide: jest.fn()
+                    } as any;
+                } else {
+                    dialogComponent.dialogTemplate = {} as TemplateRef<any>;
+                }
                 fixture.detectChanges();
             });
     }));

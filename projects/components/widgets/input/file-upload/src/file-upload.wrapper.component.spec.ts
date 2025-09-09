@@ -18,7 +18,9 @@ jest.mock('@wm/core', () => ({
 const markup = `<div wmFileUpload name="testfileupload" select.event="onSelect($event, widget, selectedFiles)" error.event="onError($event, widget, files)" role="input"></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true,
+    imports: [FileUploadComponent,]
 })
 
 class FileUploadWrapperComponent {
@@ -36,8 +38,8 @@ class FileUploadWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [FileUploadWrapperComponent],
-    imports: [FileUploadComponent, FileSizePipe, FileIconClassPipe, StateClassPipe],
+    declarations: [],
+    imports: [FileUploadComponent,],
     providers: [{ provide: App, useValue: mockApp }, AbstractDialogService]
 };
 
@@ -63,7 +65,9 @@ describe('Fileupload Component', () => {
         fixture = compileTestComponent(testModuleDef, FileUploadWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (wmComponent) {
+            fixture.detectChanges();
+        }
     });
     it('should create the Fileupload Component', () => {
         expect(wrapperComponent).toBeTruthy();

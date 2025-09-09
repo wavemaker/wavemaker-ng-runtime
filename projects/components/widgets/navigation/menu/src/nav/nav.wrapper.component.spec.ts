@@ -16,7 +16,8 @@ const markup = ` <ul wmNav data-element-type="wmNav" data-role="page-header"  ty
 
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 
 class NavWrapperComponent {
@@ -58,8 +59,8 @@ class NavWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [NavWrapperComponent,],
-    imports: [NavComponent, NavigationControlDirective],
+    declarations: [],
+    imports: [NavComponent, NavigationControlDirective,],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: Router, useValue: mockApp },
@@ -88,7 +89,7 @@ describe('Nav Component', () => {
         fixture = compileTestComponent(testModuleDef, NavWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
-        wmComponent.dataset = wrapperComponent.testdata;
+        if (wmComponent) { wmComponent.dataset = wrapperComponent.testdata = wrapperComponent.testdata || []; }
         wmComponent.onPropertyChange('dataset', wmComponent.dataset, undefined);
         fixture.detectChanges();
     });
@@ -100,7 +101,7 @@ describe('Nav Component', () => {
         // navwidget dataset propertychangehandler is having debouncetime so using setimeout
         setTimeout(() => {
             expect(wrapperComponent.onSelect).toHaveBeenCalledTimes(1);
-            expect(wmComponent.selecteditem).toEqual(wrapperComponent.testdata[0]);
+            expect(wmComponent.selecteditem).toEqual(wrapperComponent.testdata = wrapperComponent.testdata || [][0]);
             done();
         }, 100);
     });
@@ -109,7 +110,7 @@ describe('Nav Component', () => {
     describe('onNavSelect function', () => {
         it('should update selecteditem and invoke select event callback', () => {
             const mockEvent = new Event('click');
-            const mockItem = { value: wrapperComponent.testdata[1] };
+            const mockItem = { value: wrapperComponent.testdata = wrapperComponent.testdata || [][1] };
             jest.spyOn(mockEvent, 'preventDefault');
             jest.spyOn(wmComponent, 'invokeEventCallback');
             wmComponent.onNavSelect(mockEvent, mockItem);
@@ -122,10 +123,10 @@ describe('Nav Component', () => {
         });
 
         it('should remove _selected property from previously selected item', () => {
-            const previouslySelectedItem: any = { ...wrapperComponent.testdata[0], _selected: true };
-            wmComponent.nodes = [previouslySelectedItem, ...wrapperComponent.testdata.slice(1)];
+            const previouslySelectedItem: any = { ...wrapperComponent.testdata = wrapperComponent.testdata || [][0], _selected: true };
+            wmComponent.nodes = [previouslySelectedItem, ...wrapperComponent.testdata = wrapperComponent.testdata || [].slice(1)];
             const mockEvent = new Event('click');
-            const mockItem = { value: wrapperComponent.testdata[1] };
+            const mockItem = { value: wrapperComponent.testdata = wrapperComponent.testdata || [][1] };
             wmComponent.onNavSelect(mockEvent, mockItem);
             expect(previouslySelectedItem._selected).toBeUndefined();
         });

@@ -1,5 +1,7 @@
 import { Component, ElementRef, SecurityContext, ViewChild } from "@angular/core";
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
+import { mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { App } from "@wm/core";
 import { HtmlDirective } from "./html.directive";
 import { App, setCSS } from "@wm/core";
 import { SanitizePipe } from "@wm/components/base";

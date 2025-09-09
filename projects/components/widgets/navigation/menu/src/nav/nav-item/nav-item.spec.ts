@@ -16,6 +16,7 @@ const markup = `<ul>
   </ul>`
 
 @Component({
+        standalone: true,
     template: markup
 })
 class TestComponent { }
@@ -26,8 +27,8 @@ describe('NavItemDirective', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [NavItemDirective, AnchorComponent],
-            declarations: [TestComponent],
+            imports: [NavItemDirective, AnchorComponent,     TestComponent],
+            declarations: [],
             providers: [
                 { provide: 'EXPLICIT_CONTEXT', useValue: null },
                 { provide: App, useValue: mockApp }

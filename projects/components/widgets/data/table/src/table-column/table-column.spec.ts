@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { TableColumnDirective } from './table-column.directive';
 import { TableComponent } from '../table.component';
 import { App, AppDefaults, FormWidgetType } from '@wm/core';
@@ -16,6 +17,8 @@ jest.mock('@wm/components/base', () => ({
 }));
 
 @Component({
+        standalone: true,
+    imports: [TableColumnDirective],
     template: '<div wmTableColumn></div>'
 })
 class TestComponent { }
@@ -65,8 +68,8 @@ describe('TableColumnDirective', () => {
         };
 
         await TestBed.configureTestingModule({
-            declarations: [TestComponent],
-            imports: [ReactiveFormsModule, TableColumnDirective],
+            declarations: [],
+            imports: [ReactiveFormsModule, TableColumnDirective, TestComponent],
             providers: [
                 { provide: TableComponent, useValue: mockTable },
                 { provide: AppDefaults, useValue: mockAppDefaults },
@@ -75,7 +78,12 @@ describe('TableColumnDirective', () => {
         }).compileComponents();
 
         fixture = TestBed.createComponent(TestComponent);
-        directive = fixture.debugElement.children[0].injector.get(TableColumnDirective);
+        const dirEl = fixture.debugElement.query(By.directive(TableColumnDirective));
+        if (dirEl) {
+            directive = dirEl.injector.get(TableColumnDirective);
+        } else {
+            throw new Error('Directive element not found');
+        }
         fixture.detectChanges();
     });
 

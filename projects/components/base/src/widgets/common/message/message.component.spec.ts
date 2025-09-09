@@ -63,7 +63,7 @@ describe('MessageComponent', () => {
     });
 
     it('should change message type and classes accordingly', () => {
-        component.onPropertyChange('type', 'error');
+        component && component.onPropertyChange('type', 'error');
         expect(component.messageClass).toBe('alert-danger');
         expect(component.messageIconClass).toBe('wi wi-cancel');
     });
@@ -78,7 +78,7 @@ describe('MessageComponent', () => {
         ];
 
         types.forEach(({ type, expectedClass, expectedIconClass }) => {
-            component.onPropertyChange('type', type);
+            component && component.onPropertyChange('type', type);
             expect(component.messageClass).toBe(expectedClass);
             expect(component.messageIconClass).toBe(expectedIconClass);
         });

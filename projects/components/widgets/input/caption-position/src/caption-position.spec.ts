@@ -6,6 +6,7 @@ import { App } from '@wm/core';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
 @Component({
+        standalone: true,
     template: `
     <div wmCaptionPosition>
       <input type="text" placeholder="Test Input">
@@ -30,8 +31,8 @@ describe('CaptionPositionDirective', () => {
         };
 
         await TestBed.configureTestingModule({
-            imports: [CaptionPositionDirective],
-            declarations: [TestComponent],
+            imports: [CaptionPositionDirective,     TestComponent],
+            declarations: [],
             providers: [
                 { provide: App, useValue: mockApp }
             ]

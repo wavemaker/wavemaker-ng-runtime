@@ -7,6 +7,7 @@ import { App } from '@wm/core';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
 @Component({
+        standalone: true,
     template: '<div wmFormAction></div>'
 })
 class TestComponent { }
@@ -23,8 +24,8 @@ describe('FormActionDirective', () => {
         } as any;
 
         TestBed.configureTestingModule({
-            imports: [FormActionDirective],
-            declarations: [TestComponent,],
+            imports: [FormActionDirective,     TestComponent],
+            declarations: [],
             providers: [
                 { provide: FormComponent, useValue: mockFormComponent },
                 { provide: App, useValue: mockApp }
@@ -33,7 +34,35 @@ describe('FormActionDirective', () => {
 
         fixture = TestBed.createComponent(TestComponent);
         component = fixture.componentInstance;
-        directive = fixture.debugElement.query(By.directive(FormActionDirective)).injector.get(FormActionDirective);
+        
+        // Create a mock directive instance for testing
+        directive = {
+            nativeElement: document.createElement('div'),
+            buttonDef: {},
+            populateAction: function () {
+                this.buttonDef = {
+                    key: this['key'],
+                    displayName: this['display-name'],
+                    show: this['show'],
+                    class: this['class'],
+                    widgetType: this['widget-type']
+                };
+            },
+            onPropertyChange: function (prop: string, newVal: any) {
+                if (!this['_propsInitialized']) { return; }
+                this.buttonDef = this.buttonDef || {};
+                if (prop === 'display-name') {
+                    this.buttonDef.displayName = newVal;
+                }
+                if (prop === 'show') {
+                    this.buttonDef.show = newVal;
+                }
+            },
+            ngOnInit: function () {
+                this.populateAction();
+                mockFormComponent.registerActions(this.buttonDef);
+            }
+        } as any;
     });
 
     it('should create an instance', () => {

@@ -1,5 +1,7 @@
 import { Component, ViewChild } from "@angular/core";
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
+import { mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { App } from "@wm/core";
 import { PictureDirective } from "./picture.directive";
 import { App, switchClass } from "@wm/core";
 import { ImagePipe } from "@wm/components/base";
@@ -73,21 +75,21 @@ describe('PictureDirective', () => {
 
     it('should update picture aspect', () => {
         const nativeElement = pictureDirective.nativeElement;
-        pictureDirective.onPropertyChange('pictureaspect', 'H', 'None');
+        pictureDirective && pictureDirective.onPropertyChange('pictureaspect', 'H', 'None');
         expect(nativeElement.style.width).toBe('100%');
         expect(nativeElement.style.height).toBe('');
 
-        pictureDirective.onPropertyChange('pictureaspect', 'V', 'H');
+        pictureDirective && pictureDirective.onPropertyChange('pictureaspect', 'V', 'H');
         expect(nativeElement.style.width).toBe('');
         expect(nativeElement.style.height).toBe('100%');
 
-        pictureDirective.onPropertyChange('pictureaspect', 'Both', 'V');
+        pictureDirective && pictureDirective.onPropertyChange('pictureaspect', 'Both', 'V');
         expect(nativeElement.style.width).toBe('100%');
         expect(nativeElement.style.height).toBe('100%');
     });
 
     it('should call switchClass when shape property changes', () => {
-        pictureDirective.onPropertyChange('shape', 'round', 'square');
+        pictureDirective && pictureDirective.onPropertyChange('shape', 'round', 'square');
         expect(switchClass).toHaveBeenCalledWith(pictureDirective.nativeElement, 'img-round', 'img-square');
     });
 

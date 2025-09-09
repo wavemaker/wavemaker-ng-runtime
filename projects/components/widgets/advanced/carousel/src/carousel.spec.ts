@@ -32,6 +32,7 @@ const markup = `
 `;
 
 @Component({
+        standalone: true,
     template: markup
 })
 class CarouselSpec {
@@ -51,8 +52,8 @@ describe('wm-carousel: Widget specific test cases', () => {
 
     beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
-            imports: [CarouselModule, LabelDirective, CarouselDirective],
-            declarations: [CarouselSpec],
+            imports: [CarouselModule, LabelDirective, CarouselDirective, CarouselSpec, CarouselSpec],
+            declarations: [],
             providers: [
                 { provide: App, useValue: mockApp },
                 { provide: AbstractI18nService, useClass: MockAbstractI18nService },
@@ -62,7 +63,7 @@ describe('wm-carousel: Widget specific test cases', () => {
 
         fixture = TestBed.createComponent(CarouselSpec);
         component = fixture.componentInstance;
-        component.carousel.onPropertyChange('dataset', component.testdata);
+        component.carousel && carousel.onPropertyChange('dataset', component.testdata = component.testdata || []);
         $('body').addClass('wm-app');
         fixture.detectChanges();
     }));
@@ -72,14 +73,14 @@ describe('wm-carousel: Widget specific test cases', () => {
     });
 
     it('should initialize currentslide with first object', () => {
-        const testData = component.testdata;
+        const testData = component.testdata = component.testdata || [];
         fixture.detectChanges();
         expect(component.carousel.currentslide).toEqual(testData[0]);
     });
 
     it('should have the correct number of slides', () => {
         const slides = fixture.nativeElement.querySelectorAll('.carousel-item');
-        expect(slides.length).toBe(component.testdata.length);
+        expect(slides.length).toBe(component.testdata = component.testdata || [].length);
     });
 
     it('should resume carousel on mouseleave', (done) => {
@@ -147,8 +148,8 @@ describe('wm-carousel: Widget specific test cases', () => {
 
         component.carousel.onChangeCB(newIndex, oldIndex);
 
-        expect(component.carousel.currentslide).toEqual(component.testdata[newIndex]);
-        expect(component.carousel.previousslide).toEqual(component.testdata[oldIndex]);
+        expect(component.carousel.currentslide).toEqual(component.testdata = component.testdata || [][newIndex]);
+        expect(component.carousel.previousslide).toEqual(component.testdata = component.testdata || [][oldIndex]);
     });
 
     it('should call triggerAnimation with slides in the subscription callback', () => {

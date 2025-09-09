@@ -13,6 +13,7 @@ jest.mock('@wm/core', () => ({
 }));
 
 @Component({
+        standalone: true,
     template: '<section wmPrefab prefabname="test" name="testPrefab"></section>'
 })
 class TestComponent { }
@@ -24,8 +25,8 @@ describe('PrefabDirective', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestComponent],
-            imports: [PrefabDirective],
+            declarations: [],
+            imports: [PrefabDirective,     TestComponent],
             providers: [
                 { provide: App, useValue: mockApp },
                 { provide: 'EXPLICIT_CONTEXT', useValue: null }

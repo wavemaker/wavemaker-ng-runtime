@@ -67,7 +67,9 @@ const markup = `
     `;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true,
+    imports: [PopoverComponent, AnchorComponent,]
 })
 class PopoverwrapperComponent {
     @ViewChild(PopoverComponent, /* TODO: add static flag */ { static: true })
@@ -79,8 +81,8 @@ class PopoverwrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [PopoverModule.forRoot(), PopoverComponent, AnchorComponent],
-    declarations: [PopoverwrapperComponent],
+    imports: [PopoverModule.forRoot(), PopoverComponent, AnchorComponent, PopoverwrapperComponent,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: PopoverConfig },

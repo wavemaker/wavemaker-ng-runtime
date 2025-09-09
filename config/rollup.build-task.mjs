@@ -2,6 +2,12 @@ import multi from '@rollup/plugin-multi-entry';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import alias from '@rollup/plugin-alias';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const projectRoot = path.resolve(__dirname, '..');
 
 export default [
     {
@@ -13,9 +19,9 @@ export default [
         plugins: [
             alias({
                 entries: [
-                    { find: 'rxjs/Subject', replacement: 'node_modules/rxjs/_esm5/internal/Subject.js' },
-                    { find: '@wm/core', replacement: 'libraries/core/fesm2022/index.mjs' },
-                    { find: '@wm/transpiler', replacement: 'libraries/transpiler/fesm2022/index.mjs' }
+                    { find: 'rxjs/Subject', replacement: path.resolve(projectRoot, 'node_modules/rxjs/_esm5/internal/Subject.js') },
+                    { find: '@wm/core', replacement: path.resolve(projectRoot, 'libraries/core/fesm2022/index.mjs') },
+                    { find: '@wm/transpiler', replacement: path.resolve(projectRoot, 'libraries/transpiler/fesm2022/index.mjs') }
                 ]
             }),
             nodeResolve({
@@ -62,7 +68,7 @@ export default [
             multi(),
             alias({
                 entries: [
-                    { find: '@wm/core', replacement: 'libraries/core/fesm2022/index.mjs' }
+                    { find: '@wm/core', replacement: path.resolve(projectRoot, 'libraries/core/fesm2022/index.mjs') }
                 ]
             }),
             nodeResolve({
@@ -87,9 +93,9 @@ export default [
             multi(),
             alias({
                 entries: [
-                    { find: 'rxjs/Subject', replacement: 'node_modules/rxjs/_esm5/internal/Subject.js' },
-                    { find: '@wm/components/base', replacement: 'dist/transpilation/all-pipes.es.js' },
-                    { find: '@wm/core', replacement: 'libraries/core/fesm2022/index.mjs' }
+                    { find: 'rxjs/Subject', replacement: path.resolve(projectRoot, 'node_modules/rxjs/_esm5/internal/Subject.js') },
+                    { find: '@wm/components/base', replacement: path.resolve(projectRoot, 'dist/transpilation/all-pipes.es.js') },
+                    { find: '@wm/core', replacement: path.resolve(projectRoot, 'libraries/core/fesm2022/index.mjs') }
                 ]
             }),
             nodeResolve({

@@ -16,7 +16,8 @@ import { compileTestComponent, mockApp } from "projects/components/base/src/test
 const markup = `<wm-input name="text1">`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 
 class InputTextWrapperComponent {
@@ -25,7 +26,7 @@ class InputTextWrapperComponent {
 
 const testModuleDef: ITestModuleDef = {
     imports: [FormsModule, IMaskModule, InputTextComponent],
-    declarations: [InputTextWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -65,14 +66,14 @@ describe('InputTextComponent', () => {
     it('should update maskVal and call checkForDisplayFormat when displayformat changes', () => {
         component.displayformat = '(999) 999-9999';
         const newDisplayFormat = '(999) 999-9999';
-        component.onPropertyChange('displayformat', newDisplayFormat, '');
+        component && component.onPropertyChange('displayformat', newDisplayFormat, '');
 
         expect(component.maskVal).toBe(newDisplayFormat);
     });
     it('should update lazy when showdisplayformaton changes', () => {
-        component.onPropertyChange('showdisplayformaton', 'keypress', '');
+        component && component.onPropertyChange('showdisplayformaton', 'keypress', '');
         expect(component['lazy']).toBe(true);
-        component.onPropertyChange('showdisplayformaton', 'blur', 'keypress');
+        component && component.onPropertyChange('showdisplayformaton', 'blur', 'keypress');
         expect(component['lazy']).toBe(false);
     });
     it('should return false when no displayformat is set', () => {

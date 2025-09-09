@@ -7,6 +7,7 @@ import { App } from '@wm/core';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
 @Component({
+        standalone: true,
     selector: 'app-test-menu-adapter',
     template: '<div></div>'
 })
@@ -55,8 +56,8 @@ describe('MenuAdapterComponent', () => {
         } as any;
 
         await TestBed.configureTestingModule({
-            declarations: [TestMenuAdapterComponent],
-            imports: [MenuComponent],
+            declarations: [],
+            imports: [MenuComponent, TestMenuAdapterComponent, TestMenuAdapterComponent, TestMenuAdapterComponent],
             providers: [
                 { provide: Injector, useValue: injectorMock },
                 { provide: 'WIDGET_CONFIG', useValue: { widgetType: 'wm-menu' } },
@@ -75,13 +76,13 @@ describe('MenuAdapterComponent', () => {
 
     it('should call super.onPropertyChange for non-menu properties', () => {
         const superSpy = jest.spyOn(MenuAdapterComponent.prototype, 'onPropertyChange');
-        component.onPropertyChange('nonMenuProp', 'newValue', 'oldValue');
+        component && component.onPropertyChange('nonMenuProp', 'newValue', 'oldValue');
         expect(superSpy).toHaveBeenCalledWith('nonMenuProp', 'newValue', 'oldValue');
     });
 
     it('should update menuRef for menu properties', () => {
         component['menuRef'] = mockMenuComponent;
-        component.onPropertyChange('itemlabel', 'newLabel', 'oldLabel');
+        component && component.onPropertyChange('itemlabel', 'newLabel', 'oldLabel');
         expect(mockMenuComponent.itemlabel).toBe('newLabel');
     });
 

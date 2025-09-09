@@ -11,11 +11,11 @@ import {
 import { IMaskModule } from "angular-imask";
 import { InputCalendarComponent } from "./input-calendar.component";
 import { mockApp } from "projects/components/base/src/test/util/component-test-util";
-
 const markup = `<wm-input type="date" name="text1" hint="date field">`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 
 class InputCalendarWrapperComponent {
@@ -23,8 +23,8 @@ class InputCalendarWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule, InputCalendarComponent],
-    declarations: [InputCalendarWrapperComponent],
+    imports: [FormsModule, IMaskModule, InputCalendarComponent,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

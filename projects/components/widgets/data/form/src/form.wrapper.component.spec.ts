@@ -190,7 +190,8 @@ const markup = `<form wmForm role="" #form_1 ngNativeValidate
                 </form>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 
 class FormWrapperComponent {
@@ -219,28 +220,8 @@ class FormWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [
-        BrowserAnimationsModule,
-        InputTextComponent,
-        FormsModule,
-        ReactiveFormsModule,
-        IMaskModule,
-        LayoutGridRowDirective,
-        LabelDirective,
-        CommonModule,
-        BsDatepickerModule.forRoot(),
-        TimepickerModule.forRoot(),
-        BsDropdownModule.forRoot()
-    ],
-    declarations: [
-        FormWrapperComponent,
-        FormComponent,
-        FormActionDirective,
-        FormFieldDirective,
-        FormWidgetDirective,
-        TimeComponent,
-        DateComponent
-    ],
+    imports: [BrowserAnimationsModule, InputTextComponent, FormsModule, ReactiveFormsModule, IMaskModule, LayoutGridRowDirective, LabelDirective, CommonModule, BsDatepickerModule.forRoot(), TimepickerModule.forRoot(), BsDropdownModule.forRoot(),],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: Viewport, useValue: mockViewport },
@@ -333,7 +314,7 @@ describe('FormComponent', () => {
         fixture = compileTestComponent(testModuleDef, FormWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
-        wmComponent.getWidget().dataset = wrapperComponent.testdata;
+        wmComponent.getWidget().dataset = wrapperComponent.testdata = wrapperComponent.testdata || [];
         wmComponent.formFields = [
             {
                 key: 'field1',

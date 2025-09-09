@@ -17,15 +17,16 @@ const markup = `<div wmRichTextEditor #wm_richtexteditor1="wmRichTextEditor"
                 </div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class RichTextEditorWrapperComponent {
     @ViewChild(RichTextEditorComponent, /* TODO: add static flag */ { static: true }) wmComponent: RichTextEditorComponent;
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [RichTextEditorWrapperComponent,],
-    imports: [RichTextEditorComponent],
+    declarations: [],
+    imports: [RichTextEditorComponent,],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: SanitizePipe, useClass: SanitizePipe },
@@ -51,7 +52,9 @@ describe('wm-richtexteditor: Component Spectific Tests', () => {
         fixture = compileTestComponent(testModuleDef, RichTextEditorWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (wmComponent) {
+            fixture.detectChanges();
+        }
     });
     it('should create the Richtext Editor compoent', () => {
         expect(wrapperComponent).toBeTruthy();

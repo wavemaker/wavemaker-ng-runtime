@@ -45,7 +45,8 @@ shortcutkey="g" tabindex="0" outputformat="hh:mm:ss"  timepattern="hh:mm:ss" hou
    tap.event="time1Tap($event, widget)"  class="input-group-lg" color="#9f4343" margin="5px"  autofocus="true" ngModel></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class TimeWrapperComponent {
     @ViewChild(TimeComponent, /* TODO: add static flag */ { static: true })
@@ -83,8 +84,8 @@ class TimeWrapperComponent {
 }
 
 const dateComponentModuleDef: ITestModuleDef = {
-    declarations: [TimeWrapperComponent],
-    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    declarations: [],
+    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot(),],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
@@ -149,7 +150,9 @@ describe("TimeComponent", () => {
         fixture = compileTestComponent(dateComponentModuleDef, TimeWrapperComponent);
         timeWrapperComponent = fixture.componentInstance;
         wmComponent = timeWrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (wmComponent) {
+            fixture.detectChanges();
+        }
     }));
     afterEach(() => {
         if (fixture) {
@@ -423,8 +426,8 @@ describe("TimeComponent", () => {
 
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
-    declarations: [TimeWrapperComponent],
-    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    declarations: [],
+    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot(),],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'de' },
@@ -449,7 +452,9 @@ describe('TimeComponent with localization', () => {
         fixture = compileTestComponent(dateComponentLocaleModuleDef, TimeWrapperComponent);
         timeWrapperComponent = fixture.componentInstance;
         wmComponent = timeWrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (wmComponent) {
+            fixture.detectChanges();
+        }
     }));
 
     afterEach(() => {
@@ -490,8 +495,8 @@ describe('TimeComponent with localization', () => {
 });
 
 const dateComponentROLocaleModuleDef: ITestModuleDef = {
-    declarations: [TimeWrapperComponent],
-    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    declarations: [],
+    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot(),],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'ro' },
@@ -514,7 +519,9 @@ describe('TimeComponent with ro (Romania) localization', () => {
         fixture = compileTestComponent(dateComponentROLocaleModuleDef, TimeWrapperComponent);
         timeWrapperComponent = fixture.componentInstance;
         wmComponent = timeWrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (wmComponent) {
+            fixture.detectChanges();
+        }
     }));
 
     afterEach(() => {

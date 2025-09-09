@@ -13,6 +13,7 @@ jest.mock('@wm/core', () => ({
 }));
 
 @Component({
+        standalone: true,
     template: `<div wmListItem [item]="testItem"></div>`
 })
 class TestComponent {
@@ -27,8 +28,8 @@ describe('ListItemDirective', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestComponent,],
-            imports: [ListItemDirective],
+            declarations: [],
+            imports: [ListItemDirective,     TestComponent],
             providers: [
                 {
                     provide: ListComponent, useValue: {
@@ -144,7 +145,7 @@ describe('ListItemDirective', () => {
         expect((directive as any).destroy$.subscribe).toHaveBeenCalledWith(mockWatchResult);
 
         // Simulate destruction of the component
-        directive.destroy.next();
+        directive.destroy.next(null);
         directive.destroy.complete();
     });
 

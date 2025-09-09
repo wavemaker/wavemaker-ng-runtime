@@ -7,7 +7,7 @@ const NG_REACTIVE_FORM_MODULE: ImportDef[] = [{ from: '@angular/forms', name: 'R
 // NGX Bootstrap Modules
 const NGX_BS_DATE_PICKER: ImportDef[] = [{ from: 'ngx-bootstrap/datepicker', name: 'BsDatepickerModule', as: 'ngx_BsDatepickerModule' }];
 const NGX_CAROUSEL_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/carousel', name: 'CarouselModule', as: 'ngxCarouselModule', forRoot: true }];
-const NGX_COLOR_PICKER_MODULE: ImportDef[] = [{ from: 'ngx-color-picker', name: 'ColorPickerModule', as: 'ngx_ColorPickerModule' }];
+const NGX_COLOR_PICKER_DIRECTIVE: ImportDef[] = [{ from: 'ngx-color-picker', name: 'ColorPickerDirective', as: 'ngx_ColorPickerDirective' }];
 const NGX_DROP_DOWN_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/dropdown', name: 'BsDropdownModule', as: 'ngxBsDropdownModule', forRoot: true }];
 //const NGX_MODAL_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/modal', name: 'ModalModule', as: 'ngx_ModalModule' }];
 const NGX_PAGINATION_MODULE: ImportDef[] = [{ from: 'ngx-bootstrap/pagination', name: 'PaginationModule', as: 'ngxPaginationModule', forRoot: true }];
@@ -44,6 +44,7 @@ const PARTIAL_CONTAINER: ImportDef[] = [{ from: '@wm/components/base', name: 'Pa
 const ACCORDION_PANE_COMPONENT: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/containers/accordion', name: 'AccordionPaneComponent' }];
 const ACCORDION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/accordion', name: 'AccordionDirective' }];
 const CONTAINER_DIRECTIVE: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/base', name: 'ContainerDirective' }]
+const PARTIAL_PARAM_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/base', name: 'PartialParamDirective' }];
 const LINEAR_LAYOUT_ITEM_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/linear-layout', name: 'LinearLayoutItemDirective' }];
 const LINEAR_LAYOUT_DIRECTIVE: ImportDef[] = [...LINEAR_LAYOUT_ITEM_DIRECTIVE, { from: '@wm/components/containers/linear-layout', name: 'LinearLayoutDirective' }];
 const TAB_PANE_COMPONENT: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/containers/tabs', name: 'TabPaneComponent' }];
@@ -56,6 +57,7 @@ const LAYOUT_GRID_ROW_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containe
 const LAYOUT_GRID_DIRECTIVE: ImportDef[] = [...LAYOUT_GRID_ROW_DIRECTIVE, ...LAYOUT_GRID_COLUMN_DIRECTIVE, { from: '@wm/components/containers/layout-grid', name: 'LayoutgridDirective' }];
 const PANEL_COMPONENT: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/containers/panel', name: 'PanelComponent' }];
 const TILE_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/containers/tile', name: 'TileDirective' }];
+const REPEAT_TEMPLATE_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/base', name: 'RepeatTemplateDirective' }];
 
 // Dialog Modules
 const ALERT_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/alert-dialog', name: 'AlertDialogComponent' }];
@@ -64,6 +66,7 @@ const DESIGN_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/de
 const IFRAME_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/iframe-dialog', name: 'IframeDialogComponent' }];
 const LOGIN_DIALOG_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/dialogs/login-dialog', name: 'LoginDialogDirective' }, ...DESIGN_DIALOG_COMPONENT];
 const PARTIAL_DIALOG_COMPONENT: ImportDef[] = [{ from: '@wm/components/dialogs/partial-dialog', name: 'PartialDialogComponent' }, ...CONTAINER_DIRECTIVE];
+const DIALOGACTIONS_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/dialogs', name: 'DialogFooterDirective' }];
 
 // Navigation Modules
 const NAV_ITEM_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/navigation/menu', name: 'NavItemDirective' }];
@@ -81,7 +84,7 @@ const TOP_NAV_DIRECTIVE: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/compo
 // Input Components
 const CALENDAR_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, { from: '@wm/components/input/calendar', name: 'CalendarComponent' }];
 const CHIPS_COMPONENT: ImportDef[] = [...SEARCH_COMPONENT, { from: '@wm/components/input/chips', name: 'ChipsComponent' }];
-const COLOR_PICKER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_COLOR_PICKER_MODULE, { from: '@wm/components/input/color-picker', name: 'ColorPickerComponent' }];
+const COLOR_PICKER_COMPONENT: ImportDef[] = [...NG_FORM_MODULE, ...NGX_COLOR_PICKER_DIRECTIVE, { from: '@wm/components/input/color-picker', name: 'ColorPickerComponent' }];
 const CURRENCY_COMPONENT: ImportDef[] = [{ from: '@wm/components/input/currency', name: 'CurrencyComponent' }];
 const DATE_COMPONENT: ImportDef[] = [
     ...NG_FORM_MODULE, ...NGX_BS_DATE_PICKER, ...NGX_DROP_DOWN_MODULE,
@@ -130,8 +133,8 @@ const TABLE_FILTER_SORT_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/t
 const TABLE_ACTION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableActionDirective' }];
 const TABLE_COLUMN_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableColumnDirective' }];
 const TABLE_COLUMN_GROUP_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableColumnGroupDirective' }];
-const TABLE_ROW_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableRowDirective' }];
-const TABLE_ROW_ACTION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableRowActionDirective' }];
+const TABLE_ROW_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableRowDirective' }, ...CONTAINER_DIRECTIVE, ...PARTIAL_CONTAINER];
+const TABLE_ROW_ACTION_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/data/table', name: 'TableRowActionDirective' }, ...BUTTON_COMPONENT];
 const TABLE_COMPONENT: ImportDef[] = [
     ...NG_FORM_MODULE,
     ...NG_REACTIVE_FORM_MODULE,
@@ -168,6 +171,7 @@ const FORM_COMPONENT: ImportDef[] = [
     ...LIVE_FILTER_DIRECTIVE,
     ...LIVE_FORM_DIRECTIVE,
     { from: '@wm/components/data/form', name: 'FormComponent' }];
+const COMPOSITE_DIRECTIVE = [{ from: '@wm/components/input/composite', name: 'CompositeDirective' }, { from: '@wm/components/input/caption-position', name: 'CaptionPositionDirective' }]
 
 // Page Structure Components // TODO: PARTIAL_CONTAINER these needed ? appComponent has imports at root
 const FOOTER_DIRECTIVE: ImportDef[] = [...PARTIAL_CONTAINER, { from: '@wm/components/page/footer', name: 'FooterDirective' }];
@@ -182,7 +186,7 @@ const CONTENT_COMPONENT: ImportDef[] = [{ from: '@wm/components/page', name: 'Co
 // Advanced Components
 const CAROUSEL_TEMPLATE_DIRECTIVE: ImportDef[] = [...NGX_CAROUSEL_MODULE, { from: '@wm/components/advanced/carousel', name: 'CarouselTemplateDirective' }];
 const CAROUSEL_COMPONENT: ImportDef[] = [...NGX_CAROUSEL_MODULE, ...CAROUSEL_TEMPLATE_DIRECTIVE, { from: '@wm/components/advanced/carousel', name: 'CarouselDirective' }];
-const CHART_COMPONENT: ImportDef[] = [{ from: '@wm/components/chart', name: 'ChartComponent' }];
+const CHART_COMPONENT: ImportDef[] = [{ from: '@wm/components/chart', name: 'ChartComponent' }, {from: '@wm/components/base', name: 'RedrawableDirective'}];
 const CUSTOM_WIDGET_CONTAINER_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/advanced/custom', name: 'CustomWidgetContainerDirective' }];
 const CUSTOM_WIDGET_DIRECTIVE: ImportDef[] = [...CUSTOM_WIDGET_CONTAINER_DIRECTIVE, { from: '@wm/components/advanced/custom', name: 'CustomWidgetDirective' }];
 const LOGIN_COMPONENT: ImportDef[] = [{ from: '@wm/components/advanced/login', name: 'LoginComponent' }];
@@ -226,11 +230,13 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-colorpicker', COLOR_PICKER_COMPONENT],
     ['wm-confirmdialog', CONFIRM_DIALOG_COMPONENT],
     ['wm-container', CONTAINER_DIRECTIVE],
+    ['wm-param', PARTIAL_PARAM_DIRECTIVE],
     ['wm-content', CONTENT_COMPONENT],
     ['wm-currency', CURRENCY_COMPONENT],
     ['wm-date', DATE_COMPONENT],
     ['wm-datetime', DATE_TIME_COMPONENT],
     ['wm-dialog', DESIGN_DIALOG_COMPONENT],
+    ['wm-dialogactions', DIALOGACTIONS_DIRECTIVE],
     ['wm-footer', FOOTER_DIRECTIVE],
     ['wm-form', FORM_COMPONENT],
     ['wm-form-action', FORM_ACTION_DIRECTIVE],
@@ -297,9 +303,9 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-video', VIDEO_COMPONENT],
     ['wm-wizard', WIZARD_COMPONENT],
     ['wm-wizardstep', WIZARD_COMPONENT],
-]);
+    ['wm-repeat-template', REPEAT_TEMPLATE_DIRECTIVE],
+    ['wm-composite', COMPOSITE_DIRECTIVE],
 
-export  const PIPE_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['toDate', TO_DATE_PIPE],
     ['toCurrency', TO_CURRENCY_PIPE],
     ['numberToString', NUMBER_TO_STRING_PIPE],

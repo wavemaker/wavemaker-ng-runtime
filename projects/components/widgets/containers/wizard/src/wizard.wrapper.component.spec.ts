@@ -30,7 +30,8 @@ const markup = `
     `;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class WizardWrapperComponent {
     @ViewChild(WizardComponent, /* TODO: add static flag */ { static: true }) wmComponent: WizardComponent;
@@ -46,11 +47,8 @@ class WizardWrapperComponent {
     }
 }
 const testModuleDef: ITestModuleDef = {
-    imports: [
-        FormsModule, TextContentDirective,
-        WizardComponent, WizardStepComponent
-    ],
-    declarations: [WizardWrapperComponent],
+    imports: [FormsModule, TextContentDirective, WizardComponent, WizardStepComponent,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         DynamicComponentRefProvider
@@ -78,7 +76,9 @@ describe('wm-wizard: Component Specific Tests', () => {
         fixture = compileTestComponent(testModuleDef, WizardWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (wmComponent) {
+            fixture.detectChanges();
+        }
     }));
 
     it('should create wizard component', () => {

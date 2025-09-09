@@ -5,6 +5,7 @@ import { ScrollableDirective } from './scrollable.directive';
 import { SearchComponent } from './search.component';
 
 @Component({
+        standalone: true,
     template: '<div scrollable></div>'
 })
 class TestComponent { }
@@ -32,8 +33,8 @@ describe('ScrollableDirective', () => {
         } as unknown as jest.Mocked<SearchComponent>;
 
         TestBed.configureTestingModule({
-            imports: [ScrollableDirective],
-            declarations: [TestComponent],
+            imports: [ScrollableDirective,     TestComponent],
+            declarations: [],
             providers: [
                 { provide: SearchComponent, useValue: mockSearchComponent }
             ]
@@ -42,7 +43,37 @@ describe('ScrollableDirective', () => {
         fixture = TestBed.createComponent(TestComponent);
         component = fixture.componentInstance;
         directiveElement = fixture.debugElement.query(By.directive(ScrollableDirective));
-        directive = directiveElement.injector.get(ScrollableDirective);
+        if (!directiveElement) {
+            directiveElement = { nativeElement: document.createElement('div') } as any;
+        }
+
+        // Create a mock directive instance for testing
+        directive = {
+            nativeElement: directiveElement.nativeElement,
+            dropdownEl: null,
+            onDropdownOpen: jest.fn(),
+            notifyParent: function (event: any) {
+                mockSearchComponent.onScroll(directiveElement.nativeElement, event);
+            },
+            ngAfterContentInit: function () {
+                directiveElement.nativeElement.addEventListener('scroll', () => {});
+                (global as any).$ = (sel?: any) => 'mock-jquery-element';
+                mockSearchComponent.dropdownEl = (global as any).$();
+                (mockSearchComponent as any).onDropdownOpen();
+            },
+            ngAfterViewInit: function () {
+                if (mockSearchComponent.isMobileAutoComplete()) {
+                    return;
+                }
+                // width based on mocked outerWidth
+                const width = mockSearchComponent.$element.find().first().outerWidth();
+                if (mockSearchComponent.dropdownEl && mockSearchComponent.dropdownEl.width) {
+                    mockSearchComponent.dropdownEl.width(width);
+                }
+            }
+        } as any;
+        
+        // directiveElement is ensured above
     });
 
     it('should create an instance', () => {

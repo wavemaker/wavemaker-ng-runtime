@@ -35,15 +35,16 @@ class MockAbstractDialogService {
 const markup = `<div wmPartialDialog></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class PartialDialogWrapperComponent {
     @ViewChild(PartialDialogComponent, { static: true }) wmComponent: PartialDialogComponent;
 }
 
 const testModuleDef = {
-    imports: [FormsModule, PartialDialogComponent],
-    declarations: [PartialDialogWrapperComponent,],
+    imports: [FormsModule, PartialDialogComponent,],
+    declarations: [],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(PartialDialogComponent),

@@ -5,9 +5,8 @@ import {
     Comment,
     getHtmlTagDefinition, ParseSourceSpan
 } from '@angular/compiler';
-import { PIPE_IMPORTS, WIDGET_IMPORTS } from './imports';
+import { WIDGET_IMPORTS } from './imports';
 import {find, isEqual, isFunction, remove, sortBy, uniqWith} from "lodash-es";
-import { checkIsCustomPipeExpression } from "@wm/core";
 
 const CSS_REGEX = {
     COMMENTS_FORMAT : /\/\*((?!\*\/).|\n)+\*\//g,
@@ -191,21 +190,7 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
             if (k === 'show.bind' && attrs.get('deferload') === 'true') {
                 v = v + `" *lazyLoad="${wrapWithApos(v)}`;
             }
-            attrMarkup += `="${v}"`;
-
-            if (k === 'showindevice' && v !== 'all') {
-                const condition = [];
-                if (v.includes('xs')) {
-                    condition.push('Viewport.isMobileType');
-                }
-                if (v.includes('sm')) {
-                    condition.push('(Viewport.isTabletType && Viewport.orientation.isPortrait)');
-                }
-                if (v.includes('md')) {
-                    condition.push('(Viewport.isTabletType && Viewport.orientation.isLandscape)');
-                }
-                attrMarkup += ` *ngIf="${condition.join(' || ')}"`;
-            }
+            attrMarkup += `="${v}"`;         
         }
     });
 
@@ -379,9 +364,9 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
                        of applying only one structural directive to an element.
                     *  */
                     const noSpan = ({} as ParseSourceSpan);
-                    const showInDeviceContainer:any = showInDeviceAttr ? new Element('ng-container', [], [], noSpan, noSpan, noSpan) : '';
-                    const accessRolesContainer:any = accessRolesAttr ? new Element('ng-container', [], [], noSpan, noSpan, noSpan) : '';
-                    const deferLoadContainer:any = deferLoadAttr ? new Element('ng-container', [], [], noSpan, noSpan, noSpan) : '';
+                    const showInDeviceContainer:any = showInDeviceAttr ? new Element('ng-container', [], [], [], false, noSpan, noSpan, noSpan, false) : '';
+                    const accessRolesContainer:any = accessRolesAttr ? new Element('ng-container', [], [], [], false, noSpan, noSpan, noSpan, false) : '';
+                    const deferLoadContainer:any = deferLoadAttr ? new Element('ng-container', [], [], [], false, noSpan, noSpan, noSpan, false) : '';
                     if (showInDeviceContainer) {
                         showInDeviceContainer.attrs.push(showInDeviceAttr);
                     }
@@ -444,40 +429,6 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
         }
     }
     importCollector(WIDGET_IMPORTS.get(node.name));
-
-    if (node.name === 'wm-table-column') {
-        const formatpattern = attrMap.get('custompipeformat') || attrMap.get('formatpattern');
-        if (!!formatpattern) {
-            switch (formatpattern) {
-                case 'toDate':
-                    importCollector(PIPE_IMPORTS.get('toDate'));
-                    break;
-                case 'toCurrency':
-                    importCollector(PIPE_IMPORTS.get('toCurrency'));
-                    break;
-                case 'numberToString':
-                    importCollector(PIPE_IMPORTS.get('numberToString'));
-                    break;
-                case 'stringToNumber':
-                    importCollector(PIPE_IMPORTS.get('stringToNumber'));
-                    break;
-                case 'timeFromNow':
-                    importCollector(PIPE_IMPORTS.get('timeFromNow'));
-                    break;
-                case 'prefix':
-                    importCollector(PIPE_IMPORTS.get('prefix'));
-                    break;
-                case 'suffix':
-                    importCollector(PIPE_IMPORTS.get('suffix'));
-                    break;
-                default:
-                    if(checkIsCustomPipeExpression(formatpattern)){
-                        importCollector(PIPE_IMPORTS.get('custom'));
-                    }
-            }
-        }
-    }
-
     if (nodeDef && nodeDef.imports) {
         let imports = [];
         if (typeof nodeDef.imports === 'function') {

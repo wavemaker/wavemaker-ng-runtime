@@ -37,7 +37,8 @@ const markup = `<div
                  >
                 </div>`;
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class CalendarWrapperComponent {
     @ViewChild(CalendarComponent, /* TODO: add static flag */ { static: true })
@@ -48,8 +49,8 @@ class CalendarWrapperComponent {
 }
 
 const calendarComponentModuleDef: ITestModuleDef = {
-    declarations: [CalendarWrapperComponent],
-    imports: [FormsModule, BsDatepickerModule, IMaskModule, CalendarComponent],
+    declarations: [],
+    imports: [FormsModule, BsDatepickerModule, IMaskModule, CalendarComponent,],
     providers: [{ provide: ToDatePipe, useClass: ToDatePipe },
     { provide: App, useValue: mockApp },
     { provide: DatePipe, useClass: DatePipe },
@@ -195,14 +196,14 @@ describe('CalendarComponent', () => {
 
     describe('setSelectedData', () => {
         beforeEach(() => {
-            wmComponent.dataset = {
+            if (wmComponent) { wmComponent.dataset = {
                 data: [
                     { start: '2024-08-15', end: '2024-08-17', title: 'Event 1' },
                     { start: '2024-08-18', end: '2024-08-20', title: 'Event 2' },
                     { start: '2024-08-22', title: 'Event 3' },
                     { start: '2024-08-25', end: '2024-08-27', title: 'Event 4' },
                 ]
-            };
+            }; }
         });
 
         it('should filter events within the given date range', () => {
@@ -230,7 +231,7 @@ describe('CalendarComponent', () => {
         });
 
         it('should return undefined when dataset is not available', () => {
-            wmComponent.dataset = null;
+            if (wmComponent) { wmComponent.dataset = null; }
             const start = '2024-08-16';
             const end = '2024-08-23';
             const result = wmComponent['setSelectedData'](start, end);

@@ -22,7 +22,8 @@ jest.mock('@wm/core', () => ({
 const markup = `<ul wmChips name="chips1" readonly="false" class= "text-success" show="true" width="800" height="200" backgroundcolor="#00ff29"
                     placeholder="" tabindex="0" overflow="auto"></ul>`; // placeholder and tabindex are not working because .bind is not working
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class ChipsWrapperComponent implements OnInit {
     @ViewChild(ChipsComponent, /* TODO: add static flag */ { static: true }) wmComponent: ChipsComponent;
@@ -35,12 +36,8 @@ class ChipsWrapperComponent implements OnInit {
 
 }
 const testModuleDef: ITestModuleDef = {
-    imports: [
-        FormsModule,
-        TypeaheadModule.forRoot(),
-        ChipsComponent, SearchComponent
-    ],
-    declarations: [ChipsWrapperComponent],
+    imports: [FormsModule, TypeaheadModule.forRoot(), ChipsComponent, SearchComponent,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -78,7 +75,9 @@ describe('wm-chips: Component Specific Tests', () => {
         fixture = compileTestComponent(testModuleDef, ChipsWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (wmComponent) {
+            fixture.detectChanges();
+        }
     });
 
     it('should create chips component', () => {
@@ -105,7 +104,7 @@ describe('wm-chips: Component Specific Tests', () => {
     }))
 
     it('should add chipitems with "CONTAINS" matchmode with search key', waitForAsync(() => {
-        wmComponent.getWidget().dataset = wrapperComponent.testdata;
+        wmComponent.getWidget().dataset = wrapperComponent.testdata = wrapperComponent.testdata || [];
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
@@ -118,7 +117,7 @@ describe('wm-chips: Component Specific Tests', () => {
         applyIgnoreCaseMatchMode('anywhereignorecase', 'Option 2', 'option 2', done);
     });
     it('should add chipitems with "CONTAINS_IGNORE_CASE" matchmode with search key', (done) => {
-        wmComponent.getWidget().dataset = wrapperComponent.testdata;
+        wmComponent.getWidget().dataset = wrapperComponent.testdata = wrapperComponent.testdata || [];
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
@@ -131,7 +130,7 @@ describe('wm-chips: Component Specific Tests', () => {
         applyMatchMode('start', 'Option 2', 'option 2');
     }))
     it('should add chipitems with "STARTS_WITH" matchmode with search key', waitForAsync(() => {
-        wmComponent.getWidget().dataset = wrapperComponent.testdata;
+        wmComponent.getWidget().dataset = wrapperComponent.testdata = wrapperComponent.testdata || [];
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
@@ -144,7 +143,7 @@ describe('wm-chips: Component Specific Tests', () => {
         applyIgnoreCaseMatchMode('startignorecase', 'Option 2', 'option 2', done);
     });
     it('should add chipitems with "STARTS_WITH_IGNORE_CASE" matchmode with search key', (done) => {
-        wmComponent.getWidget().dataset = wrapperComponent.testdata;
+        wmComponent.getWidget().dataset = wrapperComponent.testdata = wrapperComponent.testdata || [];
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
@@ -160,7 +159,7 @@ describe('wm-chips: Component Specific Tests', () => {
     }));
 
     it('should add chipitems with "ENDS_WITH" matchmode with search key', waitForAsync(() => {
-        wmComponent.getWidget().dataset = wrapperComponent.testdata;
+        wmComponent.getWidget().dataset = wrapperComponent.testdata = wrapperComponent.testdata || [];
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
@@ -175,7 +174,7 @@ describe('wm-chips: Component Specific Tests', () => {
         applyIgnoreCaseMatchMode('endignorecase', 'script', 'Script', done);
     });
     it('should add chipitems with "ENDS_WITH_IGNORE_CASE" matchmode with search key', (done) => {
-        wmComponent.getWidget().dataset = wrapperComponent.testdata;
+        wmComponent.getWidget().dataset = wrapperComponent.testdata = wrapperComponent.testdata || [];
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
@@ -190,7 +189,7 @@ describe('wm-chips: Component Specific Tests', () => {
         applyMatchMode('exact', 'java', 'Java');
     }));
     it('should add chipitems with "IS_EQUAL" matchmode with search key', waitForAsync(() => {
-        wmComponent.getWidget().dataset = wrapperComponent.testdata;
+        wmComponent.getWidget().dataset = wrapperComponent.testdata = wrapperComponent.testdata || [];
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';
@@ -206,7 +205,7 @@ describe('wm-chips: Component Specific Tests', () => {
     });
 
     it('should add chipitems with "IS_EQUAL_WITH_IGNORE_CASE" matchmode with search key', (done) => {
-        wmComponent.getWidget().dataset = wrapperComponent.testdata;
+        wmComponent.getWidget().dataset = wrapperComponent.testdata = wrapperComponent.testdata || [];
         wmComponent.getWidget().displayfield = 'name';
         // Setting searchkey property manually on search because .bind is not working
         getwmSearchEle().componentInstance.getWidget().searchkey = 'name';

@@ -5,6 +5,8 @@ import { AbstractI18nService, App, AppDefaults, CURRENCY_INFO, setPipeProvider }
 import { TrailingZeroDecimalPipe } from "@wm/components/base";
 import { DecimalPipe } from "@angular/common";
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
+import { mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { App } from "@wm/core";
 import { PipeProvider } from "../../../../../runtime-base/src/services/pipe-provider.service";
 import { waitForAsync, ComponentFixture } from '@angular/core/testing';
 import { compileTestComponent, mockApp, setInputValue } from "../../../../base/src/test/util/component-test-util";
@@ -18,7 +20,9 @@ const markup = `<div blur.event="onBlur($event, widget)"
                  trailingzero="true" tabindex="1"></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true,
+    imports: [CurrencyComponent,]
 })
 
 class CurrencyWrapperComponent {
@@ -39,8 +43,8 @@ class CurrencyWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, CurrencyComponent],
-    declarations: [CurrencyWrapperComponent],
+    imports: [FormsModule, CurrencyComponent, CurrencyWrapperComponent,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AppDefaults, useValue: AppDefaults },

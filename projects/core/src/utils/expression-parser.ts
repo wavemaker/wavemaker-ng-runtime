@@ -11,9 +11,11 @@ import {
     LiteralMap,
     LiteralPrimitive,
     Parser,
+    ParseLocation,
+    ParseSourceFile,
+    ParseSourceSpan,
     PrefixNot,
     PropertyRead,
-    PropertyWrite,
     Unary
 } from '@angular/compiler';
 import {get} from "lodash-es";
@@ -383,8 +385,9 @@ class ASTCompiler {
             return this.processLiteralMap();
         } else if (ast instanceof PropertyRead) {
             return this.processPropertyRead();
-        } else if (ast instanceof PropertyWrite) {
-            return this.processPropertyWrite();
+        // PropertyWrite is no longer available in Angular 20
+        // } else if (ast instanceof PropertyWrite) {
+        //     return this.processPropertyWrite();
         } else if (ast instanceof KeyedRead) {
             return this.processKeyedRead();
         } else if (ast instanceof PrefixNot) {
@@ -538,7 +541,11 @@ export function $parseExpr(expr: string, defOnly?: boolean): ParseExprResult {
             };
         } else {
             const parser = new Parser(new Lexer);
-            const ast = parser.parseBinding(expr, '',0);
+            const parseSourceSpan = new ParseSourceSpan(
+                new ParseLocation(new ParseSourceFile('', ''), 0, 0, 0), 
+                new ParseLocation(new ParseSourceFile('', ''), expr.length, 0, expr.length)
+            );
+            const ast = parser.parseBinding(expr, parseSourceSpan, 0);
 
             if (ast.errors.length) {
                 fn = noop;
@@ -637,7 +644,11 @@ export function $parseEvent(expr, defOnly?): ParseExprResult {
             fn = simpleFunctionEvaluator.bind(undefined, expr);
         } else {
             const parser = new Parser(new Lexer);
-            const ast = parser.parseAction(expr, '', 0);
+            const parseSourceSpan = new ParseSourceSpan(
+                new ParseLocation(new ParseSourceFile('', ''), 0, 0, 0), 
+                new ParseLocation(new ParseSourceFile('', ''), expr.length, 0, expr.length)
+            );
+            const ast = parser.parseAction(expr, parseSourceSpan, 0);
 
             if (ast.errors.length) {
                 return noop;

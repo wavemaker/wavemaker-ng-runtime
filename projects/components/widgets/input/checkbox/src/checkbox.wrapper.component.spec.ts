@@ -3,13 +3,16 @@ import { CheckboxComponent, unStringify } from "./checkbox.component";
 import { waitForAsync, ComponentFixture } from "@angular/core/testing";
 import { compileTestComponent, getHtmlSelectorElement, mockApp } from "../../../../base/src/test/util/component-test-util";
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
+import { mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { App } from "@wm/core";
 import { FormsModule } from "@angular/forms";
 import { App } from "@wm/core";
 
 const markup = `<div wmCheckbox hint="checkbox" caption="Label" name="checkbox1" tabindex="1"></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 
 class CheckboxWrapperComponent {
@@ -17,8 +20,8 @@ class CheckboxWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, CheckboxComponent],
-    declarations: [CheckboxWrapperComponent],
+    imports: [FormsModule, CheckboxComponent,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
     ]
@@ -47,7 +50,9 @@ describe('Checkbox component', () => {
         fixture = compileTestComponent(testModuleDef, CheckboxWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         checkboxComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (checkboxComponent) {
+            fixture.detectChanges();
+        }
     }));
 
     it('should create checkbox component', () => {

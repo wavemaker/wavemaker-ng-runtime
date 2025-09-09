@@ -7,7 +7,9 @@ import { App } from "@wm/core";
 const markup = `<span wmIcon name="icon1" caption="star" hint="icon"></span>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true,
+    imports: [IconComponent,]
 })
 
 class IconWrapperComponent {
@@ -15,8 +17,8 @@ class IconWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [IconComponent],
-    declarations: [IconWrapperComponent,],
+    imports: [IconComponent, IconWrapperComponent,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
     ]

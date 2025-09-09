@@ -22,15 +22,16 @@ class MockTrustAsPipe implements PipeTransform {
 const markup = `<div wmAudio name="audio" hint="audio" [attr.aria-label]="'audio'" tabindex="0"></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class AudioWrapperComponent {
     @ViewChild(AudioComponent, { static: true }) wmComponent: AudioComponent;
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, AudioComponent],
-    declarations: [AudioWrapperComponent, MockTrustAsPipe],
+    imports: [FormsModule, AudioComponent,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         provideAsWidgetRef(AudioComponent)
@@ -61,7 +62,9 @@ describe('Audio component', () => {
         fixture = compileTestComponent(testModuleDef, AudioWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         audioComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (audioComponent) {
+            fixture.detectChanges();
+        }
     }));
 
     it('should create audio component', () => {

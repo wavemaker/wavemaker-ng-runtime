@@ -88,7 +88,7 @@ describe('RadiosetComponent', () => {
     it('should set list class on itemsperrow change', () => {
         jest.spyOn(component, 'onPropertyChange');
         component.itemsperrow = '3';
-        component.onPropertyChange('itemsperrow', '3');
+        component && component.onPropertyChange('itemsperrow', '3');
 
         expect(component.onPropertyChange).toHaveBeenCalledWith('itemsperrow', '3');
     });

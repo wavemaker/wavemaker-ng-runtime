@@ -96,6 +96,7 @@ describe('getTimepickerConfig', () => {
 });
 
 @Component({
+        standalone: true,
     template: '<div></div>'
 })
 class TestBaseDateTimeComponent extends BaseDateTimeComponent {
@@ -111,7 +112,7 @@ describe('BaseDateTimeComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestBaseDateTimeComponent],
+            declarations: [],
             providers: [
                 { provide: AbstractI18nService, useClass: MockAbstractI18nService },
                 { provide: App, useValue: mockApp },
@@ -399,31 +400,31 @@ describe('BaseDateTimeComponent', () => {
 
         it('should do nothing for tabindex', () => {
             const spy = jest.spyOn(component as any, '_onChange');
-            component.onPropertyChange('tabindex', 0);
+            component && component.onPropertyChange('tabindex', 0);
             expect(spy).not.toHaveBeenCalled();
         });
 
         it('should call _onChange for required', () => {
             const spy = jest.spyOn(component as any, '_onChange');
-            component.onPropertyChange('required', true);
+            component && component.onPropertyChange('required', true);
             expect(spy).toHaveBeenCalledWith(component.datavalue);
         });
 
         it('should update datepattern and call updateFormat', () => {
             component.updateFormat = jest.fn();
-            component.onPropertyChange('datepattern', 'yyyy-MM-dd');
+            component && component.onPropertyChange('datepattern', 'yyyy-MM-dd');
             expect(component.updateFormat).toHaveBeenCalledWith('datepattern');
         });
 
         it('should update showweeks in _dateOptions', () => {
-            component.onPropertyChange('showweeks', true);
+            component && component.onPropertyChange('showweeks', true);
             expect(component._dateOptions.showWeekNumbers).toBe(true);
         });
 
         it('should update mindate and call minDateMaxDateValidationOnInput', () => {
             const mockDate = new Date('2023-01-01');
             (component as any).minDateMaxDateValidationOnInput = jest.fn();
-            component.onPropertyChange('mindate', mockDate);
+            component && component.onPropertyChange('mindate', mockDate);
             expect(component._dateOptions.minDate).toEqual(mockDate);
             expect((component as any).minDateMaxDateValidationOnInput).toHaveBeenCalledWith(component.datavalue);
         });
@@ -431,56 +432,56 @@ describe('BaseDateTimeComponent', () => {
         it('should update maxdate and call minDateMaxDateValidationOnInput', () => {
             const mockDate = new Date('2023-12-31');
             (component as any).minDateMaxDateValidationOnInput = jest.fn();
-            component.onPropertyChange('maxdate', mockDate);
+            component && component.onPropertyChange('maxdate', mockDate);
             expect(component._dateOptions.maxDate).toEqual(mockDate);
             expect((component as any).minDateMaxDateValidationOnInput).toHaveBeenCalledWith(component.datavalue);
         });
 
         it('should update selectfromothermonth in _dateOptions', () => {
-            component.onPropertyChange('selectfromothermonth', true);
+            component && component.onPropertyChange('selectfromothermonth', true);
             expect(component._dateOptions.selectFromOtherMonth).toBe(true);
         });
 
         it('should update todaybutton in _dateOptions', () => {
-            component.onPropertyChange('todaybutton', true);
+            component && component.onPropertyChange('todaybutton', true);
             expect(component._dateOptions.showTodayButton).toBe(true);
         });
 
         it('should update clearbutton in _dateOptions', () => {
-            component.onPropertyChange('clearbutton', true);
+            component && component.onPropertyChange('clearbutton', true);
             expect(component._dateOptions.showClearButton).toBe(true);
         });
 
         it('should update todaybuttonlabel in _dateOptions', () => {
-            component.onPropertyChange('todaybuttonlabel', 'Today');
+            component && component.onPropertyChange('todaybuttonlabel', 'Today');
             expect(component._dateOptions.todayButtonLabel).toBe('Today');
         });
 
         it('should update clearbuttonlabel in _dateOptions', () => {
-            component.onPropertyChange('clearbuttonlabel', 'Clear');
+            component && component.onPropertyChange('clearbuttonlabel', 'Clear');
             expect(component._dateOptions.clearButtonLabel).toBe('Clear');
         });
 
         it('should update adaptiveposition in _dateOptions', () => {
-            component.onPropertyChange('adaptiveposition', true);
+            component && component.onPropertyChange('adaptiveposition', true);
             expect(component._dateOptions.adaptivePosition).toBe(true);
         });
 
         it('should update datepattern and call updateFormat', () => {
             component.updateFormat = jest.fn();
-            component.onPropertyChange('datepattern', 'yyyy-MM-dd');
+            component && component.onPropertyChange('datepattern', 'yyyy-MM-dd');
             expect(component.updateFormat).toHaveBeenCalledWith('datepattern');
         });
 
         it('should update showweeks in _dateOptions', () => {
-            component.onPropertyChange('showweeks', true);
+            component && component.onPropertyChange('showweeks', true);
             expect(component._dateOptions.showWeekNumbers).toBe(true);
         });
 
         it('should update mindate and call minDateMaxDateValidationOnInput', () => {
             const mockDate = new Date('2023-01-01');
             (component as any).minDateMaxDateValidationOnInput = jest.fn();
-            component.onPropertyChange('mindate', mockDate);
+            component && component.onPropertyChange('mindate', mockDate);
             expect(component._dateOptions.minDate).toEqual(mockDate);
             expect((component as any).minDateMaxDateValidationOnInput).toHaveBeenCalledWith(component.datavalue);
         });

@@ -11,11 +11,11 @@ import {
 import { IMaskModule } from "angular-imask";
 import { InputColorComponent } from "./input-color.component";
 import { mockApp } from "projects/components/base/src/test/util/component-test-util";
-
 const markup = `<wm-input type="color" name="text1" hint="colorpicker">`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 
 class InputColorWrapperComponent {
@@ -23,8 +23,8 @@ class InputColorWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule, InputColorComponent],
-    declarations: [InputColorWrapperComponent],
+    imports: [FormsModule, IMaskModule, InputColorComponent,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

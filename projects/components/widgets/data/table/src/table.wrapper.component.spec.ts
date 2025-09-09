@@ -426,7 +426,7 @@ let providers = [
 
 const testModuleDef: ITestModuleDef = {
     imports: [...declarations, ...imports],
-    declarations: [TableWrapperComponent],
+    declarations: [],
     providers: providers,
     teardown: { destroyAfterEach: false }
 };
@@ -763,7 +763,7 @@ describe("DataTable", () => {
 
                 const inlineTestModuleDef: ITestModuleDef = {
                     imports: [...declarations, ...imports],
-                    declarations: [InlineTableWrapperComponent],
+                    declarations: [],
                     providers: providers,
                     teardown: { destroyAfterEach: false }
                 };
@@ -2363,7 +2363,7 @@ describe("DataTable", () => {
                 });
             });
 
-            xdescribe("Quick Edit", () => {
+            describe("Quick Edit", () => {
                 @Component({
                     template: quick_edit_markup
                 })
@@ -2375,7 +2375,7 @@ describe("DataTable", () => {
 
                 const quickeditTestModuleDef: ITestModuleDef = {
                     imports: [...declarations, ...imports],
-                    declarations: [QuickEditTableWrapperComponent],
+                    declarations: [],
                     providers: providers,
                     teardown: { destroyAfterEach: false }
                 };
@@ -2676,7 +2676,7 @@ describe("DataTable", () => {
                 });
             });
 
-            xdescribe("Summary Row", () => {
+            describe("Summary Row", () => {
                 @Component({
                     template: summary_row_markup
                 })
@@ -2754,7 +2754,7 @@ describe("DataTable", () => {
 
                 const summaryRowTestModuleDef: ITestModuleDef = {
                     imports: [...declarations, ...imports],
-                    declarations: [SummaryRowWrapperComponent],
+                    declarations: [],
                     providers: providers,
                     teardown: { destroyAfterEach: false }
                 };

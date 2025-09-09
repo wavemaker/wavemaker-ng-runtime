@@ -34,7 +34,8 @@ class MockAbstractDialogService {
 const markup = `<div wmDialog></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class DialogWrapperComponent {
     @ViewChild(DialogComponent, { static: true }) wmComponent: DialogComponent;
@@ -78,12 +79,7 @@ class MockMessageComponent {
 
 const testModuleDef = {
     imports: [FormsModule, DialogComponent,],
-    declarations: [
-        DialogWrapperComponent,
-        MockFormComponent,
-        MockButtonComponent,
-        MockMessageComponent
-    ],
+    declarations: [],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(DialogComponent),

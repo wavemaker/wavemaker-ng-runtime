@@ -8,6 +8,8 @@ import { TrailingZeroDecimalPipe } from '@wm/components/base';
 import { PipeProvider } from '../../../../../runtime-base/src/services/pipe-provider.service';
 import localePT from '@angular/common/locales/pt';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
+import { mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { App } from "@wm/core";
 import { compileTestComponent, mockApp } from "../../../../base/src/test/util/component-test-util";
 import { By } from '@angular/platform-browser';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
@@ -15,7 +17,8 @@ import { MockAbstractI18nService } from 'projects/components/base/src/test/util/
 const markup = `<div wmNumber hint="Number" name="testnumber" tabindex="1" ngModel change.event="onChange($event, widget, newVal, oldVal)"></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 
 class NumberWrapperComponent {
@@ -31,8 +34,8 @@ class NumberWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, NumberComponent],
-    declarations: [NumberWrapperComponent],
+    imports: [FormsModule, NumberComponent,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService },
@@ -65,7 +68,9 @@ describe('NumberComponent', () => {
         fixture = compileTestComponent(testModuleDef, NumberWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         numberComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (numberComponent) {
+            fixture.detectChanges();
+        }
     }));
 
     it('should create the Number Component', () => {
@@ -123,7 +128,9 @@ describe('NumberComponent with Localization', () => {
         fixture = compileTestComponent(testModuleDef, NumberWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         numberComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (numberComponent) {
+            fixture.detectChanges();
+        }
     }));
 
     it('should create the Number Component', () => {

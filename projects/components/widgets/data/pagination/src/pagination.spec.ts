@@ -639,7 +639,7 @@ describe('PaginationComponent', () => {
             (component as any).setPagingValues = jest.fn();
             component.isEditNotInCurrentPage = jest.fn().mockReturnValue(false);
 
-            component.onPropertyChange('dataset', mockData, null);
+            component && component.onPropertyChange('dataset', mockData, null);
 
             expect(component.parent.onDataNavigatorDataSetChange).toHaveBeenCalledWith(mockData);
             expect(component.parent._triggeredByUser).toBe(false);
@@ -652,7 +652,7 @@ describe('PaginationComponent', () => {
             component.setResult = jest.fn();
             (component as any).setPagingValues = jest.fn();
             component.isEditNotInCurrentPage = jest.fn().mockReturnValue(false);
-            component.onPropertyChange('dataset', mockData, null);
+            component && component.onPropertyChange('dataset', mockData, null);
             expect((component as any).setPagingValues).toHaveBeenCalledWith(mockData);
         });
 
@@ -663,7 +663,7 @@ describe('PaginationComponent', () => {
             (component as any).setPagingValues = jest.fn();
             component.isEditNotInCurrentPage = jest.fn().mockReturnValue(true);
 
-            component.onPropertyChange('dataset', mockData, null);
+            component && component.onPropertyChange('dataset', mockData, null);
 
             expect(component.setResult).toHaveBeenCalledWith(mockData);
             expect((component as any).setPagingValues).not.toHaveBeenCalled();
@@ -672,7 +672,7 @@ describe('PaginationComponent', () => {
         it('should handle navigation change to "Advanced"', () => {
             (component as any).updateNavSize = jest.fn();
 
-            component.onPropertyChange('navigation', 'Advanced', 'Basic');
+            component && component.onPropertyChange('navigation', 'Advanced', 'Basic');
 
             expect(component.navigation).toBe('Classic');
             expect(component.navcontrols).toBe('Advanced');
@@ -681,7 +681,7 @@ describe('PaginationComponent', () => {
 
         it('should handle navigation change to other values', () => {
             (component as any).updateNavSize = jest.fn();
-            component.onPropertyChange('navigation', 'Basic', 'Advanced');
+            component && component.onPropertyChange('navigation', 'Basic', 'Advanced');
             expect(component.navigation).toBe('Basic');
             expect((component as any).updateNavSize).toHaveBeenCalled();
         });
@@ -689,7 +689,7 @@ describe('PaginationComponent', () => {
         it('should handle navigationsize change', () => {
             (component as any).updateNavSize = jest.fn();
 
-            component.onPropertyChange('navigationsize', 'large', 'small');
+            component && component.onPropertyChange('navigationsize', 'large', 'small');
 
             expect((component as any).updateNavSize).toHaveBeenCalled();
         });
@@ -698,7 +698,7 @@ describe('PaginationComponent', () => {
             component.dataset = [{ id: 1 }, { id: 2 }];
             (component as any).setPagingValues = jest.fn();
 
-            component.onPropertyChange('maxResults', 10, 5);
+            component && component.onPropertyChange('maxResults', 10, 5);
 
             expect((component as any).setPagingValues).toHaveBeenCalledWith(component.dataset);
         });
@@ -706,7 +706,7 @@ describe('PaginationComponent', () => {
         it('should call super.onPropertyChange for other properties', () => {
             const superOnPropertyChange = jest.spyOn(Object.getPrototypeOf(PaginationComponent.prototype), 'onPropertyChange');
 
-            component.onPropertyChange('someOtherProperty', 'newValue', 'oldValue');
+            component && component.onPropertyChange('someOtherProperty', 'newValue', 'oldValue');
 
             expect(superOnPropertyChange).toHaveBeenCalledWith('someOtherProperty', 'newValue', 'oldValue');
         });

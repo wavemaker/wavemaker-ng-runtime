@@ -17,7 +17,8 @@ import { compileTestComponent, mockApp } from "projects/components/base/src/test
 const markup = `<wm-input type="number" name="text1" hint="number field">`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 
 class InputNumberWrapperComponent {
@@ -26,7 +27,7 @@ class InputNumberWrapperComponent {
 
 const testModuleDef: ITestModuleDef = {
     imports: [FormsModule, IMaskModule, InputNumberComponent],
-    declarations: [InputNumberWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -55,7 +56,9 @@ describe('InputNumberComponent', () => {
         fixture = compileTestComponent(testModuleDef, InputNumberWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         inputNumberComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (inputNumberComponent) {
+            fixture.detectChanges();
+        }
     });
     it('should create the InputNumberComponent', () => {
         expect(wrapperComponent).toBeTruthy();

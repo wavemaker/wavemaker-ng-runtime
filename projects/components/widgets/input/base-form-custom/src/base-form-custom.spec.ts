@@ -24,6 +24,7 @@ class MockBaseFormComponent {
 
 // Create a testable version of BaseFormCustomComponent
 @Component({
+        standalone: true,
     template: ''
 })
 class TestableBaseFormCustomComponent extends MockBaseFormComponent implements Partial<BaseFormCustomComponent> {
@@ -68,8 +69,8 @@ describe('BaseFormCustomComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestableBaseFormCustomComponent],
-            imports: [ReactiveFormsModule],
+            declarations: [],
+            imports: [ReactiveFormsModule, TestableBaseFormCustomComponent, TestableBaseFormCustomComponent, TestableBaseFormCustomComponent, TestableBaseFormCustomComponent],
             providers: [
                 {
                     provide: App,

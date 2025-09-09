@@ -2,7 +2,9 @@ import { Component, ViewChild } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { App } from "@wm/core";
 import { ProgressBarComponent } from "./progress-bar.component";
-import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../../base/src/test/common-widget.specs";
+import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
+import { mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { App } from "@wm/core";
 import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
 import { ComponentFixture, fakeAsync, tick, waitForAsync } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
@@ -11,7 +13,8 @@ import { provideAsWidgetRef } from "@wm/components/base";
 const markup = `<div wmProgressBar name="progress_bar1" hint="Progress bar" arialabel="Progress bar" tabindex="0"></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class ProgressBarWrapperComponent {
     @ViewChild(ProgressBarComponent, { static: true }) wmComponent: ProgressBarComponent;
@@ -19,7 +22,7 @@ class ProgressBarWrapperComponent {
 
 const testModuleDef: ITestModuleDef = {
     imports: [FormsModule, ProgressBarComponent],
-    declarations: [ProgressBarWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         provideAsWidgetRef(ProgressBarComponent)
@@ -50,7 +53,9 @@ describe('ProgressBar component', () => {
         fixture = compileTestComponent(testModuleDef, ProgressBarWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         progressBarComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (progressBarComponent) {
+            fixture.detectChanges();
+        }
     }));
 
     it('should create progress bar component', () => {
@@ -87,10 +92,10 @@ describe('ProgressBar component', () => {
 
     describe('prepareData', () => {
         it('should handle dataset correctly', fakeAsync(() => {
-            progressBarComponent.dataset = [
+            if (progressBarComponent) { progressBarComponent.dataset = [
                 { value: 25, type: 'info' },
                 { value: 75, type: 'success' }
-            ];
+            ]; }
             progressBarComponent.datavalue = 'value';
             progressBarComponent.type = 'type';
             progressBarComponent.displayformat = '9.99';

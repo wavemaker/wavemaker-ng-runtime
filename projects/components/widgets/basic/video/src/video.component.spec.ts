@@ -23,6 +23,7 @@ const markup = `<video wmVideo
 </video>`;
 
 @Component({
+        standalone: true,
     template: markup
 })
 class TestComponent {
@@ -30,8 +31,8 @@ class TestComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [TestComponent],
-    imports: [FormsModule, VideoComponent],
+    declarations: [],
+    imports: [FormsModule, VideoComponent,     TestComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService },
@@ -62,7 +63,7 @@ describe("Video Component", () => {
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, TestComponent);
         fixture.detectChanges();
-        wmComponent = fixture.componentInstance.wmComponent;
+        wmComponent = fixture.componentInstance ? fixture.componentInstance.wmComponent : null;
     });
 
     it("should create the component", () => {

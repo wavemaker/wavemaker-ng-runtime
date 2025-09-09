@@ -12,12 +12,15 @@ import { SecurityService } from '@wm/security';
 import { DatasetAwareNavComponent } from '../../../../base/src/widgets/common/base/dataset-aware-nav.component';
 import { BsDropdownDirective, BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
+import { mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { App } from "@wm/core";
 import { compileTestComponent, mockApp } from "../../../../base/src/test/util/component-test-util";
 import { provideAnimations } from '@angular/platform-browser/animations';
 
 const markup = `<div wmPanel badgevalue="Test val" #wm_panel1="wmPanel" expanded="true" helptext="samplePanel" partialContainer wm-navigable-element="true"  subheading="subheading" iconclass="wi wi-account-circle" actions="testData" autoclose="outsideClick" title="Title" enablefullscreen="true" closable="true" collapsible="true" name="panel1" hint="panel hint" actionsclick.event="panel1Actionsclick($item)">`;
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 
 class PanelWrapperComponent {
@@ -31,8 +34,8 @@ class PanelWrapperComponent {
 }
 
 const panelComponentModuleDef: ITestModuleDef = {
-    declarations: [PanelWrapperComponent,],
-    imports: [BsDropdownModule, PanelComponent, MenuComponent, MenuDropdownItemComponent, MenuDropdownComponent, NavigationControlDirective],
+    declarations: [],
+    imports: [BsDropdownModule, PanelComponent, MenuComponent, MenuDropdownItemComponent, MenuDropdownComponent, NavigationControlDirective,],
     providers: [
         { provide: Router, useValue: Router },
         { provide: App, useValue: mockApp },
@@ -80,7 +83,9 @@ describe("PanelComponent", () => {
         fixture = compileTestComponent(panelComponentModuleDef, PanelWrapperComponent);
         panelWrapperComponent = fixture.componentInstance;
         wmComponent = panelWrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (wmComponent) {
+            fixture.detectChanges();
+        }
     }));
 
     async function togglePanel(expand: string) {

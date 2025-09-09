@@ -12,7 +12,7 @@ const findChild = (node: Element, childName: string): Element => {
 };
 
 const createElement = name => {
-    return new Element(name, [], [], noSpan, noSpan, noSpan);
+    return new Element(name, [], [], [], false, noSpan, noSpan, noSpan, false);
 };
 
 const getElementNode = (name, node) => {

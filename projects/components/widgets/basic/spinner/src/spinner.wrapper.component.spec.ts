@@ -6,19 +6,19 @@ import { App, AppDefaults } from "@wm/core";
 import { ImagePipe, StylableComponent, ToDatePipe, TrustAsPipe } from "@wm/components/base";
 import { DatePipe } from "@angular/common";
 import { mockApp } from "projects/components/base/src/test/util/component-test-util";
-
 const markup = `<div wmSpinner #wm_spinner1="wmSpinner" [attr.aria-label]="wm_spinner1.arialabel || 'Loading...'" hint="Loading..." name="spinner1">`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class SpinnerWrapperComponent {
     @ViewChild(SpinnerComponent, { static: true }) wmComponent: SpinnerComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [SpinnerComponent, ImagePipe, TrustAsPipe],
-    declarations: [SpinnerWrapperComponent],
+    imports: [SpinnerComponent, ImagePipe, TrustAsPipe,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -54,7 +54,7 @@ describe('SpinnerComponent', () => {
 
     beforeEach(() => {
         fixture = TestBed.createComponent(SpinnerWrapperComponent);
-        component = fixture.componentInstance.wmComponent;
+        component = fixture.componentInstance ? fixture.componentInstance.wmComponent : null;
         fixture.detectChanges();
     });
 
@@ -62,13 +62,13 @@ describe('SpinnerComponent', () => {
         expect(component).toBeTruthy();
     });
     it('should set animation class correctly', () => {
-        component.onPropertyChange('animation', 'spin');
+        component && component.onPropertyChange('animation', 'spin');
         expect(component.animation).toBe('fa-spin');
 
-        component.onPropertyChange('animation', 'custom-animation');
+        component && component.onPropertyChange('animation', 'custom-animation');
         expect(component.animation).toBe('custom-animation');
 
-        component.onPropertyChange('animation', '');
+        component && component.onPropertyChange('animation', '');
         expect(component.animation).toBe('');
     });
 
@@ -77,7 +77,7 @@ describe('SpinnerComponent', () => {
         const mockTransformedPath = 'transformed/path.png';
         jest.spyOn(component['imagePipe'], 'transform').mockReturnValue(mockTransformedPath);
 
-        component.onPropertyChange('image', mockImagePath);
+        component && component.onPropertyChange('image', mockImagePath);
         expect(component['picture']).toBe(mockTransformedPath);
         expect(component['imagePipe'].transform).toHaveBeenCalledWith(mockImagePath);
     });

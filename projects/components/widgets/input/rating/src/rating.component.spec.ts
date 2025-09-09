@@ -16,6 +16,7 @@ import { MockAbstractI18nService } from '../../../../base/src/test/util/date-tes
 
 const markup = `<div tabindex="1"  wmRating  name="rating1"></div>`;
 @Component({
+        standalone: true,
     template: markup
 })
 class TestComponent {
@@ -23,8 +24,8 @@ class TestComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [TestComponent],
-    imports: [FormsModule, RatingComponent],
+    declarations: [],
+    imports: [FormsModule, RatingComponent,     TestComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService },
@@ -51,7 +52,7 @@ describe("wm-rating: Component Specific tests", () => {
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, TestComponent);
         fixture.detectChanges();
-        wmComponent = fixture.componentInstance.wmComponent;
+        wmComponent = fixture.componentInstance ? fixture.componentInstance.wmComponent : null;
         testElement = fixture.debugElement.queryAll(By.css("label"))[3];
     });
     it("should create the component", () => {

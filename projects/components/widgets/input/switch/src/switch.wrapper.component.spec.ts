@@ -12,14 +12,15 @@ import { ToDatePipe } from '@wm/components/base';
 const markup = `<div wmSwitch #wm_switch1="wmSwitch" [attr.aria-label]="wm_switch1.arialabel || 'Switch button'" datavalue="yes" show="true" width="800" height="200" hint="Switch button" tabindex="0" disabled="false" name="switch1"></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class SwitchWrapperComponent {
     @ViewChild(SwitchComponent, /* TODO: add static flag */ { static: true }) wmComponent: SwitchComponent;
 }
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, SwitchComponent],
-    declarations: [SwitchWrapperComponent],
+    imports: [FormsModule, SwitchComponent,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -52,7 +53,9 @@ describe('wm-switch: Component specific tests: ', () => {
         fixture = compileTestComponent(testModuleDef, SwitchWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (wmComponent) {
+            fixture.detectChanges();
+        }
     }));
 
     it('should create switch compoent', () => {
@@ -122,7 +125,7 @@ describe('wm-switch: Component specific tests: ', () => {
         expect(wmComponent.invokeOnChange).toHaveBeenCalled();
     });
 
-    xit('should not select option when disabled', () => {
+    it('should not select option when disabled', () => {
         const mockEvent = { preventDefault: jest.fn() };
         wmComponent.disabled = true;
         wmComponent.modelByKey = 'initial';

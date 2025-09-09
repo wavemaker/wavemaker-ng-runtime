@@ -3,7 +3,9 @@ import { ColorPickerComponent } from "./color-picker.component";
 import { FormsModule } from "@angular/forms";
 import { addClass, App, removeClass } from "@wm/core";
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
-import { ColorPickerModule } from "ngx-color-picker";
+import { mockApp } from "projects/components/base/src/test/util/component-test-util";
+import { App } from "@wm/core";
+import { ColorPickerDirective } from "ngx-color-picker";
 import { AUTOCLOSE_TYPE } from "@wm/components/base";
 import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
 import { ComponentFixture } from "@angular/core/testing";
@@ -17,7 +19,8 @@ jest.mock("@wm/core", () => ({
 const markup = `<div wmColorPicker name="colorpicker1" hint="colorpicker" tabindex="1">`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 
 class ColorPickerWrapperComponent {
@@ -25,8 +28,8 @@ class ColorPickerWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, ColorPickerModule, ColorPickerComponent],
-    declarations: [ColorPickerWrapperComponent],
+    imports: [FormsModule, ColorPickerDirective, ColorPickerComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
     ]
@@ -56,7 +59,9 @@ describe('wm-colorpicker: Component Specific Tests', () => {
         fixture = compileTestComponent(testModuleDef, ColorPickerWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (wmComponent) {
+            fixture.detectChanges();
+        }
 
         // Clear mock calls before each test
         (addClass as jest.Mock).mockClear();

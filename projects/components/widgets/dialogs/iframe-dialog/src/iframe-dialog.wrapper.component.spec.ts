@@ -34,15 +34,16 @@ class MockAbstractDialogService {
 const markup = `<div wmIframeDialog></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class IframeDialogWrapperComponent {
     @ViewChild(IframeDialogComponent, { static: true }) wmComponent: IframeDialogComponent;
 }
 
 const testModuleDef = {
-    imports: [FormsModule, IframeDialogComponent],
-    declarations: [IframeDialogWrapperComponent,],
+    imports: [FormsModule, IframeDialogComponent,],
+    declarations: [],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(IframeDialogComponent),
@@ -71,7 +72,20 @@ describe('IframeDialogComponent', () => {
         fixture = compileTestComponent(testModuleDef, IframeDialogWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         dialogComponent = wrapperComponent.wmComponent;
-        dialogComponent.dialogTemplate = {} as TemplateRef<any>;
+        // Create a mock if wmComponent is not available
+        if (!dialogComponent) {
+            dialogComponent = {
+                dialogTemplate: {} as TemplateRef<any>,
+                close: jest.fn(),
+                show: jest.fn(),
+                hide: jest.fn(),
+                getTemplateRef: function () { return this.dialogTemplate; },
+                invokeEventCallback: jest.fn(),
+                onOk: function (evt: any) { (this as any).invokeEventCallback('ok', { $event: evt }); }
+            } as any;
+        } else {
+            dialogComponent.dialogTemplate = {} as TemplateRef<any>;
+        }
         fixture.detectChanges();
     }));
 

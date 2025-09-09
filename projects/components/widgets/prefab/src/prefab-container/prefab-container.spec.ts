@@ -9,6 +9,7 @@ import { mockApp } from 'projects/components/base/src/test/util/component-test-u
 
 // Define a test component to host the directive
 @Component({
+        standalone: true,
     template: `<div wmPrefabContainer></div>`
 })
 class TestComponent { }
@@ -41,8 +42,8 @@ describe('PrefabContainerDirective', () => {
         });
 
         await TestBed.configureTestingModule({
-            declarations: [TestComponent],
-            imports: [PrefabContainerDirective],
+            declarations: [],
+            imports: [PrefabContainerDirective,     TestComponent],
             providers: [
                 { provide: App, useValue: mockApp },
                 { provide: Viewport, useValue: viewportMock },

@@ -31,6 +31,7 @@ const markup = `
         ></button>
     `;
 @Component({
+        standalone: true,
     template: markup
 })
 class TestComponent {
@@ -49,8 +50,8 @@ class TestComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [TestComponent],
-    imports: [ButtonComponent],
+    declarations: [],
+    imports: [ButtonComponent,     TestComponent],
     providers: [
         { provide: App, useValue: mockApp }
     ]
@@ -103,7 +104,9 @@ describe('wm-button: Component specific tests: ', () => {
         wrapperComponent = fixture.componentInstance;
         captionEl = fixture.nativeElement.querySelector('.btn-caption');
         wmComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (wmComponent) {
+            fixture.detectChanges();
+        }
     }));
 
     it('should create Button Component', () => {
@@ -225,8 +228,8 @@ class BtnTestComponent {
     wmComponent: ButtonComponent;
 }
 const btnTestModuleDef: ITestModuleDef = {
-    declarations: [BtnTestComponent],
-    imports: [ButtonComponent],
+    declarations: [],
+    imports: [ButtonComponent,     TestComponent],
     providers: [
         { provide: App, useValue: mockApp }
     ]
@@ -240,7 +243,9 @@ describe('wm-button: Component Specific tests', () => {
         fixture = compileTestComponent(btnTestModuleDef, BtnTestComponent);
         wrapperComponent = fixture.componentInstance;
         wmComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (wmComponent) {
+            fixture.detectChanges();
+        }
     });
     it('should create button Component', () => {
         expect(wrapperComponent).toBeTruthy();

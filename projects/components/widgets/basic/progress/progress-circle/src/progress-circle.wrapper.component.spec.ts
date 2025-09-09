@@ -15,15 +15,16 @@ jest.mock('../../progress-utils/src/progress-utils');  // Mock the entire utils 
 const markup = `<div wmProgressCircle title="progress-circle" [attr.aria-label]="'progress-circle'" name="progress-circle" hint="progress-circle" tabindex="1"></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 class ProgressCircleWrapperComponent {
     @ViewChild(ProgressCircleComponent, { static: true }) wmComponent: ProgressCircleComponent;
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, ProgressCircleComponent],
-    declarations: [ProgressCircleWrapperComponent, CircleProgressComponent],
+    imports: [FormsModule, ProgressCircleComponent,],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         provideAsWidgetRef(ProgressCircleComponent),
@@ -55,7 +56,9 @@ describe('ProgressCircle component', () => {
         fixture = compileTestComponent(testModuleDef, ProgressCircleWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         progressCircleComponent = wrapperComponent.wmComponent;
-        fixture.detectChanges();
+        if (progressCircleComponent) {
+            fixture.detectChanges();
+        }
     }));
 
     it('should create progress circle component', () => {

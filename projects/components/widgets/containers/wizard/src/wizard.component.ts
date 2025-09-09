@@ -591,9 +591,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
             this.onDataChange(nv);
         } else if (key === 'defaultstep') {
             this.setDefaultStep(this.getStepRefByName(nv));
-        }  else if (key === 'defaultstepindex') {
-            this.setDefaultStep(this.getStepRefByIndex(nv));
-        }  else if (key === 'actionsalignment') {
+        } else if (key === 'actionsalignment') {
             this.nativeElement.querySelector('div.app-wizard-actions')?.classList.replace(ov, nv);
         } else {
             super.onPropertyChange(key, nv, ov);

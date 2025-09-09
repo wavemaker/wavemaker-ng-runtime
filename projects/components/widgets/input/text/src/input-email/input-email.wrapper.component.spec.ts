@@ -11,11 +11,11 @@ import {
 import {IMaskModule} from "angular-imask";
 import {InputEmailComponent} from "./input-email.component";
 import { mockApp } from "projects/components/base/src/test/util/component-test-util";
-
 const markup = `<wm-input type="email" name="text1" hint="email field">`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: true
 })
 
 class InputEmailWrapperComponent {
@@ -23,8 +23,8 @@ class InputEmailWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule, InputEmailComponent],
-    declarations: [InputEmailWrapperComponent],
+    imports: [FormsModule, IMaskModule, InputEmailComponent,],
+    declarations: [],
     providers: [
         {provide: App, useValue: mockApp},
         {provide: ToDatePipe, useClass: ToDatePipe},

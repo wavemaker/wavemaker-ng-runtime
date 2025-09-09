@@ -2,7 +2,7 @@ import { ToNumberPipe } from '../pipes/custom-pipes';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { BrowserModule, DomSanitizer } from '@angular/platform-browser';
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnInit } from '@angular/core';
 import { compileTestComponent, mockApp } from './util/component-test-util';
 import { ITestModuleDef } from './common-widget.specs';
 import { CustomPipe, FileExtensionFromMimePipe, FileIconClassPipe, FileSizePipe, FilterPipe, ImagePipe, NumberToStringPipe, PrefixPipe, StateClassPipe, StringToNumberPipe, SuffixPipe, TimeFromNowPipe, ToCurrencyPipe, ToDatePipe, TrailingZeroDecimalPipe, TrustAsPipe, SanitizePipe } from '@wm/components/base';
@@ -22,7 +22,8 @@ jest.mock('@wm/core', () => ({
 }));
 
 @Component({
-    template: '<div></div>'
+    template: '<div></div>',
+    standalone: false
 })
 class PipeWrapperComponent implements OnInit {
     ngOnInit() {
@@ -31,9 +32,7 @@ class PipeWrapperComponent implements OnInit {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [
-        BrowserModule,
-    ],
+    imports: [BrowserModule],
     declarations: [PipeWrapperComponent],
     providers: [{ provide: App, useValue: mockApp },
     { provide: AbstractI18nService, useClass: MockAbstractI18nService },
@@ -96,7 +95,7 @@ describe('ToDate pipe', () => {
         customPipeManager = TestBed.inject(CustomPipeManager);
         i18nService = TestBed.inject(AbstractI18nService);
         datePipe = TestBed.inject(DatePipe);
-        pipe = new ToDatePipe(datePipe, i18nService, customPipeManager);
+        pipe = TestBed.runInInjectionContext(() => new ToDatePipe(datePipe, i18nService, customPipeManager));
     });
 
     it('create an instance', () => {
@@ -165,7 +164,9 @@ describe('ToDate pipe', () => {
         jest.spyOn(customPipeManager, 'getCustomPipe').mockReturnValue(customPipe);
 
         // Re-instantiate the pipe to trigger the constructor logic
-        pipe = new ToDatePipe(datePipe, i18nService, customPipeManager);
+        pipe = TestBed.runInInjectionContext(() => 
+            new ToDatePipe(datePipe, i18nService, customPipeManager)
+        );
 
         const result = pipe.transform('2021-09-20', 'yyyy-MM-dd');
         expect(result).toBe('Custom formatted date');
@@ -720,12 +721,14 @@ describe('Custom pipe', () => {
     let pipe: CustomPipe;
     let wrapperComponent: PipeWrapperComponent;
     let customPipeManager: CustomPipeManager;
+    let injector : Injector
 
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, PipeWrapperComponent);
         wrapperComponent = fixture.componentInstance;
         customPipeManager = TestBed.inject(CustomPipeManager);
-        pipe = new CustomPipe(customPipeManager);
+        injector = TestBed.inject(Injector)
+         pipe = TestBed.runInInjectionContext(() => new CustomPipe(customPipeManager));
     });
 
     it('create an instance', () => {
@@ -749,12 +752,14 @@ describe('Custom pipe', () => {
     });
 
     it('should handle no additional arguments', () => {
-        const mockFormatter = jest.fn(data => `formatted-${data}`);
+        const mockVariables = { someVar: 'value' };
+        (pipe as any).app = { Variables: mockVariables };
+        const mockFormatter = jest.fn((data, mockVariables) => `formatted-${data}`);
         jest.spyOn(customPipeManager, 'getCustomPipe').mockReturnValue({ formatter: mockFormatter });
 
         const result = pipe.transform('testData', 'testPipe');
         expect(result).toBe('formatted-testData');
-        expect(mockFormatter).toHaveBeenCalledWith('testData');
+        expect(mockFormatter).toHaveBeenCalledWith('testData', mockVariables);
     });
 
     it('should catch and log errors from formatter', () => {
@@ -777,14 +782,21 @@ describe('Custom pipe', () => {
     });
 
     it('should handle multiple arguments passed directly to transform', () => {
-        const mockFormatter = jest.fn((data, ...args) => `formatted-${data}-${args.join('-')}`);
+        const mockVariables = { someVar: 'value' };
+        (pipe as any).app = { Variables: mockVariables };
+
+        const mockFormatter = jest.fn((data, ...args) => {
+        // Remove the Variables object from args for the expected result
+         const actualArgs = args.slice(0, -1);
+         return `formatted-${data}-${actualArgs.join('-')}`
+        });
         jest.spyOn(customPipeManager, 'getCustomPipe').mockReturnValue({ formatter: mockFormatter });
 
         // Call transform with multiple arguments
         const result = (pipe as any).transform('testData', 'testPipe', 'arg1', 'arg2', 'arg3');
 
         expect(result).toBe('formatted-testData-arg1-arg2-arg3');
-        expect(mockFormatter).toHaveBeenCalledWith('testData', 'arg1', 'arg2', 'arg3');
+        expect(mockFormatter).toHaveBeenCalledWith('testData', 'arg1', 'arg2', 'arg3', mockVariables);
     });
 });
 
