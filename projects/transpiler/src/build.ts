@@ -190,7 +190,7 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
             if (k === 'show.bind' && attrs.get('deferload') === 'true') {
                 v = v + `" *lazyLoad="${wrapWithApos(v)}`;
             }
-            attrMarkup += `="${v}"`;         
+            attrMarkup += `="${v}"`;
         }
     });
 
@@ -353,6 +353,7 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
                         showInDeviceAttr = attr;
                     } else if (attr.name === 'accessroles') {
                         accessRolesAttr = attr;
+                        importCollector(WIDGET_IMPORTS.get('accessroles'));
                     } else if (attr.name === 'deferload') {
                         deferLoadAttr = attr;
                     } else if (attr.name === 'show') {
