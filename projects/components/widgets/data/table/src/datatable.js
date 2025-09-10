@@ -1848,7 +1848,7 @@ $.widget('wm.datatable', {
         this.element[0].querySelectorAll('.app-menu').forEach(el => {
             if (el && el.classList.contains('open') && el.getAttribute('autoclose') === 'outsideClick' && e?.originalEvent?.isTrusted &&
                 e.target !== el.querySelector('[dropdowntoggle]')&& e.target.parentElement!== el.querySelector('[dropdowntoggle]')) {
-                    el?.widget?.bsDropdown?.hide();
+                    el?.classList.remove("open");
             }
         });
     },
@@ -2125,6 +2125,9 @@ $.widget('wm.datatable', {
     },
     /* Toggles the edit state of a row. */
     toggleEditRow: function (e, options) {
+        if($(e.target).closest('.app-menu').length) {
+            return;
+        }
         options = options || {};
         this.closeDropdown(e);
         if (e) {
