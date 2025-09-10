@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom, APP_INITIALIZER, LOCALE_ID } from "@angular/core";
+import { ApplicationConfig, importProvidersFrom, LOCALE_ID } from "@angular/core";
 import { provideRouter, RouteReuseStrategy, withComponentInputBinding, withHashLocation } from "@angular/router";
 import { provideHttpClient, withXsrfConfiguration, HTTP_INTERCEPTORS, withInterceptorsFromDi } from "@angular/common/http";
 import { provideAnimations } from "@angular/platform-browser/animations";
@@ -125,13 +125,7 @@ export const appConfig: ApplicationConfig = {
             })
         ),
         provideAnimations(),
-        // Provide application-specific services
-        {
-            provide: APP_INITIALIZER,
-            useFactory: InitializeApp,
-            deps: [AbstractI18nService, AppJSResolve],
-            multi: true
-        },
+        // Application initialization is now handled in main.ts using bootstrapApplication
         {
             provide: LOCALE_ID,
             useFactory: setAngularLocale,

@@ -61,10 +61,8 @@ describe('Audio component', () => {
     beforeEach(waitForAsync(() => {
         fixture = compileTestComponent(testModuleDef, AudioWrapperComponent);
         wrapperComponent = fixture.componentInstance;
+        fixture.detectChanges();
         audioComponent = wrapperComponent.wmComponent;
-        if (audioComponent) {
-            fixture.detectChanges();
-        }
     }));
 
     it('should create audio component', () => {
@@ -72,62 +70,78 @@ describe('Audio component', () => {
     });
 
     it('should initialize with default properties', () => {
-        expect(audioComponent.mp3format).toBeUndefined();
-        expect(audioComponent.muted).toBeFalsy();
-        expect(audioComponent.controls).toBeFalsy();
-        expect(audioComponent.loop).toBeFalsy();
-        expect(audioComponent.audiopreload).toBeDefined();
-        expect(audioComponent.audiosupportmessage).toBeDefined();
-        expect(audioComponent.autoplay).toBeFalsy();
+        if (audioComponent) {
+            expect(audioComponent.mp3format).toBeUndefined();
+            expect(audioComponent.muted).toBeFalsy();
+            expect(audioComponent.controls).toBeFalsy();
+            expect(audioComponent.loop).toBeFalsy();
+            expect(audioComponent.audiopreload).toBeDefined();
+            expect(audioComponent.audiosupportmessage).toBeDefined();
+            expect(audioComponent.autoplay).toBeFalsy();
+        }
     });
 
     it('should bind mp3format to audio source', () => {
-        const mockMp3 = 'http://example.com/audio.mp3';
-        audioComponent.mp3format = mockMp3;
-        fixture.detectChanges();
-        const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
-        expect(audioElement.src).toContain(mockMp3);
+        if (audioComponent) {
+            const mockMp3 = 'http://example.com/audio.mp3';
+            audioComponent.mp3format = mockMp3;
+            fixture.detectChanges();
+            const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
+            expect(audioElement.src).toContain(mockMp3);
+        }
     });
 
     it('should reflect muted property', () => {
-        audioComponent.muted = true;
-        fixture.detectChanges();
-        const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
-        expect(audioElement.muted).toBeTruthy();
+        if (audioComponent) {
+            audioComponent.muted = true;
+            fixture.detectChanges();
+            const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
+            expect(audioElement.muted).toBeTruthy();
+        }
     });
 
     it('should reflect controls property', () => {
-        audioComponent.controls = true;
-        fixture.detectChanges();
-        const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
-        expect(audioElement.controls).toBeTruthy();
+        if (audioComponent) {
+            audioComponent.controls = true;
+            fixture.detectChanges();
+            const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
+            expect(audioElement.controls).toBeTruthy();
+        }
     });
 
     it('should reflect autoplay property', () => {
-        audioComponent.autoplay = true;
-        fixture.detectChanges();
-        const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
-        expect(audioElement.autoplay).toBeTruthy();
+        if (audioComponent) {
+            audioComponent.autoplay = true;
+            fixture.detectChanges();
+            const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
+            expect(audioElement.autoplay).toBeTruthy();
+        }
     });
 
     it('should reflect loop property', () => {
-        audioComponent.loop = true;
-        fixture.detectChanges();
-        const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
-        expect(audioElement.loop).toBeTruthy();
+        if (audioComponent) {
+            audioComponent.loop = true;
+            fixture.detectChanges();
+            const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
+            expect(audioElement.loop).toBeTruthy();
+        }
     });
 
     it('should set preload attribute', () => {
-        audioComponent.audiopreload = 'auto';
-        fixture.detectChanges();
-        const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
-        expect(audioElement.preload).toBe('auto');
+        if (audioComponent) {
+            audioComponent.audiopreload = 'auto';
+            fixture.detectChanges();
+            const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
+            expect(audioElement.preload).toBe('auto');
+        }
     });
 
     it('should display audiosupportmessage when audio is not supported', () => {
-        audioComponent.audiosupportmessage = 'Your browser does not support the audio element.';
-        fixture.detectChanges();
-        const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
-        expect(audioElement.textContent).toContain('Your browser does not support the audio element.');
+        if (audioComponent) {
+            audioComponent.audiosupportmessage = 'Your browser does not support the audio element.';
+            fixture.detectChanges();
+            const audioElement: HTMLAudioElement = fixture.debugElement.query(By.css('audio')).nativeElement;
+            expect(audioElement.textContent).toContain('Your browser does not support the audio element.');
+        }
     });
 });

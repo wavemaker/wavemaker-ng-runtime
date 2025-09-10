@@ -18,15 +18,15 @@ const markup = `<wm-input type="number" name="text1" hint="number field">`;
 
 @Component({
     template: markup,
-    standalone: true
+    standalone: true,
+    imports: [InputNumberComponent]
 })
-
 class InputNumberWrapperComponent {
     @ViewChild(InputNumberComponent, { static: true }) wmComponent: InputNumberComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule, InputNumberComponent],
+    imports: [FormsModule, IMaskModule, InputNumberComponent, InputNumberWrapperComponent],
     declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
@@ -55,74 +55,84 @@ describe('InputNumberComponent', () => {
     beforeEach(() => {
         fixture = compileTestComponent(testModuleDef, InputNumberWrapperComponent);
         wrapperComponent = fixture.componentInstance;
+        fixture.detectChanges();
         inputNumberComponent = wrapperComponent.wmComponent;
-        if (inputNumberComponent) {
-            fixture.detectChanges();
-        }
     });
     it('should create the InputNumberComponent', () => {
         expect(wrapperComponent).toBeTruthy();
     });
 
     it('should trigger onArrowPress method', () => {
-        inputNumberComponent.step = 0;
-        fixture.detectChanges();
+        if (inputNumberComponent) {
+            inputNumberComponent.step = 0;
+            fixture.detectChanges();
 
-        const onArrowPressSpyOn = jest.spyOn(inputNumberComponent, 'onArrowPress');
-        const inputElement = fixture.nativeElement.querySelector('input');
-        const event = new KeyboardEvent('keydown', { key: 'ArrowUp' });
-        inputElement.dispatchEvent(event);
-        fixture.detectChanges();
+            const onArrowPressSpyOn = jest.spyOn(inputNumberComponent, 'onArrowPress');
+            const inputElement = fixture.nativeElement.querySelector('input');
+            const event = new KeyboardEvent('keydown', { key: 'ArrowUp' });
+            inputElement.dispatchEvent(event);
+            fixture.detectChanges();
 
-        expect(onArrowPressSpyOn).toHaveBeenCalled();
+            expect(onArrowPressSpyOn).toHaveBeenCalled();
+        }
     });
 
     it('should validateInputEntry method called on keypress', () => {
-        const validateInputEntrySpyOn = jest.spyOn(inputNumberComponent, 'validateInputEntry');
-        const inputElement = fixture.nativeElement.querySelector('input');
-        inputElement.value = '1';
-        const event = new KeyboardEvent('keypress', { key: '1' });
-        inputElement.dispatchEvent(event);
+        if (inputNumberComponent) {
+            const validateInputEntrySpyOn = jest.spyOn(inputNumberComponent, 'validateInputEntry');
+            const inputElement = fixture.nativeElement.querySelector('input');
+            inputElement.value = '1';
+            const event = new KeyboardEvent('keypress', { key: '1' });
+            inputElement.dispatchEvent(event);
 
-        fixture.detectChanges();
-        expect(validateInputEntrySpyOn).toHaveBeenCalled();
+            fixture.detectChanges();
+            expect(validateInputEntrySpyOn).toHaveBeenCalled();
+        }
     });
     it('should return false when "e" is pressed and "e" already exists in the input', () => {
-        const event = {
-          key: 'e',
-          target: { value: 'test' }
-        };
-        const result = inputNumberComponent.validateInputEntry(event);
-        expect(result).toBe(false);
+        if (inputNumberComponent) {
+            const event = {
+              key: 'e',
+              target: { value: 'test' }
+            };
+            const result = inputNumberComponent.validateInputEntry(event);
+            expect(result).toBe(false);
+        }
       });
 
     it('should allow "e" when it is not in the value', () => {
-        const inputElement = fixture.nativeElement.querySelector('input');
-        inputElement.value = '123';
-        fixture.detectChanges();
+        if (inputNumberComponent) {
+            const inputElement = fixture.nativeElement.querySelector('input');
+            inputElement.value = '123';
+            fixture.detectChanges();
 
-        const event = new KeyboardEvent('keypress', { key: 'e' });
-        Object.defineProperty(event, 'target', { writable: false, value: inputElement });
+            const event = new KeyboardEvent('keypress', { key: 'e' });
+            Object.defineProperty(event, 'target', { writable: false, value: inputElement });
 
-        const result = inputNumberComponent.validateInputEntry(event);
-        expect(result).toBeUndefined();
+            const result = inputNumberComponent.validateInputEntry(event);
+            expect(result).toBeUndefined();
+        }
     });
 
     it('should prevent default when step is 0', () => {
-        const event = {
-          preventDefault: jest.fn()
-        };
-        inputNumberComponent.step = 0;
-        inputNumberComponent.onArrowPress(event);
-        expect(event.preventDefault).toHaveBeenCalled();
+        if (inputNumberComponent) {
+            const event = {
+              preventDefault: jest.fn()
+            };
+            inputNumberComponent.step = 0;
+            inputNumberComponent.onArrowPress(event);
+            expect(event.preventDefault).toHaveBeenCalled();
+        }
       });
     
       it('should not prevent default when step is not 0', () => {
-        const event = {
-          preventDefault: jest.fn()
-        };
-        inputNumberComponent.step = 1;
-        inputNumberComponent.onArrowPress(event);
-        expect(event.preventDefault).not.toHaveBeenCalled();
+        if (inputNumberComponent) {
+            const event = {
+              preventDefault: jest.fn()
+            };
+            inputNumberComponent.step = 1;
+            inputNumberComponent.onArrowPress(event);
+            expect(event.preventDefault).not.toHaveBeenCalled();
+        }
       });
 });

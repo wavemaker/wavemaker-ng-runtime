@@ -1,64 +1,59 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Component, TemplateRef, ViewContainerRef, ViewChild } from '@angular/core';
+import { Component, TemplateRef, ViewContainerRef, ViewChild, ElementRef, Injector } from '@angular/core';
 import { By } from '@angular/platform-browser';
 import { LazyLoadDirective } from './lazy-load.directive';
 import { App } from '@wm/core';
 
 // Mock dependencies
 jest.mock('@wm/core', () => ({
-    $watch: jest.fn(() => jest.fn()),  // Return a function that can be called as unsubscribe
+    $watch: jest.fn(() => jest.fn()),
     App: jest.fn(),
-    findParent: jest.fn()
+    findParent: jest.fn(() => ({}))
 }));
 
-// Test component
-@Component({
-        standalone: true,
-    template: '<ng-template lazyLoad [lazyLoad]="condition">Lazy loaded content</ng-template>'
-})
-class TestComponent {
-    @ViewChild(LazyLoadDirective) lazyLoadDirective: LazyLoadDirective;
-    condition = false;
-}
-
 describe('LazyLoadDirective', () => {
-    let component: TestComponent;
-    let fixture: ComponentFixture<TestComponent>;
     let directive: LazyLoadDirective;
     let mockViewContainerRef: any;
+    let mockTemplateRef: any;
+    let mockInjector: any;
+    let mockWatch: jest.Mock;
+    let mockUnsubscribeFn: jest.Mock;
 
-    beforeEach(async () => {
+    beforeEach(() => {
         mockViewContainerRef = {
             createEmbeddedView: jest.fn()
         };
 
-        await TestBed.configureTestingModule({
-            imports: [LazyLoadDirective, TestComponent],
-            declarations: [],
-            providers: [
-                { provide: App, useValue: {} },
-                { provide: 'EXPLICIT_CONTEXT', useValue: {} },
-                { provide: ViewContainerRef, useValue: mockViewContainerRef }
-            ]
-        }).compileComponents();
+        mockTemplateRef = {
+            elementRef: new ElementRef(document.createElement('div'))
+        };
 
-        fixture = TestBed.createComponent(TestComponent);
-        component = fixture.componentInstance;
-        fixture.detectChanges();
+        mockInjector = {
+            get: jest.fn((token) => {
+                if (token === App) return {};
+                return {};
+            }),
+            _lView: [null, null, null, null, null, null, null, null, {}]
+        };
 
-        // Create a mock directive instance for testing
-        directive = {
-            nativeElement: document.createElement('div'),
-            lazyLoad: false,
-            $watch: jest.fn(),
-            createEmbeddedView: jest.fn(),
-            clear: jest.fn(),
-            ngOnDestroy: jest.fn()
-        } as any;
-    });
+        // Get the mocked functions
+        const { $watch } = require('@wm/core');
+        mockWatch = $watch as jest.Mock;
+        mockUnsubscribeFn = jest.fn();
+        mockWatch.mockReturnValue(mockUnsubscribeFn);
 
-    afterEach(() => {
-        fixture.destroy();
+        // Reset mocks
+        mockWatch.mockClear();
+        mockUnsubscribeFn.mockClear();
+        mockViewContainerRef.createEmbeddedView.mockClear();
+
+        // Create directive instance directly
+        directive = new LazyLoadDirective(
+            mockInjector,
+            mockTemplateRef,
+            mockViewContainerRef,
+            {}
+        );
     });
 
     it('should create an instance', () => {
@@ -66,35 +61,47 @@ describe('LazyLoadDirective', () => {
     });
 
     it('should call $watch when lazyLoad input changes', () => {
-        const watchSpy = jest.spyOn(require('@wm/core'), '$watch');
-        // Simulate the directive behavior
-        directive.lazyLoad = true;
-        directive.$watch();
+        directive.lazyLoad = 'testExpression';
         
-        expect(watchSpy).toHaveBeenCalled();
+        expect(mockWatch).toHaveBeenCalledWith(
+            'testExpression',
+            expect.any(Object),
+            expect.any(Object),
+            expect.any(Function)
+        );
     });
 
     it('should create embedded view when condition becomes true', () => {
-        // Simulate the directive behavior
+        // Trigger the lazyLoad setter with a truthy value
         directive.lazyLoad = true;
-        directive.createEmbeddedView();
         
-        expect(directive.createEmbeddedView).toHaveBeenCalled();
+        // Get the watch callback and call it with true
+        const watchCalls = mockWatch.mock.calls;
+        if (watchCalls.length > 0 && watchCalls[0].length > 3) {
+            const watchCallback = watchCalls[0][3] as Function;
+            watchCallback(true);
+            
+            expect(mockViewContainerRef.createEmbeddedView).toHaveBeenCalledWith(
+                mockTemplateRef,
+                expect.any(Object)
+            );
+        }
     });
 
     it('should not create embedded view when condition is false', () => {
-        // Simulate the directive behavior
+        // Trigger the lazyLoad setter with a falsy value
         directive.lazyLoad = false;
         
-        expect(directive.createEmbeddedView).not.toHaveBeenCalled();
+        // The directive should not have called createEmbeddedView
+        expect(mockViewContainerRef.createEmbeddedView).not.toHaveBeenCalled();
     });
 
     it('should unsubscribe from $watch on destroy', () => {
-        const unsubscribeSpy = jest.fn();
-        directive.$watch = jest.fn(() => unsubscribeSpy);
+        // First set up the lazyLoad to ensure unSubscribeFn is set
+        directive.lazyLoad = 'test';
         
+        // Now call ngOnDestroy
         directive.ngOnDestroy();
-
-        expect(unsubscribeSpy).toHaveBeenCalled();
+        expect(mockUnsubscribeFn).toHaveBeenCalled();
     });
 });

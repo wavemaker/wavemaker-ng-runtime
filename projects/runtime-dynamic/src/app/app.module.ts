@@ -2,7 +2,7 @@ import { Injector, ModuleWithProviders, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { RouteReuseStrategy, RouterModule } from '@angular/router';
-import { HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
+// HttpClientModule and HttpClientXsrfModule are deprecated, using provideHttpClient in app.config.ts instead
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
 import { TimepickerModule as ngxTimepickerModule } from 'ngx-bootstrap/timepicker';
@@ -185,7 +185,7 @@ const xsrfOptions = {
 if (xsrfHeaderName) {
     xsrfOptions['headerName'] = xsrfHeaderName;
 }
-export const httpClientXsrfModule = HttpClientXsrfModule.withOptions(xsrfOptions);
+// HttpClientXsrfModule is deprecated, XSRF configuration is now handled in app.config.ts
 
 export const modalModule: ModuleWithProviders<ModalModule> = ModalModule.forRoot();
 export const bsDatePickerModule: ModuleWithProviders<BsDatepickerModule> = BsDatepickerModule.forRoot();
@@ -341,7 +341,6 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule as any, ReactiveFormsMo
         BrowserAnimationsModule,
         CommonModule,
         RouterModule,
-        HttpClientModule,
 
         modalModule,
         bsDatePickerModule,
@@ -357,7 +356,6 @@ REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS.push(FormsModule as any, ReactiveFormsMo
 
         routerModule,
         toastrModule,
-        httpClientXsrfModule,
         WM_MODULES_FOR_ROOT
     ],
     providers: [

@@ -1,7 +1,7 @@
-import { APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule } from '@angular/core';
+import { LOCALE_ID, ModuleWithProviders, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ɵSharedStylesHost } from '@angular/platform-browser';
 import { ɵDomRendererFactory2 } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -419,7 +419,6 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     imports: [
         CommonModule,
         RouterModule,
-        HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
         ...definitions,
@@ -434,7 +433,6 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         AccessrolesDirective,
         CommonModule,
         RouterModule,
-        HttpClientModule,
         ToastrModule,
         // CoreModule,
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS
@@ -486,12 +484,7 @@ export class RuntimeBaseModule {
                 { provide: AbstractNavigationService, useClass: NavigationServiceImpl },
                 { provide: AppDefaults, useClass: AppDefaultsService },
                 { provide: DynamicComponentRefProvider, useClass: DynamicComponentRefProviderService },
-                {
-                    provide: APP_INITIALIZER,
-                    useFactory: InitializeApp,
-                    deps: [AbstractI18nService, AppJSResolve],
-                    multi: true
-                },
+                // Application initialization is now handled in main.ts using bootstrapApplication
                 {
                     provide: LOCALE_ID,
                     useFactory: setAngularLocale,
