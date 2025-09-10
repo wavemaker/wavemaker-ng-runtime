@@ -1,7 +1,7 @@
 
 @if (navcontrols === 'Classic') {
 <ul class="pagination advanced {{navigationClass}}">
-    @if (allowpagesizechange &&  pageSizeOptions?.[0]<=rowSummary?.totalRecords) {
+    @if (allowpagesizechange &&  pageSizeOptions?.[0]<rowSummary?.totalRecords) {
         <li class="items-per-page">
           <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label">{{appLocale.LABEL_ITEMS_PER_PAGE}} :</label>
 
@@ -13,13 +13,11 @@
                 <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu pagesize-options"
                     role="menu" aria-labelledby="button-basic">
                     @for (option of pageSizeOptions; track option; let i = $index) {
-                        @if(option<=rowSummary?.totalRecords){
                             <li role="menuitem" [ngClass]="{ 'active': option == maxResults }">
                                 <a class="dropdown-item" (click)="onPageSizeChange($event, option)" (keydown)="onDropdownKeydown($event, i)"
                                    [attr.tabindex]="i === focusedIndex ? 0 : -1">{{option}}</a>
                             </li>
                             }
-                        }
                 </ul>
             </div>
         </li>
@@ -97,7 +95,7 @@
 }
 @if (navcontrols === 'Pager') {
   <ul class="pager {{navigationClass}}">
-        @if (allowpagesizechange &&  pageSizeOptions?.[0]<=rowSummary?.totalRecords) {
+        @if (allowpagesizechange &&  pageSizeOptions?.[0]<rowSummary?.totalRecords) {
         <li class="items-per-page">
           <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label">{{appLocale.LABEL_ITEMS_PER_PAGE}} :</label>
 
@@ -109,13 +107,11 @@
                 <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu pagesize-options"
                     role="menu" aria-labelledby="button-basic">
                     @for (option of pageSizeOptions; track option; let i = $index) {
-                        @if(option<=rowSummary?.totalRecords){
                         <li role="menuitem" [ngClass]="{ 'active': option == maxResults }">
                             <a class="dropdown-item" (click)="onPageSizeChange($event, option)" (keydown)="onDropdownKeydown($event, i)"
                          [attr.tabindex]="i === focusedIndex ? 0 : -1">{{option}}</a>
                         </li>
                         }
-                    }
                 </ul>
             </div>
         </li>
@@ -150,7 +146,7 @@
 }
 
 @if (navcontrols === 'Basic') {
-    @if (allowpagesizechange &&  pageSizeOptions?.[0]<=rowSummary?.totalRecords) {
+    @if (allowpagesizechange &&  pageSizeOptions?.[0]<rowSummary?.totalRecords) {
       <div class="items-per-page">
         <label [title]="appLocale.LABEL_ITEMS_PER_PAGE" class="app-label">{{appLocale.LABEL_ITEMS_PER_PAGE }} :</label>
 
@@ -162,13 +158,11 @@
             <ul id="dropdown-basic" *dropdownMenu class="dropdown-menu pagesize-options"
                 role="menu" aria-labelledby="button-basic">
                 @for (option of pageSizeOptions; track option; let i = $index) {
-                    @if(option<=rowSummary?.totalRecords){
                     <li role="menuitem" [ngClass]="{ 'active': option == maxResults }">
                         <a class="dropdown-item" (click)="onPageSizeChange($event, option)" (keydown)="onDropdownKeydown($event, i)"
                          [attr.tabindex]="i === focusedIndex ? 0 : -1">{{option}}</a>
                     </li>
                     }
-                }
             </ul>
         </div>
       </div>
