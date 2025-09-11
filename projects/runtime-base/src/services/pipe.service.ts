@@ -1,11 +1,13 @@
 import { Injectable } from "@angular/core";
 import { PipeProvider } from "./pipe-provider.service";
-import { App } from "@wm/core";
+import { App, setPipeProvider } from "@wm/core";
 
 @Injectable({ providedIn: 'root' })
 export class PipeService {
     constructor(private pipeProvider: PipeProvider,
                 private $app: App) {
+                    // setting pipe provider, to be used for variables watcher in expression parser
+        setPipeProvider(pipeProvider);
         if(this.$app.isApplicationType) {
             this.supportedPipes.push('custom');
         }
