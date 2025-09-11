@@ -195,7 +195,7 @@ const PREFAB_CONTAINER_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/prefab'
 const PREFAB_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/prefab', name: 'PrefabDirective' }];
 const RICH_TEXT_EDITOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/rich-text-editor', name: 'RichTextEditorComponent' }];
 const TREE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/tree', name: 'TreeComponent' }];
-const ACCESSROLES_DIRECTIVE = [{from: '@wm/runtime/base', name: 'AccessRolesDirective'}];
+const ACCESSROLES_DIRECTIVE = [{from: '@wm/runtime/base', name: 'AccessrolesDirective'}];
 
 // Pipes
 const TO_DATE_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'ToDatePipe' }];
