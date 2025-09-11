@@ -242,4 +242,23 @@ export class AppRef {
         //if shoudlPersist is true, set the modes object in the localStorage
         if (shouldPersist) localStorage.setItem('wm-app-modes', JSON.stringify(modes));
     };
+
+    setDesignTokens(tokens: any) {
+        const rootEl = document.getElementsByTagName('html')[0];
+
+        // root sanity check
+        if (!rootEl) return;
+
+        // tokens sanity check
+        if (!rootEl || !tokens || typeof tokens !== 'object') return;
+
+        // loop through tokens and create variables string
+        const cssVars = Object.entries(tokens)
+            .map(([key, value]) => `${key}: ${value}`)
+            .join('; ');
+
+        // Assign all token variables at once on the root
+        rootEl.style.cssText += cssVars;
+
+    }
 }
