@@ -1,0 +1,7 @@
+{
+    "name": "@wm/components/input/textarea",
+    "sideEffects": false,
+    "dependencies": {
+      "tslib": "^2.0.0"
+    }
+}

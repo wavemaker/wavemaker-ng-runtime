@@ -83,32 +83,273 @@ export default [
         }
     },
     {
-        input: './libraries/components/input/default/fesm2022/index.mjs',
+        input: './libraries/components/input/button/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
-            file: './libraries/components/input/default/bundles/index.umd.js',
+            file: './libraries/components/input/button/bundles/index.umd.js',
             format: 'umd',
-            name: 'wm.components.input',
+            name: 'wm.components.input.button',
             globals: rollupGlobals
         }
     },
     {
-        input: './libraries/components/basic/default/fesm2022/index.mjs',
+        input: './libraries/components/input/base-form/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
-            file: './libraries/components/basic/default/bundles/index.umd.js',
+            file: './libraries/components/input/base-form/bundles/index.umd.js',
             format: 'umd',
-            name: 'wm.components.basic',
+            name: 'wm.components.input.baseForm',
             globals: rollupGlobals
         }
     },
     {
-        input: './libraries/components/basic/progress/fesm2022/index.mjs',
+        input: './libraries/components/input/base-form-custom/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
-            file: './libraries/components/basic/progress/bundles/index.umd.js',
+            file: './libraries/components/input/base-form-custom/bundles/index.umd.js',
             format: 'umd',
-            name: 'wm.components.basic.progress',
+            name: 'wm.components.input.baseFormCustom',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/text/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/text/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.text',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/dataset-aware-form/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/dataset-aware-form/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.datasetawareform',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/button-group/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/button-group/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.buttongroup',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/caption-position/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/caption-position/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.captionposition',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/checkbox/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/checkbox/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.checkbox',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/checkboxset/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/checkboxset/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.checkboxset',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/composite/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/composite/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.composite',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/number/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/number/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.number',
+            globals: rollupGlobals
+        }
+    },
+   
+    {
+        input: './libraries/components/input/radioset/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/radioset/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.radioset',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/select/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/select/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.select',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/textarea/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/textarea/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.textarea',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/switch/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/switch/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.switch',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/anchor/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/anchor/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.anchor',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/audio/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/audio/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.audio',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/html/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/html/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.html',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/icon/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/icon/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.icon',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/iframe/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/iframe/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.iframe',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/label/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/label/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.label',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/picture/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/picture/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.picture',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/spinner/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/spinner/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.spinner',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/video/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/video/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.video',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/progress/progress-utils/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/progress/progress-utils/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.progress.progressUtils',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/progress/progress-bar/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/progress/progress-bar/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.progress.progressBar',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/basic/progress/progress-circle/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/basic/progress/progress-circle/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.basic.progress.progressCircle',
             globals: rollupGlobals
         }
     },
@@ -183,12 +424,62 @@ export default [
         }
     },
     {
-        input: './libraries/components/input/epoch/fesm2022/index.mjs',
+        input: './libraries/components/input/epoch/picker/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
-            file: './libraries/components/input/epoch/bundles/index.umd.js',
+            file: './libraries/components/input/epoch/picker/bundles/index.umd.js',
             format: 'umd',
-            name: 'wm.components.input.epoch',
+            name: 'wm.components.input.epoch.picker',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/epoch/date-time-picker/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/epoch/date-time-picker/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.epoch.dateTimePicker',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/epoch/base-date-time/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/epoch/base-date-time/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.epoch.baseDateTime',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/epoch/date/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/epoch/date/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.epoch.date',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/epoch/date-time/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/epoch/date-time/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.epoch.dateTime',
+            globals: rollupGlobals
+        }
+    },
+    {
+        input: './libraries/components/input/epoch/time/fesm2022/index.mjs',
+        external: [ ...rollupExternals ],
+        output: {
+            file: './libraries/components/input/epoch/time/bundles/index.umd.js',
+            format: 'umd',
+            name: 'wm.components.input.epoch.time',
             globals: rollupGlobals
         }
     },
