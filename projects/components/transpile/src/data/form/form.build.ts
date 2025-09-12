@@ -154,11 +154,9 @@ const buildTask = (directiveAttr = ''): IBuildTaskDef => {
             return provider;
         },
         imports: (attrs: Map<String, String>): string[] => {
-            if (directiveAttr === 'wmLiveForm') {
-                const formlayout = attrs.get('formlayout');
-                if (formlayout === 'dialog') {
-                    return ['wm-dialog'];
-                }
+            const formlayout = attrs.get('formlayout');
+            if (formlayout === 'dialog') {
+                return ['wm-dialog'];
             }
             return [];
         }
