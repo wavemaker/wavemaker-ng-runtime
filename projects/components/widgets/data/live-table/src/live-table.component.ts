@@ -106,9 +106,11 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     onDialogOpen(action) {
-        if (action == 'update') {
+        const attrs: Map<string, string> = this?.form?.formFields?.[0]?.$attrs ?? new Map();
+        const hasDefault = ["defaultvalue", "defaultvalue.bind"].some(key => attrs.get(key)?.trim() !== "");
+        if (action == 'update'||!!hasDefault) {
             const firstFormField = $("form [wmformfield]").first();
-            if (firstFormField.find("div[widget='autocomplete']").length != 1) { // prevent focusing first form field if widget is  autocomplete
+            if (firstFormField.find("div[widget='autocomplete']").length != 1 && this?.form?.formFields?.[0]?.widgettype != 'autocomplete') { // prevent focusing first form field if widget is  autocomplete
                 this.focusFirstInput();
             }
         } else {

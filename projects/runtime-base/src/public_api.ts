@@ -23,6 +23,7 @@ export * from './guards/page-not-found.guard';
 export * from './components/app-component/app.component';
 export * from './components/empty-component/empty-page.component';
 export * from './components/prefab-preview.component';
+export * from './resolves/app-before-load.resolve';
 export * from './resolves/app-js.resolve';
 export * from './resolves/app-extension.resolve';
 export * from './resolves/app-variables.resolve';

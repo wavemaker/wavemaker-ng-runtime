@@ -52,6 +52,7 @@ export const registerProps = () => {
                 ['viewlessmessage', {value: 'View Less', ...PROP_STRING}],
                 ['pagesize', PROP_NUMBER],
                 ['radioselect', PROP_BOOLEAN],
+                ['headerselectall',{value: false, ...PROP_BOOLEAN}],
                 ['radioselecttitle', PROP_ANY],
                 ['radioselectarialabel', PROP_ANY],
                 ['rowclass', PROP_STRING],

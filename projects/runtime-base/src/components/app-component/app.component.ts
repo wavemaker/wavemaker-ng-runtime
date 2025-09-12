@@ -53,7 +53,6 @@ interface SPINNER {
     messages: Array<string>;
     arialabel: string;
 }
-
 @Component({
     standalone: true,
     imports: [CommonModule, RouterOutlet, AlertDialogComponent, ConfirmDialogComponent, DialogComponent, AppSpinnerComponent, ContainerDirective, PartialParamHandlerDirective , PartialContainerDirective],
@@ -96,8 +95,6 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
         if (this.isApplicationType) {
             this.customIconsLoaderService.load();
         }
-
-        this.appManager.beforeAppReady();
 
         // subscribe to OAuth changes
         oAuthService.getOAuthProvidersAsObservable().subscribe((providers: any) => {
