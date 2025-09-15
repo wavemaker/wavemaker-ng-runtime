@@ -17,6 +17,7 @@ import {
     AppDefaultsService,
     AppExtensionJSResolve,
     AppJSResolve,
+    AppBeforeLoadResolve,
     AppManagerService,
     AppRef,
     I18nServiceImpl,
@@ -32,7 +33,8 @@ import {
     RoleGuard,
     PipeService,
     AuthGuard,
-    WmRouteReuseStrategy
+    WmRouteReuseStrategy,
+    AppVariablesResolve
 } from "@wm/runtime/base";
 import {
     AbstractDialogService,
@@ -61,7 +63,7 @@ import { ComponentRefProviderService } from "./services/component-ref-provider.s
 import { PrefabConfigProviderService } from "./services/prefab-config-provider.service";
 import { AppResourceManagerService } from "./services/app-resource-manager.service";
 import { CustomPipe, DialogServiceImpl, FilterPipe, ImagePipe, SanitizePipe, ToDatePipe, TrailingZeroDecimalPipe, TrustAsPipe } from "@wm/components/base";
-import {PageDirective} from "@wm/components/page";
+import { PageDirective } from "@wm/components/page";
 
 
 const wmModules = [
@@ -99,11 +101,14 @@ const initializeProjectDetails = () => {
     }
 };
 
-export function InitializeApp(I18nService, AppJSResolve) {
+export function InitializeApp(I18nService, AppJSResolve, AppBeforeLoadResolve, AppVariablesResolve, AppExtensionJSResolve) {
     return async () => {
         initializeProjectDetails();
         await AppJSResolve.resolve();
-        return I18nService.loadDefaultLocale();
+        await AppVariablesResolve.resolve();
+        await AppExtensionJSResolve.resolve();
+        await I18nService.loadDefaultLocale();
+        return AppBeforeLoadResolve.resolve();
     };
 }
 
@@ -114,6 +119,7 @@ export function setAngularLocale(I18nService) {
 
 export const appConfig: ApplicationConfig = {
     providers: [
+        { provide: HTTP_INTERCEPTORS, useClass: HttpCallInterceptor, multi: true },
         // Provide Angular core services
         provideRouter(routes, withHashLocation(), withComponentInputBinding()),
         provideHttpClient(
@@ -128,18 +134,13 @@ export const appConfig: ApplicationConfig = {
         {
             provide: APP_INITIALIZER,
             useFactory: InitializeApp,
-            deps: [AbstractI18nService, AppJSResolve],
+            deps: [AbstractI18nService, AppJSResolve, AppBeforeLoadResolve, AppVariablesResolve, AppExtensionJSResolve, PipeService],
             multi: true
         },
         {
             provide: LOCALE_ID,
             useFactory: setAngularLocale,
             deps: [AbstractI18nService]
-        },
-        {
-            provide: HTTP_INTERCEPTORS,
-            useClass: HttpCallInterceptor,
-            multi: true
         },
         { provide: App, useClass: AppRef },
         { provide: AbstractToasterService, useClass: ToasterServiceImpl },
@@ -178,8 +179,10 @@ export const appConfig: ApplicationConfig = {
         PageNotFoundGuard,
         CanDeactivatePageGuard,
         AppJSResolve,
+        AppVariablesResolve,
         AppExtensionJSResolve,
         I18nResolve,
+        AppBeforeLoadResolve,
         SecurityService,
         OAuthService,
         VariablesService,

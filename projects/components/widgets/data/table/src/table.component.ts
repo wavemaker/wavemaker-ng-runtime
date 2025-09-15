@@ -1,8 +1,7 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
-import { AnchorComponent } from '@wm/components/basic';
-import { ButtonComponent } from '@wm/components/input';
-import { MenuComponent } from '@wm/components/navigation/menu';
+import {CommonModule} from '@angular/common';
+import {AnchorComponent} from '@wm/components/basic/anchor';
+import {ButtonComponent} from '@wm/components/input/button';
+import {MenuComponent} from '@wm/components/navigation/menu';
 import {
     AfterContentInit,
     Attribute,
@@ -10,7 +9,8 @@ import {
     ContentChild,
     ContentChildren,
     ElementRef,
-    HostListener, Inject,
+    HostListener,
+    Inject,
     Injector,
     NgZone,
     OnDestroy,
@@ -69,18 +69,32 @@ import {registerProps} from './table.props';
 import {debounceTime} from 'rxjs/operators';
 import {
     debounce,
-    extend, find,
-    findIndex, floor, forEach,
-    get, includes, indexOf, isArray, isEmpty,
+    extend,
+    find,
+    findIndex,
+    floor,
+    forEach,
+    get,
+    includes,
+    indexOf,
+    isArray,
+    isEmpty,
     isEqual,
-    isNaN, isObject,
-    isUndefined, keys, omitBy,
+    isNaN,
+    isObject,
+    isUndefined,
+    keys,
+    omitBy,
     pullAllWith,
     remove,
     set,
-    some, split, startsWith, toNumber, values
+    some,
+    split,
+    startsWith,
+    toNumber,
+    values
 } from "lodash-es";
-import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import {BsDropdownModule} from 'ngx-bootstrap/dropdown';
 
 declare const $;
 
@@ -118,8 +132,8 @@ const isInputBodyWrapper = target => {
 };
 
 @Component({
-    standalone: true,
-    imports: [CommonModule, WmComponentsModule, AnchorComponent, PaginationComponent, ButtonComponent, BsDropdownModule, MenuComponent],
+      standalone: true,
+      imports: [CommonModule, AnchorComponent, PaginationComponent, ButtonComponent, BsDropdownModule, MenuComponent],
     selector: '[wmTable]',
     templateUrl: './table.component.html',
     providers: [
@@ -201,6 +215,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     prevData;
     primaryKey = [];
     radioselect;
+    headerselectall;
     rowclass;
     rowngclass;
     selectedItems = [];
@@ -364,6 +379,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         multiselecttitle: '',
         multiselectarialabel: '',
         radioselecttitle: '',
+        headerselectall:false,
         radioselectarialabel: '',
         ACTIONS: {
             'DELETE': 'delete',
@@ -562,6 +578,38 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         onHeaderClick: (col, e) => {
             // if onSort function is registered invoke it when the column header is clicked
             this.invokeEventCallback('headerclick', {$event: e, $data: col, column: col});
+        },
+        selectAllRows: (checked,e)=> {
+            if(this.headerselectall && this.multiselect){
+                const dataSize = this.dataNavigator.dataSize;
+                const pageSize = this.dataNavigator.maxResults;
+                if (checked) {
+                    const selectedDict = { selectedItem: [] };
+                    const totalPages = Math.ceil(dataSize / pageSize);
+                    for (let page = 1; page <= totalPages; page++) {
+                        const pageLen = Math.min(pageSize, dataSize - (page - 1) * pageSize);
+                        for (let i = 0; i < pageLen; i++) {
+                            selectedDict.selectedItem.push({ page, index: i });
+                        }
+                    }
+                    this.items = [...this.__fullData];
+                    this.selectedItems = this.callDataGridMethod('getSelectedRows');
+                    if (this.selectedItems.length) {
+                        this.selectedItemChange.next(this.selectedItems);
+                    }
+                    this.statePersistence.setWidgetState(this, selectedDict);
+                    this.__fullData.forEach((row) => {
+                    this.invokeEventCallback('rowselect', {$data: getClonedObject(row), $event: e, row: getClonedObject(row)});
+                    });
+                } else {
+                    this.items =this.selectedItems= [];
+                    this.statePersistence.setWidgetState(this, { selectedItem: null });
+                    this.__fullData.forEach((row) => {
+                            const rowData = getClonedObject(row);
+                            this.invokeEventCallback('rowdeselect', { $data: rowData, $event: e, row: rowData });
+                    });
+                }
+            }
         },
         onRowDelete: (row, cancelRowDeleteCallback, e, callBack, options) => {
             this.ngZone.run(() => {
@@ -1197,6 +1245,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.gridOptions.multiselecttitle = this.multiselecttitle;
         this.gridOptions.multiselectarialabel = this.multiselectarialabel;
         this.gridOptions.radioselecttitle = this.radioselecttitle;
+        this.gridOptions.headerselectall=this.headerselectall;
         this.gridOptions.radioselectarialabel = this.radioselectarialabel;
 
         // When loadondemand property is enabled(deferload="true") and show is true, only the column titles of the datatable are rendered, the data(body of the datatable) is not at all rendered.
@@ -1925,6 +1974,10 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                 if (nv.startUpdate === false) {
                     this.variableInflight = false;
                     this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
+                }
+                if (get(this.datasource, 'category') !== 'wm.Variable'){
+                    this.headerselectall=false;
+                    this.setDataGridOption("headerselectall", false);
                 }
                 this.watchVariableDataSet(this.dataset);
                 this.onDataSourceChange();

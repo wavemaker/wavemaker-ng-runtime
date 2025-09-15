@@ -8,14 +8,16 @@
  *  publishVersion: To generate the given version package.json file
  */
 'use strict';
-const fs = require('fs');
 
-const argv = require("yargs")
-	.options({
-		"publishVersion": {
-			type: "string"
-		}
-	}).argv;
+import fs from 'fs';
+import yargs from "yargs";
+import { hideBin } from "yargs/helpers";
+
+const argv = yargs(hideBin(process.argv))
+    .options({
+        publishVersion: { type: "string" }
+    })
+    .argv;
 
 const DEBUG_LOG = 'ANGULAR-APP: ';
 
@@ -32,9 +34,9 @@ const updateWMVersion = (path, wmPackageJSON) => {
 /**
  * To add the app-ng-runtime package as dependency in angular app package.json
  */
-const addWMDependency = () => {
+const addWMDependency = async () => {
 	const path = './dist/runtime-cli/angular-app/package.json';
-	const packageJSON = require(path);
+	const packageJSON = JSON.parse(fs.readFileSync(path, 'utf8'));
 
 	packageJSON.version = argv.publishVersion;
 	packageJSON["files"] = [];
@@ -51,9 +53,9 @@ const addWMDependency = () => {
  * To replace the libraries with node_modules path in angular.json
  * @param {*} wm_pkg_name  ng runtime pm package name @wavemaker/app-ng-runtime
  */
-const updateAngularJSON = (wm_pkg_name) => {
+const updateAngularJSON = async (wm_pkg_name) => {
 	const path = './dist/runtime-cli/angular-app/angular.json';
-	const json = require(path);
+	const json = JSON.parse(fs.readFileSync(path, 'utf8'));
 	const scripts = json['projects']['angular-app']['architect']['build']['options']['scripts'];
 	scripts.forEach((v, i) => {
 		if (v.startsWith('./libraries/')) {
@@ -68,8 +70,8 @@ const updateAngularJSON = (wm_pkg_name) => {
  * @param {*} path TS Config path
  * @param {*} wm_pkg_name ng runtime pm package name @wavemaker/app-ng-runtime
  */
-const updateTSConfig = (path, wm_pkg_name) => {
-	const json = require(path);
+const updateTSConfig = async (path, wm_pkg_name) => {
+	const json = JSON.parse(fs.readFileSync(path, 'utf8'));
 	const paths = json['compilerOptions']['paths'];
 	for (let key in paths) {
 		const pathRefs = paths[key];
@@ -88,12 +90,12 @@ const updateTSConfig = (path, wm_pkg_name) => {
  * Update packagename and version in the angular.json
  * Update TS config with package name
  */
-const init = () => {
+const init = async () => {
 	const wm_pkg_name = '@wavemaker/app-ng-runtime';
-	addWMDependency();
-	updateAngularJSON(wm_pkg_name);
-	updateTSConfig('./dist/runtime-cli/angular-app/tsconfig.json', wm_pkg_name);
-	updateTSConfig('./dist/runtime-cli/angular-app/tsconfig.web-app.json', wm_pkg_name);
+	await addWMDependency();
+	await updateAngularJSON(wm_pkg_name);
+	await updateTSConfig('./dist/runtime-cli/angular-app/tsconfig.json', wm_pkg_name);
+	await updateTSConfig('./dist/runtime-cli/angular-app/tsconfig.web-app.json', wm_pkg_name);
 };
 
 init();

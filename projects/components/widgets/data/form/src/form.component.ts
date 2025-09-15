@@ -1,7 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
-import { AnchorComponent } from '@wm/components/basic';
-import { ButtonComponent } from '@wm/components/input';
+import {CommonModule} from '@angular/common';
+import {AnchorComponent} from '@wm/components/basic/anchor';
+import {ButtonComponent} from '@wm/components/input/button';
 import {
     AfterContentInit,
     AfterViewInit,
@@ -9,7 +8,8 @@ import {
     Component,
     ContentChildren,
     HostBinding,
-    HostListener, Inject,
+    HostListener,
+    Inject,
     Injector,
     NgZone,
     OnDestroy,
@@ -41,6 +41,7 @@ import {
     scrollToElement,
 } from '@wm/core';
 import {
+    FilterPipe,
     getFieldLayoutConfig,
     Live_Operations,
     MessageComponent,
@@ -59,12 +60,14 @@ import {registerFormProps} from './form.props';
 import {
     debounce as _debounce,
     filter,
-    find, findIndex,
+    find,
+    findIndex,
     forEach,
     get,
     includes,
     isArray,
-    isEmpty, isEqual,
+    isEmpty,
+    isEqual,
     isUndefined,
     keys,
     last,
@@ -155,7 +158,7 @@ const setTouchedState = (self, ngForm, fieldName) => {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, WmComponentsModule, AnchorComponent, ButtonComponent, MessageComponent],
+  imports: [CommonModule, FilterPipe, AnchorComponent, ButtonComponent, MessageComponent],
     selector: 'form[wmForm]',
     templateUrl: './form.component.html',
     providers: [
@@ -573,6 +576,7 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                 const $invalidForm = eleForm.ngForm;
                 let $invalidEle  = eleForm.$ele;
                 $invalidEle = $invalidEle.parent().find('[focus-target]');
+                const $target = eleForm?.$ele?.parent()?.find('input[type=checkbox], input[type=radio], input[type=file]')?.first();
                 if ($invalidEle.length) {
                     // on save click in page layout liveform, focus of autocomplete widget opens full-screen search.
                     if (!$invalidEle.hasClass('app-search-input')) {
@@ -584,6 +588,8 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
                     }
                     $appDigest();
                     return true;
+                } else if ($target && $target.length) {
+                    $target.focus();
                 }
                 return true;
             }

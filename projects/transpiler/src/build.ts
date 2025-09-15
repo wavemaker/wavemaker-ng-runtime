@@ -191,20 +191,6 @@ export const getAttrMarkup = (attrs: Map<string, string>) => {
                 v = v + `" *lazyLoad="${wrapWithApos(v)}`;
             }
             attrMarkup += `="${v}"`;
-
-            if (k === 'showindevice' && v !== 'all') {
-                const condition = [];
-                if (v.includes('xs')) {
-                    condition.push('Viewport.isMobileType');
-                }
-                if (v.includes('sm')) {
-                    condition.push('(Viewport.isTabletType && Viewport.orientation.isPortrait)');
-                }
-                if (v.includes('md')) {
-                    condition.push('(Viewport.isTabletType && Viewport.orientation.isLandscape)');
-                }
-                attrMarkup += ` *ngIf="${condition.join(' || ')}"`;
-            }
         }
     });
 
@@ -367,6 +353,7 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
                         showInDeviceAttr = attr;
                     } else if (attr.name === 'accessroles') {
                         accessRolesAttr = attr;
+                        importCollector(WIDGET_IMPORTS.get('accessroles'));
                     } else if (attr.name === 'deferload') {
                         deferLoadAttr = attr;
                     } else if (attr.name === 'show') {

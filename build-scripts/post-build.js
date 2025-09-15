@@ -164,9 +164,9 @@ const generateSha1 = (content) => {
     try {
         const angularJson = require(`${process.cwd()}/angular.json`);
         const build = angularJson['projects']['angular-app']['architect']['build'];
-        let deployUrl = args['deploy-url'] || build['options']['deployUrl'];
+        let deployUrl = args['deploy-url'] || build['configurations']['production']['deployUrl'];
         global.randomHash = deployUrl.split('/')[1];
-        let outputPath = global.opPath = args['output-path'] || build['options']['outputPath']
+        let outputPath = global.opPath = args['output-path'] || build['configurations']['production']['outputPath']
         const contents = await readFile(`./dist/index.html`, `utf8`);
         $ = cheerio.load(contents);
         isProdBuild = fs.existsSync(`${process.cwd()}/${outputPath}/wm-styles.css`);

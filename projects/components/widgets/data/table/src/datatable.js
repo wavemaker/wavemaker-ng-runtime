@@ -32,6 +32,7 @@ $.widget('wm.datatable', {
         enableRowSelection: true,
         enableColumnSelection: false,
         multiselect: false,
+        headerselectall: false,
         multiselecttitle: '',
         multiselectarialabel: '',
         radioselecttitle:'',
@@ -1745,6 +1746,7 @@ $.widget('wm.datatable', {
             if ((this.options.multiselect || this.options.showRadioColumn) && !this.options.isrowselectable) {
                 if (Number(this.getColInfo(e))) {
                     e.stopPropagation();
+                    this.closeDropdown(e);
                     return;
                 }
             }
@@ -1769,6 +1771,7 @@ $.widget('wm.datatable', {
             if ((this.options.multiselect || this.options.showRadioColumn) && !this.options.isrowselectable) {
                 if (Number(this.getColInfo(e))) {
                     e.stopPropagation();
+                    this.closeDropdown(e);
                     return;
                 }
             }
@@ -1840,6 +1843,14 @@ $.widget('wm.datatable', {
     closePopover: function() {
         //If the DataTable is in the popover, popover shouldn't be closed
         this.options.closePopover(this.element);
+    },
+    closeDropdown: function(e){
+        this.element[0].querySelectorAll('.app-menu').forEach(el => {
+            if (el && el.classList.contains('open') && el.getAttribute('autoclose') === 'outsideClick' && e?.originalEvent?.isTrusted &&
+                e.target !== el.querySelector('[dropdowntoggle]')&& e.target.parentElement!== el.querySelector('[dropdowntoggle]')) {
+                    el?.classList.remove("open");
+            }
+        });
     },
     headerClickHandler: function (e) {
         var $th = $(e.target).closest('th.app-datagrid-header-cell'),
@@ -2114,7 +2125,11 @@ $.widget('wm.datatable', {
     },
     /* Toggles the edit state of a row. */
     toggleEditRow: function (e, options) {
+        if($(e.target).closest('.app-menu').length) {
+            return;
+        }
         options = options || {};
+        this.closeDropdown(e);
         if (e) {
             e.stopPropagation();
         }
@@ -2683,6 +2698,9 @@ $.widget('wm.datatable', {
                             self.options.timeoutCall(function () {
                                 if(quickEdit){
                                     var rowId = $editingRow[0]?.getAttribute('data-row-id');
+                                    if($editingRow.hasClass("always-new-row")){
+                                        rowId= self.gridElement[0].querySelector("tr.always-new-row")?.getAttribute('data-row-id')-1;
+                                    }
                                     var matchingRow = self.gridElement[0].querySelector("tr[data-row-id='" + rowId + "']");
                                     if($(matchingRow).hasClass('always-new-row')){return;}
                                     if (matchingRow) {
@@ -3164,13 +3182,16 @@ $.widget('wm.datatable', {
                     'rowId': rowId,
                     '_selected': self.preparedData[rowId]?._selected
                 });
-                if (checked && _.isFunction(self.options.onRowSelect)) {
-                    self.options.onRowSelect(rowData, e);
-                }
-                if (!checked && _.isFunction(self.options.onRowDeselect)) {
-                    self.options.onRowDeselect(rowData, e);
+                if(!(self.options.headerselectall && self.options.multiselect)){
+                    if (checked && _.isFunction(self.options.onRowSelect)) {
+                        self.options.onRowSelect(rowData, e);
+                    }
+                    if (!checked && _.isFunction(self.options.onRowDeselect)) {
+                        self.options.onRowDeselect(rowData, e);
+                    }
                 }
             });
+            self.options.selectAllRows(checked,e);
         }
 
         // WMS-17629: Hiding the table header column when show property is set to false

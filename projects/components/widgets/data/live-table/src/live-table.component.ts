@@ -1,4 +1,3 @@
-import { WmComponentsModule } from "@wm/components/base";
 import {
     AfterContentInit,
     Attribute,
@@ -25,8 +24,7 @@ const DEFAULT_CLS = 'app-livegrid';
 const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
 
 @Component({
-  standalone: true,
-  imports: [WmComponentsModule],
+    standalone: true,
     selector: '[wmLiveTable]',
     templateUrl: './live-table.component.html',
     providers: [
@@ -108,9 +106,11 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
     }
 
     onDialogOpen(action) {
-        if (action == 'update') {
+        const attrs: Map<string, string> = this?.form?.formFields?.[0]?.$attrs ?? new Map();
+        const hasDefault = ["defaultvalue", "defaultvalue.bind"].some(key => attrs.has(key));
+        if (action == 'update'||!!hasDefault) {
             const firstFormField = $("form [wmformfield]").first();
-            if (firstFormField.find("div[widget='autocomplete']").length != 1) { // prevent focusing first form field if widget is  autocomplete
+            if (firstFormField.find("div[widget='autocomplete']").length != 1 && this?.form?.formFields?.[0]?.widgettype != 'autocomplete') { // prevent focusing first form field if widget is  autocomplete
                 this.focusFirstInput();
             }
         } else {
