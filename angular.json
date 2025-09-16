@@ -235,7 +235,7 @@
               "configurations": {
                   "development": {
                       "buildTarget": "angular-app:build:ng-serve",
-                      "proxyConfig": "proxy.conf.json"
+                      "proxyConfig": "proxy.conf.js"
                   }
               },
               "defaultConfiguration": "development"
