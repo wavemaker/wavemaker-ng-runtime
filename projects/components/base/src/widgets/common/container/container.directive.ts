@@ -61,7 +61,7 @@ export class ContainerDirective extends BaseContainerComponent {
                 this.direction = nv;
                 if (nv === 'column') this.hasWrap = false; // disable wrap for column direction
 
-                this.$element.css('flex-direction', nv);
+                this.$element.css({'flex-direction': nv, display: 'flex'});
                 this.applyAlignment(this.alignment); 
                 break;
             case 'wrap':
