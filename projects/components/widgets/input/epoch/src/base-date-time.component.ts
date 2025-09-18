@@ -38,7 +38,7 @@ const DATAENTRYMODE_DROPDOWN_OPTIONS = {
 // Providing meridians to the timepicker baesd on selected locale
 export function getTimepickerConfig(i18nService): TimepickerConfig {
     return Object.assign(new TimepickerConfig(), {
-        meridians: getLocaleDayPeriods(i18nService.getSelectedLocale(), FormStyle.Format, TranslationWidth.Abbreviated)
+        meridians: [i18nService.getLocalizedMessage("LABEL_AM")||"AM",i18nService.getLocalizedMessage("LABEL_PM")||"PM"]
     });
 }
 
@@ -88,6 +88,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     protected timeNotInRange: boolean;
     protected invalidDateTimeFormat: boolean;
 
+    public am:string;
+    public pm: string;
     private dateOnShowSubscription: Subscription;
     private cancelLocaleChangeSubscription;
     public get timeZone() { return this.inj.get(AbstractI18nService).getTimezone(this); }
@@ -117,6 +119,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         this._dateOptions.clearPosition = 'right';
         this.meridians = getLocaleDayPeriods(this.selectedLocale, FormStyle.Format, TranslationWidth.Abbreviated);
         this.loadNativeDateInput = isMobile() && !this.showcustompicker;
+        this.am=this.i18nService.getLocalizedMessage("LABEL_AM")||"AM";
+        this.pm=this.i18nService.getLocalizedMessage("LABEL_PM")||"PM";
 
         this.cancelLocaleChangeSubscription = this.getAppInstance().subscribe("locale-changed", (locale) => {
             this.datePipe.datePipe.locale = locale.angular;
@@ -207,7 +211,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     // format the date value only when inputVal is obtained from $event.target.value, as the format doesnt match.
                     inputVal = getFormattedDate(this.datePipe, inputVal, pattern, timeZone);
                 }
-                if (inputVal !== formattedDate) {
+                if (inputVal?.replace(this.am, this.meridians[0])?.replace(this.pm, this.meridians[1]) !== formattedDate) {
                     this.invalidDateTimeFormat = true;
                     this.validateType = 'incorrectformat';
                     this.invokeOnChange(this.datavalue, undefined, false);
@@ -736,7 +740,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * This function checks whether the given time is valid or not
      */
     private timeFormatValidation() {
-        const enteredDate = $(this.nativeElement).find('input').val();
+        const enteredDate = $(this.nativeElement).find('input').val()?.replace(this.am, this.meridians[0])?.replace(this.pm, this.meridians[1]);
         const newVal = getNativeDateObject(enteredDate, {meridians: this.meridians, pattern: this.datepattern});
         if (!this.formatValidation(newVal, enteredDate)) {
             return;
@@ -1117,7 +1121,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             const value=this.datavalue;
             this.datavalue = undefined;
             setTimeout(() => {
-                $(this.nativeElement).find('.display-input').val(formattedDisplay);
+                $(this.nativeElement).find('.display-input').val(formattedDisplay?.replace(this.meridians[0], this.am)?.replace(this.meridians[1], this.pm));
                 this.minDateMaxDateValidationOnInput(formattedDisplay);
                 this.invokeOnChange(value, {}, false);
             });

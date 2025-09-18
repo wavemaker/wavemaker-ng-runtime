@@ -106,7 +106,8 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     }
 
     get displayValue() {
-        return getFormattedDate(this.datePipe, this.bsTimeValue, this.timepattern, this.timeZone, null, null, this) || '';
+        const display = getFormattedDate(this.datePipe, this.bsTimeValue, this.timepattern, this.timeZone, null, null, this) || '';
+        return display?.replace(this.meridians[0], this.am)?.replace(this.meridians[1], this.pm);
     }
 
     get nativeDisplayValue() {
@@ -264,7 +265,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
      * This is an internal method triggered when the time input changes
      */
     onDisplayTimeChange($event) {
-        const newVal = getNativeDateObject($event.target.value, { meridians: this.meridians, pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
+        const newVal = getNativeDateObject($event.target.value?.replace(this.am, this.meridians[0])?.replace(this.pm, this.meridians[1]), { meridians: this.meridians, pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
         // time pattern validation
         // if invalid pattern is entered, device is showing an error.
         if (!this.formatValidation(newVal, $event.target.value)) {
@@ -306,14 +307,14 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
             maxTimeMeridian = moment(new Date(this.bsTimePicker.max)).format('A');
             timeValue = this.bsTimePicker.hours + ':' + (this.bsTimePicker.minutes || 0) + ':' + (this.bsTimePicker.seconds || 0) + (this.bsTimePicker.showMeridian ? (' ' + minTimeMeridian) : '');
             timeInputValue = getNativeDateObject(timeValue, { pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
-            this.bsTimePicker.meridian = minTimeMeridian;
+            this.bsTimePicker.meridian = minTimeMeridian?.replace(this.meridians[0], this.am)?.replace(this.meridians[1], this.pm);
             this.timeNotInRange =  this.bsTimePicker.min > timeInputValue || this.bsTimePicker.max < timeInputValue;
 
             if (this.timeNotInRange || this.invalidDateTimeFormat) {
                 this.bsTimeValue = this.getPrevDataValue();
                 setTimeout(() => {
                     const timeStr = getFormattedDate(this.datePipe, timeValue, this.timepattern, this.timeZone, null, null, this) || '';
-                    $(this.nativeElement).find('.display-input').val(timeStr);
+                    $(this.nativeElement).find('.display-input').val(timeStr?.replace(this.meridians[0], this.am)?.replace(this.meridians[1], this.pm));
                 });
             }
             this.setValidateType(this.bsTimePicker.min, this.bsTimePicker.max, timeInputValue);
@@ -324,7 +325,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         // Update UI display if value hasn't changed
         if (!this.timeNotInRange && this.datavalue === this.getPrevDataValue()) {
             const displayTime = getFormattedDate(this.datePipe, this.datavalue, this.timepattern, this.timeZone, null, null, this) || '';
-            $(this.nativeElement).find('.display-input').val(displayTime);
+            $(this.nativeElement).find('.display-input').val(displayTime?.replace(this.meridians[0], this.am)?.replace(this.meridians[1], this.pm));
         }
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue, {}, true);
@@ -386,7 +387,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
     private isValid(event) {
         if (!event) {
-            const enteredDate = $(this.nativeElement).find('input').val();
+            const enteredDate = $(this.nativeElement).find('input').val()?.replace(this.am, this.meridians[0])?.replace(this.pm, this.meridians[1]);
             const newVal = getNativeDateObject(enteredDate, { meridians: this.meridians, pattern: this.loadNativeDateInput ? this.outputformat : undefined, isNativePicker: this.loadNativeDateInput });
             if (!this.formatValidation(newVal, enteredDate)) {
                 return;
