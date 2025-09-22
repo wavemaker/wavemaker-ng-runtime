@@ -91,7 +91,7 @@ const WIDGET_CONFIG = { widgetType: 'wm-menu', hostClass: 'dropdown app-menu' };
     templateUrl: './menu.component.html',
     providers: [
         provideAsWidgetRef(MenuComponent),
-        BsDropdownDirective
+
     ]
 })
 export class MenuComponent extends DatasetAwareNavComponent implements OnInit, OnDestroy, AfterViewInit {
