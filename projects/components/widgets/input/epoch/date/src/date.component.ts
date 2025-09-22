@@ -154,9 +154,6 @@ export class DateComponent extends BaseDateTimeComponent {
 
     // sets the dataValue and computes the display model values
     private setDataValue(newVal): void {
-        if(!newVal && $(this.nativeElement).find('.display-input').val()){
-            return ;
-        }
         this.invalidDateTimeFormat = false;
         // min date and max date validation in web.
         // if invalid dates are entered, device is showing validation message.
