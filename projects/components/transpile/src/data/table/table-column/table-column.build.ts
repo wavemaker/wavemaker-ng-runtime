@@ -167,7 +167,8 @@ const getValiationErrorTemplate = (errorTmplType) => {
             break;
         case 'hover':
         default:
-            validationErrorTmpl = `@if(getValidationMessage() && getControl() && getControl().invalid && getControl().touched){<span placement="top" container="body" tooltip="{{getValidationMessage()}}" class="text-danger wi wi-error">
+            // added app-label class as in foundation.css the default class(app-label) has been written for label tag
+            validationErrorTmpl = `@if(getValidationMessage() && getControl() && getControl().invalid && getControl().touched){<span placement="top" container="body" tooltip="{{getValidationMessage()}}" class="app-label text-danger wi wi-error">
                                     </span>}`;
     }
     return validationErrorTmpl;
