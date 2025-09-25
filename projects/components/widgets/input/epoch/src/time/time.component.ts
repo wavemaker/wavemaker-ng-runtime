@@ -107,7 +107,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
 
     get displayValue() {
         const display = getFormattedDate(this.datePipe, this.bsTimeValue, this.timepattern, this.timeZone, null, null, this) || '';
-        return display?.replace(this.meridians[0], this.am)?.replace(this.meridians[1], this.pm);
+        return this.safeReplaceMeridians(display);
     }
 
     get nativeDisplayValue() {
@@ -314,7 +314,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
                 this.bsTimeValue = this.getPrevDataValue();
                 setTimeout(() => {
                     const timeStr = getFormattedDate(this.datePipe, timeValue, this.timepattern, this.timeZone, null, null, this) || '';
-                    $(this.nativeElement).find('.display-input').val(timeStr?.replace(this.meridians[0], this.am)?.replace(this.meridians[1], this.pm));
+                    $(this.nativeElement).find('.display-input').val(this.safeReplaceMeridians(timeStr));
                 });
             }
             this.setValidateType(this.bsTimePicker.min, this.bsTimePicker.max, timeInputValue);
@@ -325,7 +325,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
         // Update UI display if value hasn't changed
         if (!this.timeNotInRange && this.datavalue === this.getPrevDataValue()) {
             const displayTime = getFormattedDate(this.datePipe, this.datavalue, this.timepattern, this.timeZone, null, null, this) || '';
-            $(this.nativeElement).find('.display-input').val(displayTime?.replace(this.meridians[0], this.am)?.replace(this.meridians[1], this.pm));
+            $(this.nativeElement).find('.display-input').val(this.safeReplaceMeridians(displayTime));
         }
         this.invokeOnTouched();
         this.invokeOnChange(this.datavalue, {}, true);

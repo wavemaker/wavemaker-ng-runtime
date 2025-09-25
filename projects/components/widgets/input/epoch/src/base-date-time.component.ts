@@ -97,6 +97,16 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     formatsByLocale = {'timezone': ''};
 
     /**
+     * Safely replace internal meridians with localized display meridians only for string values
+     */
+    protected safeReplaceMeridians(value: any) {
+        if (typeof value === 'string') {
+            return value.replace(this.meridians[0], this.am).replace(this.meridians[1], this.pm);
+        }
+        return value;
+    }
+
+    /**
      * This is an internal property used to map the containerClass, showWeekNumbers etc., to the bsDatepicker
      */
     public _dateOptions: BsDatepickerConfig = new BsDatepickerConfig();
@@ -1121,7 +1131,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             const value=this.datavalue;
             this.datavalue = undefined;
             setTimeout(() => {
-                $(this.nativeElement).find('.display-input').val(formattedDisplay?.replace(this.meridians[0], this.am)?.replace(this.meridians[1], this.pm));
+                $(this.nativeElement).find('.display-input').val(this.safeReplaceMeridians(formattedDisplay));
                 this.minDateMaxDateValidationOnInput(formattedDisplay);
                 this.invokeOnChange(value, {}, false);
             });
