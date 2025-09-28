@@ -31,7 +31,7 @@ cp ./wm.package.json libraries/package.json
 if [[ "${dev}" == true ]]; then
     cp -r libraries dist/runtime-cli/angular-app
 fi
-cp -rf angular.json package.json package-lock.json .npmrc tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js dist/runtime-cli/angular-app
+cp -rf angular.json package.json package-lock.json .npmrc tsconfig.json tsconfig.web-app.json wm-custom-webpack.config.js proxy.conf.js dist/runtime-cli/angular-app
 
 cp -r src dist/runtime-cli/angular-app
 cp -r build-scripts dist/runtime-cli/angular-app

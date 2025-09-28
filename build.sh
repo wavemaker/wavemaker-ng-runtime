@@ -469,7 +469,6 @@ bundleJS() {
         ./node_modules/jquery-ui/ui/widgets/sortable.js \
         ./node_modules/jquery-ui/ui/widgets/draggable.js \
         ./node_modules/jquery-ui/ui/widgets/droppable.js \
-        ./node_modules/hammerjs/hammer.min.js \
         ./node_modules/iscroll/build/iscroll.js \
         ./node_modules/js-cookie/src/js.cookie.js \
         ./projects/components/widgets/data/table/src/datatable.js \
