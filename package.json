@@ -102,7 +102,7 @@
         "owasp-dependency-check": "0.8.1",
         "rimraf": "6.0.1",
         "rollup": "4.46.2",
-        "sonarqube-scanner": "4.3.0",
+        "sonarqube-scanner": "3.5.0",
         "terser": "^5.43.1",
         "typescript": "5.5.4",
         "util": "0.12.5",
