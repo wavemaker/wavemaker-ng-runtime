@@ -206,7 +206,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
     private loadScripts() {
         return new Promise<void>((resolve) => {
-            const scriptsRequired = this.partialDirective?.$element.attr('scripts-to-load');
+            const scriptsRequired = this.partialDirective.$element.attr('scripts-to-load');
             if (scriptsRequired) {
                 this.scriptLoaderService
                     .load(...scriptsRequired.split(','))
