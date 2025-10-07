@@ -91,7 +91,14 @@ export class ContainerDirective extends BaseContainerComponent {
         }
         if (nv === 'fill') {
             if (key === 'width') this.$element.css('width', '100%');
-            if (key === 'height') this.$element.css('height', '100%');
+            if (key === 'height') {
+                const parentElement = this.nativeElement.parentElement;
+                if(parentElement?.hasAttribute('wmcontainer')){
+                  this.$element.css('align-self', 'stretch')
+                }else{
+                  this.$element.css('height', '100%')
+                }
+            }
         } else if (nv === 'hug') {
             if (key === 'width') this.$element.css('width', 'fit-content');
             if (key === 'height') this.$element.css('height', 'fit-content');
