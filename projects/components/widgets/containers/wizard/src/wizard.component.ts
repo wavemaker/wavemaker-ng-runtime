@@ -1,5 +1,14 @@
-import { CommonModule } from '@angular/common';
-import { WmComponentsModule } from "@wm/components/base";
+import {CommonModule} from '@angular/common';
+import {
+    APPLY_STYLES_TYPE,
+    Context,
+    createArrayFrom,
+    IWidgetConfig,
+    provideAsWidgetRef,
+    StylableComponent,
+    styler,
+    TextContentDirective
+} from "@wm/components/base";
 import {
     AfterContentInit,
     AfterViewChecked,
@@ -17,16 +26,8 @@ import {
 } from '@angular/core';
 
 import {DynamicComponentRefProvider, noop} from '@wm/core';
-import {
-    APPLY_STYLES_TYPE,
-    IWidgetConfig,
-    provideAsWidgetRef,
-    styler,
-    StylableComponent,
-    Context, createArrayFrom
-} from '@wm/components/base';
 
-import { registerProps } from './wizard.props';
+import {registerProps} from './wizard.props';
 
 import {WizardStepComponent} from "./wizard-step/wizard-step.component";
 import {find, findIndex, forEach, get, indexOf, isArray, isNumber, isString} from "lodash-es";
@@ -39,7 +40,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 
 @Component({
   standalone: true,
-  imports: [CommonModule, WmComponentsModule],
+  imports: [CommonModule, TextContentDirective],
     selector: 'div[wmWizard]',
     templateUrl: './wizard.component.html',
     providers: [
@@ -692,13 +693,13 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
                 break;
             case 'Enter':
             case ' ':
-            case 'Spacebar': 
+            case 'Spacebar':
                 event.preventDefault();
                 setTimeout(() => {
                     const activeElement  = this.nativeElement.querySelector('li.current');
-                    const stepLi = activeElement.closest('li[data-stepid]'); 
+                    const stepLi = activeElement.closest('li[data-stepid]');
                     const isInWizardHeader = activeElement.closest('.app-wizard-heading');
-                            
+
                     if (stepLi && isInWizardHeader) {
                     const stepId = stepLi.getAttribute('data-stepid');
                     const stepIndex = this.steps.toArray().findIndex(step => step.widgetId === stepId);

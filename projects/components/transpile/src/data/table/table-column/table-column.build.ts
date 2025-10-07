@@ -167,7 +167,8 @@ const getValiationErrorTemplate = (errorTmplType) => {
             break;
         case 'hover':
         default:
-            validationErrorTmpl = `@if(getValidationMessage() && getControl() && getControl().invalid && getControl().touched){<span placement="top" container="body" tooltip="{{getValidationMessage()}}" class="text-danger wi wi-error">
+            // added app-label class as in foundation.css the default class(app-label) has been written for label tag
+            validationErrorTmpl = `@if(getValidationMessage() && getControl() && getControl().invalid && getControl().touched){<span placement="top" container="body" tooltip="{{getValidationMessage()}}" class="app-label text-danger wi wi-error">
                                     </span>}`;
     }
     return validationErrorTmpl;
@@ -290,7 +291,17 @@ register('wm-table-column', (): IBuildTaskDef => {
         imports: (attrs: Map<String, String>): string[] => {
             const editWidgetType = attrs.get('edit-widget-type');
             const filterWidgetType = attrs.get('filterwidget') || getDataTableFilterWidget(attrs.get('type') || DataType.STRING);
-            return [getRequiredFormWidget(editWidgetType), getRequiredFormWidget(filterWidgetType), 'wm-table'];
+
+            const formatpattern = attrs.get('custompipeformat') || attrs.get('formatpattern');
+            let pipeImports = [];
+            if (!!formatpattern) {
+                if(checkIsCustomPipeExpression(formatpattern)){
+                    pipeImports.push('custom');
+                } else {
+                    pipeImports.push(formatpattern);
+                }
+            }
+            return [getRequiredFormWidget(editWidgetType), getRequiredFormWidget(filterWidgetType), 'wm-table', ...pipeImports];
         }
     };
 });

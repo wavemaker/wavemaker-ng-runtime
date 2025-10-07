@@ -1,0 +1,7 @@
+{
+    "name": "@wm/components/basic/picture",
+    "sideEffects": false,
+    "dependencies": {
+      "tslib": "^2.0.0"
+    }
+}
