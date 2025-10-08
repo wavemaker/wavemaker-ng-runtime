@@ -1,4 +1,4 @@
-import { AfterViewInit, Injector, inject, OnDestroy, ViewChild, Directive } from '@angular/core';
+import { Injector, inject, OnDestroy, ViewChild, Directive, AfterViewChecked } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import {
@@ -23,7 +23,7 @@ import { FragmentMonitor } from '../util/fragment-monitor';
 import {each, startsWith, trim} from "lodash-es";
 
 @Directive()
-export abstract class BasePrefabComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
+export abstract class BasePrefabComponent extends FragmentMonitor implements AfterViewChecked, OnDestroy {
     Widgets: any;
     Variables: any;
     Actions: any;
@@ -35,12 +35,13 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     prefabName: string;
     i18nService: AbstractI18nService;
     appLocale: any;
-    @ViewChild(PrefabContainerDirective) prefabContainerDirective;
+    @ViewChild(PrefabContainerDirective, { static: false }) prefabContainerDirective?: PrefabContainerDirective;
     scriptLoaderService: ScriptLoaderService;
     compileContent = false;
     pageDirective: PageDirective | SpaPageDirective;
     Viewport: Viewport;
     spa: boolean;
+    private scriptsLoaded = false;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -223,6 +224,11 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
 
     private loadScripts() {
         return new Promise<void>((resolve) => {
+            if (!this.prefabContainerDirective) {
+                resolve();
+                return;
+            }
+
             const scriptsRequired = this.prefabContainerDirective.$element.attr('scripts-to-load');
             if (scriptsRequired) {
                 this.scriptLoaderService
@@ -263,17 +269,19 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
         each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
     }
 
-
-    ngAfterViewInit(): void {
-        this.loadScripts().then(() => {
-            this.compileContent = true;
-            this.registerChangeListeners();
-            setTimeout(() => {
-                // trigger viewInit$.complete after a timeout so that the widget listeners are ready before Variable xhr call.
-                this.viewInit$.complete();
-                this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
-            }, 100);
-        });
+    ngAfterViewChecked(): void {
+        if (!this.scriptsLoaded && this.prefabContainerDirective) {
+            this.scriptsLoaded = true;
+            this.loadScripts().then(() => {
+                this.compileContent = true;
+                this.registerChangeListeners();
+                setTimeout(() => {
+                    // trigger viewInit$.complete after a timeout so that the widget listeners are ready before Variable xhr call.
+                    this.viewInit$.complete();
+                    this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
+                }, 100);
+            });
+        }
     }
 
     ngOnDestroy(): void {
