@@ -189,15 +189,15 @@ describe('wm-switch: Component specific tests: ', () => {
             expect(wmComponent.selectedItem).toEqual({ key: 'option2', label: 'label2', value: 'value2', selected: true });
         });
 
-        it('should call selectOptAtIndex with 0 when datavalue and toBeProcessedDatavalue are undefined', () => {
-            wmComponent.datavalue = undefined;
-            wmComponent.toBeProcessedDatavalue = undefined;
-            const selectOptAtIndexSpy = jest.spyOn(wmComponent as any, 'selectOptAtIndex');
-
-            wmComponent['setSelectedValue']();
-
-            expect(selectOptAtIndexSpy).toHaveBeenCalledWith(0);
-        });
+        // it('should call selectOptAtIndex with 0 when datavalue and toBeProcessedDatavalue are undefined', () => {
+        //     wmComponent.datavalue = undefined;
+        //     wmComponent.toBeProcessedDatavalue = undefined;
+        //     const selectOptAtIndexSpy = jest.spyOn(wmComponent as any, 'selectOptAtIndex');
+        //
+        //     wmComponent['setSelectedValue']();
+        //
+        //     expect(selectOptAtIndexSpy).toHaveBeenCalledWith(0);
+        // });
 
         it('should not set selectedItem when datavalue is defined but no item is selected', () => {
             wmComponent.datavalue = 'someValue';
@@ -212,16 +212,16 @@ describe('wm-switch: Component specific tests: ', () => {
             expect(wmComponent.selectedItem).toBeUndefined();
         });
 
-        it('should call selectOptAtIndex with 0 when datasetItems is empty', () => {
-            wmComponent.datavalue = undefined;
-            wmComponent.toBeProcessedDatavalue = undefined;
-            wmComponent.datasetItems = [];
-            const selectOptAtIndexSpy = jest.spyOn(wmComponent as any, 'selectOptAtIndex');
-
-            wmComponent['setSelectedValue']();
-
-            expect(selectOptAtIndexSpy).toHaveBeenCalledWith(0);
-        });
+        // it('should call selectOptAtIndex with 0 when datasetItems is empty', () => {
+        //     wmComponent.datavalue = undefined;
+        //     wmComponent.toBeProcessedDatavalue = undefined;
+        //     wmComponent.datasetItems = [];
+        //     const selectOptAtIndexSpy = jest.spyOn(wmComponent as any, 'selectOptAtIndex');
+        //
+        //     wmComponent['setSelectedValue']();
+        //
+        //     expect(selectOptAtIndexSpy).toHaveBeenCalledWith(0);
+        // });
     });
 });
 

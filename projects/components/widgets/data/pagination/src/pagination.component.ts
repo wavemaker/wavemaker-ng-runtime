@@ -476,8 +476,10 @@ export class PaginationComponent extends StylableComponent implements AfterViewI
         if (event && (isNaN(this.dn.currentPage) || this.dn.currentPage <= 0 || (this.pageCount && (this.dn.currentPage > this.pageCount || isNull(this.dn.currentPage))))) {
             if (this.dn.currentPage <= 0) {
                 this.dn.currentPage = 1;
+                this.goToPage(event);
             } else if (this.dn.currentPage > this.pageCount) {
                 this.dn.currentPage = this.pageCount;
+                this.goToPage(event);
             }
             return false;
         }
