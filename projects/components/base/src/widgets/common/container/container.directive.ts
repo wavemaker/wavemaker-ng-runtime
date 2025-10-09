@@ -89,6 +89,7 @@ export class ContainerDirective extends BaseContainerComponent {
             this.alignment = nv;
             this.applyAlignment(nv);
         }
+        if(key === 'width' || key === 'height'){
         if (nv === 'fill') {
             if (key === 'width') this.$element.css('width', '100%');
             if (key === 'height') {
@@ -102,6 +103,9 @@ export class ContainerDirective extends BaseContainerComponent {
         } else if (nv === 'hug') {
             if (key === 'width') this.$element.css('width', 'fit-content');
             if (key === 'height') this.$element.css('height', 'fit-content');
+        }
+    } else if (key === 'padding') {
+            this.$element.css('padding', nv)
         }
         super.onStyleChange(key, nv, ov);
     }
