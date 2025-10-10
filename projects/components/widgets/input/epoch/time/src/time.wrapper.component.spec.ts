@@ -228,6 +228,7 @@ describe("TimeComponent", () => {
     it('should set the given date as default value and timepattern check ', waitForAsync(() => {
         wmComponent.getWidget().timepattern = 'hh:mm a';
         wmComponent.getWidget().datavalue = '12:10';
+        wmComponent.getWidget().pm = "PM";
         fixture.detectChanges();
         let dateInputControl = getHtmlSelectorElement(fixture, '.app-textbox');
         expect(dateInputControl.nativeElement.value).toEqual('12:10 PM');

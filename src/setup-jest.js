@@ -71,7 +71,6 @@ import "jquery-ui/ui/widgets/draggable.js";
 import "jquery-ui/ui/widgets/droppable.js";
 import "libraries/scripts/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js";
 import "moment-timezone/builds/moment-timezone.min.js";
-import "hammerjs/hammer.min.js";
 import "iscroll/build/iscroll.js";
 import "tabbable/dist/index.umd.min.js";
 import "@wavemaker/focus-trap/dist/focus-trap.umd.min.js";

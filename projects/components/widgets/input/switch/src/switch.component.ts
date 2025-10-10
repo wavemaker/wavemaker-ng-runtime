@@ -85,7 +85,7 @@ export class SwitchComponent extends DatasetAwareFormComponent implements AfterV
         }
 
         // If no value is provided, set first value as default if options are available else set -1 ie no selection
-        this.selectOptAtIndex(0);
+        // this.selectOptAtIndex(0);
     }
 
     // set the css for switch overlay element.

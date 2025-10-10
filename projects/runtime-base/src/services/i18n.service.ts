@@ -21,6 +21,7 @@ import {find, forEach, get, includes, intersection, isObject, map, toLower} from
 
 import * as momentLib from 'moment-timezone/moment-timezone';
 const moment = momentLib.default || window['moment'];
+declare const _WM_APP_PROPERTIES;
 
 const APP_LOCALE_ROOT_PATH = 'resources/i18n';
 const RTL_LANGUAGE_CODES = ['ar', 'ar-001', 'ar-ae', 'ar-bh', 'ar-dz', 'ar-eg', 'ar-iq', 'ar-jo', 'ar-kw', 'ar-lb', 'ar-ly',
@@ -115,7 +116,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     protected loadAppLocaleBundle() {
-        const basePath = _WM_APP_PROJECT.isPreview || (window as any)._WM_APP_PROPERTIES?.languageBundleSources === 'DYNAMIC' ? '' :  _WM_APP_PROJECT.cdnUrl
+        const basePath = _WM_APP_PROJECT.isPreview || _WM_APP_PROPERTIES?.languageBundleSources === 'DYNAMIC' ? '' :  _WM_APP_PROJECT.cdnUrl
         this.loadResource( basePath + `${APP_LOCALE_ROOT_PATH}/${this.selectedLocale}.json`)
             .then(bundle => {
                 this.extendMessages(bundle.messages);
@@ -141,7 +142,7 @@ export class I18nServiceImpl extends AbstractI18nService {
             this.loadScriptForMoment(momentLocale);
         }
     }
-    
+
     protected loadScriptForMoment(momentLocale){
             moment.locale(this.selectedLocale);
             // For ngx bootstrap locale, get the config from script and apply locale
@@ -299,7 +300,7 @@ export class I18nServiceImpl extends AbstractI18nService {
         let _selectedDefaultLang = preferBrowserLang ? undefined : _defaultLanguage;
 
         let _appSupportedLang;
-        
+
         // check for the session storage to load any pre-requested locale
         const _defaultLang = getSessionStorageItem('selectedLocale') || _selectedDefaultLang || _appSupportedLang || intersection(_acceptLang, _supportedLang)[0] || this.defaultSupportedLocale;
         // if the supportedLocale is not available set it to defaultLocale
@@ -322,7 +323,7 @@ export class I18nServiceImpl extends AbstractI18nService {
     // This function returns the accepted languages list
     public getAcceptedLanguages() {
         let languages;
-       
+
         languages = decodeURIComponent(getWmProjectProperties().preferredLanguage || '');
         /**
          * Accept-Language Header will contain set of supported locale, so try splitting the string to proper locale set

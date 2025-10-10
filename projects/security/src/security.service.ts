@@ -10,7 +10,7 @@ import {
     triggerFn
 } from '@wm/core';
 import {each, forEach, get, isEmpty, join, set} from "lodash-es";
-
+declare const _WM_APP_PROPERTIES;
 // Todo[Shubham]: Move below constants to a common file
 const XSRF_COOKIE_NAME = 'wm_xsrf_token',
     isApplicationType = true;
@@ -42,14 +42,14 @@ export class SecurityService {
     load(forceFlag?: boolean) {
         if(this.loadPromise) {return this.loadPromise;}
        // Check securityEnabled flag in _WM_APP_PROPERTIES
-       if (!(window as any)._WM_APP_PROPERTIES?.securityEnabled) {
-        return Promise.resolve(null); 
+       if (!_WM_APP_PROPERTIES?.securityEnabled) {
+        return Promise.resolve(null);
         }
         if (!forceFlag && this.config) {return Promise.resolve(this.config);}
         this.loadPromise = new Promise((resolve, reject) => {
                 this.$http.send({'url': 'services/security/info', 'method': 'GET'}).then((response) => {
                     this.config = response.body;
-                    (window as any)._WM_APP_PROPERTIES['securityInfo'] = this.config
+                    _WM_APP_PROPERTIES['securityInfo'] = this.config
                     this.lastLoggedInUser = getClonedObject(this.loggedInUser);
                     this.loggedInUser = this.config.userInfo;
                     resolve(response.body);

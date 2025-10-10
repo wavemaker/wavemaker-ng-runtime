@@ -1723,6 +1723,16 @@ export class TableComponent extends StylableComponent implements AfterContentIni
             this.navigatorResultWatch = this.dataNavigator.resultEmitter.subscribe((newVal) => {
                 /* Check for sanity. */
                 if (isDefined(newVal)) {
+                    if (get(this.datasource, 'category') === 'wm.Variable' && isArray(this.dataset)) {
+                        (this.gridOptions?.data || []).forEach((row, index) => {
+                            const datasetRow = this.widget?.dataset?.[index];
+                            if (datasetRow && JSON.stringify(row) !== JSON.stringify(datasetRow)) {
+                                const itemIndex = Array.isArray(this.items) ? this.items.findIndex(item => JSON.stringify(item) === JSON.stringify(row)) : -1;
+                                if (itemIndex !== -1) {
+                                    this.items[itemIndex] = { ...datasetRow };}
+                            }
+                        });
+                    }
                     // Watch will not be triggered if dataset and new value are equal. So trigger the property change handler manually
                     // This happens in case, if dataset is directly updated.
                     if (isEqual(this.dataset, newVal)) {
