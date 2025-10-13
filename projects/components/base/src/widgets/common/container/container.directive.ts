@@ -61,7 +61,7 @@ export class ContainerDirective extends BaseContainerComponent {
                 this.direction = nv;
                 if (nv === 'column') this.hasWrap = false; // disable wrap for column direction
 
-                this.$element.css('flex-direction', nv);
+                this.$element.css({'flex-direction': nv, display: 'flex'});
                 this.applyAlignment(this.alignment); 
                 break;
             case 'wrap':
@@ -94,7 +94,7 @@ export class ContainerDirective extends BaseContainerComponent {
             if (key === 'height') {
                 const parentElement = this.nativeElement.parentElement;
                 if(parentElement?.hasAttribute('wmcontainer')){
-                  this.$element.css('align-self', 'stretch')
+                  this.$element.css({'align-self': 'stretch', 'flex-grow': '1'})
                 }else{
                   this.$element.css('height', '100%')
                 }
