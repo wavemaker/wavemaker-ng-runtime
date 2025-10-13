@@ -125,7 +125,7 @@
         </li>
         }
     }
-
+@if (!(dataSize<=maxResults)) {
     <li class="previous" [ngClass]="{'disabled':isDisablePrevious}">
       <a href="javascript:void(0);" (click)="navigatePage('prev', $event)"
         [attr.aria-disabled]="isDisablePrevious">
@@ -142,6 +142,7 @@
         <span class="sr-only">{{ isDisableNext ? ' , Disabled' : ''}}</span>
       </a>
     </li>
+  }
   </ul>
 }
 
