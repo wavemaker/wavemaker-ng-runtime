@@ -485,6 +485,8 @@ bundleJS() {
         ./node_modules/rxjs/dist/bundles/rxjs.umd.js \
         ./node_modules/@angular/compiler/bundles/compiler.umd.js \
         ./node_modules/@angular/core/bundles/core-signals.umd.js \
+        ./node_modules/@angular/core/bundles/core-event-dispatch.umd.js \
+        ./node_modules/@angular/core/bundles/core-di.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
         ./node_modules/@angular/common/bundles/common.umd.js \
         ./node_modules/@angular/animations/bundles/animations.umd.js \

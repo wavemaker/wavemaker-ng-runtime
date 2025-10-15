@@ -1,4 +1,4 @@
-import {Element, ParseSourceSpan, Text} from '@angular/compiler';
+import {Attribute, Element, ParseSourceSpan, Text} from '@angular/compiler';
 
 import {IDGenerator} from '@wm/core';
 import {getAttrMarkup, IBuildTaskDef, register} from '@wm/transpiler';
@@ -12,7 +12,7 @@ const findChild = (node: Element, childName: string): Element => {
 };
 
 const createElement = name => {
-    return new Element(name, [], [], noSpan, noSpan, noSpan);
+    return new Element(name, [], [], [], false, noSpan, noSpan, null, false);
 };
 
 const getElementNode = (name, node) => {
@@ -44,13 +44,12 @@ register('wm-page', (): IBuildTaskDef => {
                  pageContentNode = getElementNode('wm-page-content',  getElementNode('wm-content', node));
             }
             if (pageContentNode) {
+                // Use *ngIf structural directive
                 const conditionalNode = createElement('ng-container');
-                const ifOpenText = new Text('@if (compilePageContent) {', null, undefined, undefined);
-                conditionalNode.children.push(ifOpenText);
+                const ngIfAttr = new Attribute('*ngIf', 'compilePageContent', noSpan, undefined, noSpan, undefined, undefined);
+                conditionalNode.attrs.push(ngIfAttr);
                 conditionalNode.children = conditionalNode.children.concat(pageContentNode.children);
                 conditionalNode.children.push(new Text('{{onPageContentReady()}}', null, undefined, undefined));
-                const ifCloseText = new Text('}', null, undefined, undefined);
-                conditionalNode.children.push(ifCloseText);
                 pageContentNode.children = [conditionalNode];
             }
         },

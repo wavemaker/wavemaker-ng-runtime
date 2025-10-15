@@ -11,9 +11,11 @@ import {
     LiteralMap,
     LiteralPrimitive,
     Parser,
+    ParseLocation,
+    ParseSourceFile,
+    ParseSourceSpan,
     PrefixNot,
     PropertyRead,
-    PropertyWrite,
     Unary
 } from '@angular/compiler';
 import {get} from "lodash-es";
@@ -383,7 +385,7 @@ class ASTCompiler {
             return this.processLiteralMap();
         } else if (ast instanceof PropertyRead) {
             return this.processPropertyRead();
-        } else if (ast instanceof PropertyWrite) {
+        } else if (ast && ast.constructor && ast.constructor.name === 'PropertyWrite') {
             return this.processPropertyWrite();
         } else if (ast instanceof KeyedRead) {
             return this.processKeyedRead();
@@ -538,7 +540,9 @@ export function $parseExpr(expr: string, defOnly?: boolean): ParseExprResult {
             };
         } else {
             const parser = new Parser(new Lexer);
-            const ast = parser.parseBinding(expr, '',0);
+            // Use ParseSourceFile instead of null to avoid null reference errors
+            const sourceFile = new ParseSourceFile(expr, '');
+            const ast = parser.parseBinding(expr, new ParseSourceSpan(new ParseLocation(sourceFile, 0, 0, 0), new ParseLocation(sourceFile, expr.length, 0, expr.length)), 0);
 
             if (ast.errors.length) {
                 fn = noop;
@@ -637,7 +641,9 @@ export function $parseEvent(expr, defOnly?): ParseExprResult {
             fn = simpleFunctionEvaluator.bind(undefined, expr);
         } else {
             const parser = new Parser(new Lexer);
-            const ast = parser.parseAction(expr, '', 0);
+            // Use ParseSourceFile instead of null to avoid null reference errors
+            const sourceFile = new ParseSourceFile(expr, '');
+            const ast = parser.parseAction(expr, new ParseSourceSpan(new ParseLocation(sourceFile, 0, 0, 0), new ParseLocation(sourceFile, expr.length, 0, expr.length)), 0);
 
             if (ast.errors.length) {
                 return noop;

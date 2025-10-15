@@ -1,7 +1,7 @@
 import { APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { CommonModule, DatePipe, DecimalPipe, Location } from '@angular/common';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ɵSharedStylesHost } from '@angular/platform-browser';
 import { ɵDomRendererFactory2 } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -419,7 +419,6 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
     imports: [
         CommonModule,
         RouterModule,
-        HttpClientModule,
         FormsModule,
         ReactiveFormsModule,
         ...definitions,
@@ -434,7 +433,6 @@ export const REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS = [
         AccessrolesDirective,
         CommonModule,
         RouterModule,
-        HttpClientModule,
         ToastrModule,
         // CoreModule,
         ...REQUIRED_MODULES_FOR_DYNAMIC_COMPONENTS

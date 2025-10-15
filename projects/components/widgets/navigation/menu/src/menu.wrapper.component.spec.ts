@@ -14,7 +14,7 @@ import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../.
 import { compileTestComponent, getHtmlSelectorElement, mockApp } from '../../../../base/src/test/util/component-test-util';
 import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
 import { AUTOCLOSE_TYPE } from '@wm/components/base';
-import { BrowserAnimationsModule, provideAnimations } from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
 
 const markup = `<div
                 wmMenu
@@ -64,8 +64,9 @@ class MenuWrapperComponent {
 
 const menuComponentModuleDef: ITestModuleDef = {
     declarations: [MenuWrapperComponent],
-    imports: [MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent, NavigationControlDirective, BsDropdownModule, BrowserAnimationsModule],
+    imports: [MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent, NavigationControlDirective, BsDropdownModule],
     providers: [
+        provideAnimations(),
         { provide: Router, useValue: Router },
         { provide: App, useValue: mockApp },
         { provide: SecurityService, useValue: SecurityService },

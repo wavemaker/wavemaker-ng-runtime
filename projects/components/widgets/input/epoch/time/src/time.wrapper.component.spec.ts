@@ -1,7 +1,7 @@
 import { Component, ElementRef, Injector, LOCALE_ID, ViewChild } from '@angular/core';
 import { TimeComponent } from './time.component';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../../base/src/test/common-widget.specs';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import {
     compileTestComponent,
     getHtmlSelectorElement,
@@ -84,8 +84,9 @@ class TimeWrapperComponent {
 
 const dateComponentModuleDef: ITestModuleDef = {
     declarations: [TimeWrapperComponent],
-    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    imports: [TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
+        provideAnimations(),
         { provide: App, useValue: mockApp },
         { provide: UserDefinedExecutionContext, useValue: UserDefinedExecutionContext },
         { provide: AppDefaults, useValue: AppDefaults },
@@ -425,7 +426,7 @@ describe("TimeComponent", () => {
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
     declarations: [TimeWrapperComponent],
-    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    imports: [TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'de' },
@@ -492,7 +493,7 @@ describe('TimeComponent with localization', () => {
 
 const dateComponentROLocaleModuleDef: ITestModuleDef = {
     declarations: [TimeWrapperComponent],
-    imports: [BrowserAnimationsModule, TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    imports: [TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'ro' },

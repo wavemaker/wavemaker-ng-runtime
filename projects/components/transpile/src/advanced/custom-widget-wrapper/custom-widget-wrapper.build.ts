@@ -4,7 +4,7 @@ import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 const tagName = 'section';
 const noSpan = ({} as ParseSourceSpan);
 const createElement = name => {
-    return new Element(name, [], [], noSpan, noSpan, noSpan);
+    return new Element(name, [], [], [], false, noSpan, noSpan, null, false);
 };
 
 const addAtrribute = (node: Element, name: string, value: string) => {

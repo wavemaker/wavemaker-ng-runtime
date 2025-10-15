@@ -1,10 +1,10 @@
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
-import { Element, ParseSourceSpan, Text } from "@angular/compiler";
+import { Attribute, Element, ParseSourceSpan, Text } from "@angular/compiler";
 
 const tagName = 'div';
 
 const createElement = name => {
-    return new Element(name, [], [], noSpan, noSpan, noSpan);
+    return new Element(name, [], [], [], false, noSpan, noSpan, null, false);
 };
 
 const noSpan = ({} as ParseSourceSpan);
@@ -14,13 +14,12 @@ register('wm-page-content', (): IBuildTaskDef => {
         template: (node: Element) => {
             for(let attr of node.attrs) {
                 if(attr.name === 'spa' && attr.value === 'true') {
+                    // Use *ngIf structural directive
                     const conditionalNode = createElement('ng-container');
-                    const ifOpenText = new Text('@if (compilePageContent) {', null, undefined, undefined);
-                    conditionalNode.children.push(ifOpenText);
+                    const ngIfAttr = new Attribute('*ngIf', 'compilePageContent', noSpan, undefined, noSpan, undefined, undefined);
+                    conditionalNode.attrs.push(ngIfAttr);
                     conditionalNode.children = conditionalNode.children.concat(node.children);
                     conditionalNode.children.push(new Text('{{onPageContentReady()}}', null, undefined, undefined));
-                    const ifCloseText = new Text('}', null, undefined, undefined);
-                    conditionalNode.children.push(ifCloseText);
                     node.children = [conditionalNode];
                     break;
                 }

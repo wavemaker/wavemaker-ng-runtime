@@ -1,21 +1,20 @@
-import { Element, ParseSourceSpan, Text } from '@angular/compiler';
+import { Attribute, Element, ParseSourceSpan, Text } from '@angular/compiler';
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'section';
 const noSpan = ({} as ParseSourceSpan);
 const createElement = name => {
-    return new Element(name, [], [], noSpan, noSpan, noSpan);
+    return new Element(name, [], [], [], false, noSpan, noSpan, null, false);
 };
 
 register('wm-partial', (): IBuildTaskDef => {
     return {
         template: (node: Element)  => {
+            // Use *ngIf structural directive
             const conditionalNode = createElement('ng-container');
-            const ifOpenText = new Text('@if (compileContent) {', null, undefined, undefined);
-            conditionalNode.children.push(ifOpenText);
+            const ngIfAttr = new Attribute('*ngIf', 'compileContent', noSpan, undefined, noSpan, undefined, undefined);
+            conditionalNode.attrs.push(ngIfAttr);
             conditionalNode.children = conditionalNode.children.concat(node.children);
-            const ifCloseText = new Text('}', null, undefined, undefined);
-            conditionalNode.children.push(ifCloseText);
             node.children.length = 0;
             node.children.push(conditionalNode);
         },

@@ -9,7 +9,7 @@ import { IMaskModule } from 'angular-imask';
 import { FormActionDirective } from './form-action/form-action.directive';
 import { FormFieldDirective } from './form-field/form-field.directive';
 import { compileTestComponent, setInputValue, onClickCheckTaglengthOnBody, checkCustomElementClass, mockViewport, mockApp } from '../../../../base/src/test/util/component-test-util';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { performDataOperation } from '@wm/components/base';
 import { LayoutGridRowDirective } from '@wm/components/containers/layout-grid';
@@ -220,7 +220,6 @@ class FormWrapperComponent {
 
 const testModuleDef: ITestModuleDef = {
     imports: [
-        BrowserAnimationsModule,
         InputTextComponent,
         FormsModule,
         ReactiveFormsModule,
@@ -242,6 +241,7 @@ const testModuleDef: ITestModuleDef = {
         DateComponent
     ],
     providers: [
+        provideAnimations(),
         { provide: App, useValue: mockApp },
         { provide: Viewport, useValue: mockViewport },
         { provide: AppDefaults, useClass: AppDefaults },

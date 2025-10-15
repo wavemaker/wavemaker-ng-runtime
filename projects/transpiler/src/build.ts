@@ -365,9 +365,9 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
                        of applying only one structural directive to an element.
                     *  */
                     const noSpan = ({} as ParseSourceSpan);
-                    const showInDeviceContainer:any = showInDeviceAttr ? new Element('ng-container', [], [], noSpan, noSpan, noSpan) : '';
-                    const accessRolesContainer:any = accessRolesAttr ? new Element('ng-container', [], [], noSpan, noSpan, noSpan) : '';
-                    const deferLoadContainer:any = deferLoadAttr ? new Element('ng-container', [], [], noSpan, noSpan, noSpan) : '';
+                    const showInDeviceContainer:any = showInDeviceAttr ? new Element('ng-container', [], [], [], false, noSpan, noSpan, null, false) : '';
+                    const accessRolesContainer:any = accessRolesAttr ? new Element('ng-container', [], [], [], false, noSpan, noSpan, null, false) : '';
+                    const deferLoadContainer:any = deferLoadAttr ? new Element('ng-container', [], [], [], false, noSpan, noSpan, null, false) : '';
                     if (showInDeviceContainer) {
                         showInDeviceContainer.attrs.push(showInDeviceAttr);
                     }

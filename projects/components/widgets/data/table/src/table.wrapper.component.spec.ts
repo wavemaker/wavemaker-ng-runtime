@@ -19,7 +19,7 @@ import { VALIDATOR } from '@wm/core';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { TimepickerModule } from 'ngx-bootstrap/timepicker';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from '../../../../base/src/test/common-widget.specs';
 import { fullNameValidator, registerFullNameValidator, nameComparisionValidator } from 'projects/components/base/src/test/util/validations-test-util';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
@@ -373,7 +373,6 @@ class TableWrapperComponent {
 }
 
 let imports = [
-    BrowserAnimationsModule,
     ButtonComponent,
     CommonModule,
     FormsModule,
@@ -413,6 +412,7 @@ const mockWidgetRef = {
 };
 
 let providers = [
+    provideAnimations(),
     { provide: App, useValue: mockApp },
     { provide: Viewport, useValue: mockViewport },
     { provide: AppDefaults, useClass: AppDefaults },

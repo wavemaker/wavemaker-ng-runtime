@@ -1,7 +1,7 @@
 import { Component, LOCALE_ID, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import {
     UserDefinedExecutionContext,
     AppDefaults,
@@ -81,8 +81,9 @@ class DateWrapperComponent {
 
 const dateComponentModuleDef: ITestModuleDef = {
     declarations: [DateWrapperComponent],
-    imports: [BrowserAnimationsModule, FormsModule, BsDatepickerModule.forRoot(), IMaskModule, DateComponent],
+    imports: [FormsModule, BsDatepickerModule.forRoot(), IMaskModule, DateComponent],
     providers: [
+        provideAnimations(),
         { provide: Router, useValue: Router },
         { provide: App, useValue: mockApp },
         { provide: SecurityService, useValue: SecurityService },
