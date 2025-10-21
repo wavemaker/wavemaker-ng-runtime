@@ -10,7 +10,7 @@ declare const _WM_APP_PROPERTIES;
 // Todo[Shubham]: Move below constants to a common file
 const XSRF_COOKIE_NAME = 'wm_xsrf_token',
     isApplicationType = true,
-    xsrfHeaderName = getWmProjectProperties().xsrf_header_name || 'X-WM-XSRF-TOKEN';
+    xsrfHeaderName = 'X-WM-XSRF-TOKEN';
 
 @Injectable()
 export class SecurityService {
