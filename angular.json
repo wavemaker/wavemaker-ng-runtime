@@ -95,7 +95,7 @@
                 "customWebpackConfig": {
                     "path": "./wm-custom-webpack.config.js"
                 },
-                "indexTransform":"./build-scripts/index-html-transform.js",
+                "indexTransform":"./build-scripts/index-html-transform.ts",
                 "deployUrl": "ng-bundle/",
                 "outputPath": "dist/ng-bundle",
                 "index": {

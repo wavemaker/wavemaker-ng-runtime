@@ -1,19 +1,16 @@
-import { Injectable, Injector } from '@angular/core';
-import { Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import {Injectable, Injector} from '@angular/core';
+import {Location} from '@angular/common';
+import {ActivatedRoute, Router} from '@angular/router';
 
-import {
-    AbstractHttpService,
-    App,
-    getClonedObject,
-    getWmProjectProperties,
-    triggerFn
-} from '@wm/core';
+import {AbstractHttpService, App, getClonedObject, getWmProjectProperties, triggerFn} from '@wm/core';
 import {each, forEach, get, isEmpty, join, set} from "lodash-es";
+import {HttpInterceptorFn} from "@angular/common/http";
+
 declare const _WM_APP_PROPERTIES;
 // Todo[Shubham]: Move below constants to a common file
 const XSRF_COOKIE_NAME = 'wm_xsrf_token',
-    isApplicationType = true;
+    isApplicationType = true,
+    xsrfHeaderName = getWmProjectProperties().xsrf_header_name || 'X-WM-XSRF-TOKEN';
 
 @Injectable()
 export class SecurityService {
@@ -22,6 +19,8 @@ export class SecurityService {
     loggedInUser;
     loadPromise: Promise<any>;
     requestQueue: any = {};
+    localXsrfTokenKey = 'FE_LOCAL_XSRF_TOKEN';
+    localXsrfToken: string | null = sessionStorage.getItem(this.localXsrfTokenKey);
 
     constructor(
         private injector: Injector,
@@ -47,7 +46,7 @@ export class SecurityService {
         }
         if (!forceFlag && this.config) {return Promise.resolve(this.config);}
         this.loadPromise = new Promise((resolve, reject) => {
-                this.$http.send({'url': 'services/security/info', 'method': 'GET'}).then((response) => {
+                this.$http.send({'url': 'services/security/info', 'method': 'GET', 'withCredentials': true}).then((response) => {
                     this.config = response.body;
                     _WM_APP_PROPERTIES['securityInfo'] = this.config
                     this.lastLoggedInUser = getClonedObject(this.loggedInUser);
@@ -314,6 +313,7 @@ export class SecurityService {
                 'Content-Type': 'application/x-www-form-urlencoded'
             },
             url: 'j_spring_security_check',
+            withCredentials: true,
             'data': payload
         }).then((response) => {
             const xsrfCookieValue = response.body ? response.body[XSRF_COOKIE_NAME] : '';
@@ -321,6 +321,9 @@ export class SecurityService {
             // override the default xsrf cookie name and xsrf header names with WaveMaker specific values
             if (xsrfCookieValue) {
             }
+
+            this.setLocalXsrfToken(xsrfCookieValue);
+
             // After the successful login in device, this function triggers the pending onLoginCallbacks.
             this.injector.get(App).notify('userLoggedIn', {});
             triggerFn(successCallback, response);
@@ -351,7 +354,8 @@ export class SecurityService {
             url: 'j_spring_security_logout',
             method: 'POST',
             responseType: 'text',
-            byPassResult: true
+            byPassResult: true,
+            withCredentials: true
         }).then((response) => {
             set(this.get(), 'authenticated', false);
             set(this.get(), 'userInfo', null);
@@ -427,5 +431,31 @@ export class SecurityService {
      */
     authInBrowser(): Promise<any> {
         return Promise.reject('This authInBrowser should not be called');
+    }
+
+    setLocalXsrfToken(token: string) {
+        this.localXsrfToken = token;
+        sessionStorage.removeItem(this.localXsrfTokenKey);
+        sessionStorage.setItem(this.localXsrfTokenKey, token);
+    }
+
+    getLocalXsrfToken(): string | null {
+        return this.localXsrfToken;
+    }
+
+    /**
+     * Adds XSRF token and credentials to cross domain HTTP requests.
+     */
+    xsrfInterceptor(): HttpInterceptorFn {
+        return (req, next) => {
+            const token = this.getLocalXsrfToken();
+            if (token) {
+                req = req.clone({
+                    setHeaders: { [xsrfHeaderName]: token },
+                    withCredentials: true
+                });
+            }
+            return next(req);
+        };
     }
 }
