@@ -1,10 +1,12 @@
 import {
     AfterContentInit,
     AfterViewInit,
+    ChangeDetectorRef,
     Directive,
     HostListener,
     inject,
     Injector,
+    NgZone,
     OnDestroy,
     ViewChild
 } from '@angular/core';
@@ -56,6 +58,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     router: Router;
     pageParams: any;
     showPageContent: boolean;
+    compilePageContent: boolean = false;
     i18nService: AbstractI18nService;
     appLocale: any;
     startupVariablesLoaded = false;
@@ -64,6 +67,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
     $page;
     scriptLoaderService: ScriptLoaderService;
     Viewport: Viewport;
+    cdr: ChangeDetectorRef;
+    ngZone: NgZone;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -86,6 +91,8 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.i18nService = this.injector ? this.injector.get(AbstractI18nService) : inject(AbstractI18nService);
         this.router = this.injector ? this.injector.get(Router) : inject(Router);
         this.Viewport = this.injector ? this.injector.get(Viewport) : inject(Viewport);
+        this.cdr = this.injector ? this.injector.get(ChangeDetectorRef) : inject(ChangeDetectorRef);
+        this.ngZone = this.injector ? this.injector.get(NgZone) : inject(NgZone);
 
         // register functions for binding evaluation
         this.registerExpressions();
@@ -150,6 +157,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
 
 
         const subscription = this.viewInit$.subscribe(noop, noop, () => {
+            console.log('[DEBUG] viewInit$ subscription callback FIRED - starting variable initialization');
 
             if (!this.appManager.isAppVariablesFired()) {
                 variableCollection.callback(this.App.Variables).catch(noop).then(() => {
@@ -167,6 +175,7 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
                     this.startupVariablesLoaded = true;
                     // hide the loader only after the some setTimeout for smooth page load.
                     setTimeout(() => {
+                        console.log('[DEBUG] Setting showPageContent=true');
                         this.showPageContent = true;
                     }, 100);
                 });
@@ -328,16 +337,33 @@ export abstract class BasePageComponent extends FragmentMonitor implements After
         this.loadScripts().then(() => {
             this.runPageTransition()
                 .then(() => {
-                    (this as any).compilePageContent = true;
+                    // Set up the callback FIRST, before setting compilePageContent
+                    this.onPageContentReady = () => {
+                        console.log('[DEBUG] onPageContentReady INVOKED - viewInit$ will complete now');
+                        this.fragmentsLoaded$.subscribe(noop, noop, () => {
+                            this.invokeOnReady();
+                        });
+                        unMuteWatchers();
+                        this.viewInit$.complete();
+                        this.onPageContentReady = noop;
+                    };
+                    
+                    // Now set compilePageContent and trigger change detection
+                    console.log('[DEBUG] Setting compilePageContent to true');
+                    this.compilePageContent = true;
+                    
+                    // Use setTimeout to ensure change detection happens in next tick
                     setTimeout(() => {
-                        this.onPageContentReady = () => {
-                            this.fragmentsLoaded$.subscribe(noop, noop, () => {
-                                this.invokeOnReady();
-                            });
-                            unMuteWatchers();
-                            this.viewInit$.complete();
-                            this.onPageContentReady = noop;
-                        };
+                        console.log('[DEBUG] Triggering change detection after compilePageContent=true');
+                        this.cdr.detectChanges();
+                        
+                        // Fallback: If template doesn't call onPageContentReady, call it manually
+                        setTimeout(() => {
+                            if (this.onPageContentReady && this.onPageContentReady !== noop) {
+                                console.log('[DEBUG] FALLBACK: Manually calling onPageContentReady');
+                                this.onPageContentReady();
+                            }
+                        }, 100);
                     }, 0);
                 });
         });

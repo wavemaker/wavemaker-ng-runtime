@@ -1,5 +1,5 @@
 {
-    "name": "@wm/buildTask",
+    "name": "@wm/components/transpile",
     "version": "0.0.1",
     "dependencies": {
         "tslib": "^2.0.0"

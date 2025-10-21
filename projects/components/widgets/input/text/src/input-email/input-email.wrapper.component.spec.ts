@@ -19,12 +19,13 @@ const markup = `<wm-input type="email" name="text1" hint="email field">`;
 })
 
 class InputEmailWrapperComponent {
-    @ViewChild(InputEmailComponent, /* TODO: add static flag */ {static: true}) wmComponent: InputEmailComponent
+    @ViewChild(InputEmailComponent, /* TODO: add static flag */ {static: false}) wmComponent: InputEmailComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule, InputEmailComponent],
-    declarations: [InputEmailWrapperComponent],
+    imports: [FormsModule, IMaskModule, InputEmailComponent,
+        InputEmailWrapperComponent],
+    declarations: [],
     providers: [
         {provide: App, useValue: mockApp},
         {provide: ToDatePipe, useClass: ToDatePipe},

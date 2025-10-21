@@ -6,7 +6,7 @@ import { AbstractI18nService, App, AppDefaults, DataSource, setAttr } from '@wm/
 import { ToDatePipe } from "@wm/components/base";
 import { DatePipe } from "@angular/common";
 import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
-import { ComponentFixture } from "@angular/core/testing";
+import { ComponentFixture, waitForAsync } from "@angular/core/testing";
 import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
 
 const markup = `<wm-select name="select1" hint="select field">`;
@@ -16,12 +16,13 @@ const markup = `<wm-select name="select1" hint="select field">`;
 })
 
 class SelectWrapperComponent {
-    @ViewChild(SelectComponent, /* TODO: add static flag */ { static: true }) wmComponent: SelectComponent
+    @ViewChild(SelectComponent, /* TODO: add static flag */ { static: false }) wmComponent: SelectComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, SelectComponent],
-    declarations: [SelectWrapperComponent],
+    imports: [FormsModule, SelectComponent,
+        SelectWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -47,9 +48,12 @@ describe("SelectComponent", () => {
     let wrapperComponent: SelectWrapperComponent;
     let wmComponent: SelectComponent;
     let fixture: ComponentFixture<SelectWrapperComponent>;
-    beforeEach(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, SelectWrapperComponent);
         wrapperComponent = fixture.componentInstance;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         wmComponent = wrapperComponent.wmComponent;
         wmComponent.datasetItems = [
             { key: '1', value: '1', label: '1' },
@@ -57,7 +61,7 @@ describe("SelectComponent", () => {
             { key: '3', value: '3', label: '3' },
             { key: '4', value: '4', label: '4' }]
         fixture.detectChanges();
-    });
+    }));
 
     it("should create select component", () => {
         expect(wmComponent).toBeTruthy();

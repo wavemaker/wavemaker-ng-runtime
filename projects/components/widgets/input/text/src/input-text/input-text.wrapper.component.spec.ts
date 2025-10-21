@@ -10,7 +10,7 @@ import {
     ITestModuleDef
 } from "../../../../../base/src/test/common-widget.specs";
 import { IMaskModule } from "angular-imask";
-import { ComponentFixture, fakeAsync, tick } from "@angular/core/testing";
+import { ComponentFixture, fakeAsync, tick, waitForAsync } from "@angular/core/testing";
 import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
 
 const markup = `<wm-input name="text1">`;
@@ -20,12 +20,13 @@ const markup = `<wm-input name="text1">`;
 })
 
 class InputTextWrapperComponent {
-    @ViewChild(InputTextComponent, /* TODO: add static flag */ { static: true }) wmComponent: InputTextComponent
+    @ViewChild(InputTextComponent, /* TODO: add static flag */ { static: false }) wmComponent: InputTextComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule, InputTextComponent],
-    declarations: [InputTextWrapperComponent],
+    imports: [FormsModule, IMaskModule, InputTextComponent,
+        InputTextWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -53,11 +54,14 @@ describe('InputTextComponent', () => {
     let wrapperComponent: InputTextWrapperComponent;
     let component: InputTextComponent;
     let fixture: ComponentFixture<InputTextWrapperComponent>;
-    beforeEach(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, InputTextWrapperComponent);
         wrapperComponent = fixture.componentInstance;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         component = wrapperComponent.wmComponent;
-    });
+    }));
 
     it('should create the InputTextComponent', () => {
         expect(component).toBeTruthy();

@@ -20,10 +20,11 @@ const markup = `
 `;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: false
 })
 class TreeSpec {
-    @ViewChild(TreeComponent, /* TODO: add static flag */ { static: true }) tree: TreeComponent;
+    @ViewChild(TreeComponent, /* TODO: add static flag */ { static: false }) tree: TreeComponent;
     public testdata: any = [
         {
             "key": "a val",

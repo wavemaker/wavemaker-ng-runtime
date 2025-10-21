@@ -16,10 +16,11 @@ jest.mock('@wm/core', () => ({
 const markup = `<div wmHtml #wm_html2="wmHtml" [attr.aria-label]="wm_html2.arialabel || 'HTML content'" hint="HTML content"  name="html1">`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: false
 })
 class HtmlWrapperDirective {
-    @ViewChild(HtmlDirective, { static: true }) wmComponent: HtmlDirective;
+    @ViewChild(HtmlDirective, { static: false }) wmComponent: HtmlDirective;
 }
 
 const testModuleDef: ITestModuleDef = {

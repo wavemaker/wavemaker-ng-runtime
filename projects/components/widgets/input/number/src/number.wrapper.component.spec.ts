@@ -19,7 +19,7 @@ const markup = `<div wmNumber hint="Number" name="testnumber" tabindex="1" ngMod
 })
 
 class NumberWrapperComponent {
-    @ViewChild(NumberComponent, /* TODO: add static flag */ { static: true }) wmComponent: NumberComponent;
+    @ViewChild(NumberComponent, /* TODO: add static flag */ { static: false }) wmComponent: NumberComponent;
     public testDefaultValue = 123.4;
 
     public onChange($event, widget, newVal, oldVal) {
@@ -31,8 +31,9 @@ class NumberWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, NumberComponent],
-    declarations: [NumberWrapperComponent],
+    imports: [FormsModule, NumberComponent,
+        NumberWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService },

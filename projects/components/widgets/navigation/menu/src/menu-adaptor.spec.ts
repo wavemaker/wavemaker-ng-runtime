@@ -8,7 +8,8 @@ import { mockApp } from 'projects/components/base/src/test/util/component-test-u
 
 @Component({
     selector: 'app-test-menu-adapter',
-    template: '<div></div>'
+    template: '<div></div>',
+    standalone: false
 })
 class TestMenuAdapterComponent extends MenuAdapterComponent {
     constructor(

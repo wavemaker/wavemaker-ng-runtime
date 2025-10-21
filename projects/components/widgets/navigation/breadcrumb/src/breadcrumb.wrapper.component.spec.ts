@@ -16,12 +16,13 @@ const markup = `<div wmBreadcrumb name="breadcrumb1" aria-label="breadcrumb"></d
     template: markup
 })
 class BreadcrumbWrapperComponent {
-    @ViewChild(BreadcrumbComponent, { static: true }) wmComponent: BreadcrumbComponent;
+    @ViewChild(BreadcrumbComponent, { static: false }) wmComponent: BreadcrumbComponent;
 }
 
 const testModuleDef = {
-    imports: [FormsModule, BreadcrumbComponent],
-    declarations: [BreadcrumbWrapperComponent],
+    imports: [FormsModule, BreadcrumbComponent,
+        BreadcrumbWrapperComponent],
+    declarations: [],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         { provide: App, useValue: mockApp },

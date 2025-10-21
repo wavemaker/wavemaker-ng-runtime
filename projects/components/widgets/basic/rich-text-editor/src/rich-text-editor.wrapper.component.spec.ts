@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { RichTextEditorComponent } from './rich-text-editor.component';
 import { compileTestComponent, mockApp } from '../../../../base/src/test/util/component-test-util';
@@ -24,8 +24,9 @@ class RichTextEditorWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [RichTextEditorWrapperComponent,],
-    imports: [RichTextEditorComponent],
+    declarations: [],
+    imports: [RichTextEditorComponent,
+        RichTextEditorWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: SanitizePipe, useClass: SanitizePipe },
@@ -47,12 +48,15 @@ describe('wm-richtexteditor: Component Spectific Tests', () => {
     let fixture: ComponentFixture<RichTextEditorWrapperComponent>;
     let wrapperComponent: RichTextEditorWrapperComponent;
     let wmComponent: RichTextEditorComponent;
-    beforeEach(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, RichTextEditorWrapperComponent);
         wrapperComponent = fixture.componentInstance;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         wmComponent = wrapperComponent.wmComponent;
         fixture.detectChanges();
-    });
+    }));
     it('should create the Richtext Editor compoent', () => {
         expect(wrapperComponent).toBeTruthy();
     });

@@ -79,8 +79,9 @@ const testModuleDef: ITestModuleDef = {
         FormsModule,
         TypeaheadModule.forRoot(),
         SearchComponent, ScrollableDirective, InputTextComponent
-    ],
-    declarations: [SearchWrapperComponent],
+    ,
+        SearchWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

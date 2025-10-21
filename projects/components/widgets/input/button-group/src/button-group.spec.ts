@@ -12,7 +12,8 @@ import { mockApp } from 'projects/components/base/src/test/util/component-test-u
         <button class="app-button">Button 2</button>
         <button class="app-button">Button 3</button>
       </div>
-    `
+    `,
+    standalone: false
 })
 class TestComponent { }
 

@@ -194,7 +194,7 @@ const markup = `<form wmForm role="" #form_1 ngNativeValidate
 })
 
 class FormWrapperComponent {
-    @ViewChild(FormComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(FormComponent, /* TODO: add static flag */ { static: false })
     wmComponent: FormComponent;
     public testdata: any = [{ name: 'Ram', age: 24, dob: '2019-12-02' }, { name: 'Sita', age: 22, dob: '2019-12-02' }];
 

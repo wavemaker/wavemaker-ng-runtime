@@ -11,12 +11,13 @@ const markup = `<a wmAnchor data-identifier="anchor" #wm_anchor1="wmAnchor" [att
     template: markup
 })
 class AnchorWrapperComponent {
-    @ViewChild(AnchorComponent, { static: true }) wmComponent: AnchorComponent
+    @ViewChild(AnchorComponent, { static: false }) wmComponent: AnchorComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [AnchorComponent],
-    declarations: [AnchorWrapperComponent,],
+    imports: [AnchorComponent,
+        AnchorWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
     ]

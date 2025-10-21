@@ -21,12 +21,13 @@ const markup = `<wm-input type="number" name="text1" hint="number field">`;
 })
 
 class InputNumberWrapperComponent {
-    @ViewChild(InputNumberComponent, { static: true }) wmComponent: InputNumberComponent
+    @ViewChild(InputNumberComponent, { static: false }) wmComponent: InputNumberComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule, InputNumberComponent],
-    declarations: [InputNumberWrapperComponent],
+    imports: [FormsModule, IMaskModule, InputNumberComponent,
+        InputNumberWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

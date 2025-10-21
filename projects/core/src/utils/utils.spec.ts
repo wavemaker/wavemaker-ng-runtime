@@ -1142,8 +1142,8 @@ describe('isInsecureContentRequest', () => {
 
     beforeEach(() => {
         originalLocation = window.location;
-        delete window.location;
-        window.location = { href: 'https://example.com' } as Location;
+        delete (window as any).location;
+        (window as any).location = { href: 'https://example.com' };
     });
 
     afterEach(() => {

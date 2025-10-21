@@ -37,6 +37,13 @@ export class PartialContainerDirective {
         const componentFactory = await this.partialRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL, {prefab: prefabName});
         if (componentFactory) {
             const instanceRef = this.vcRef.createComponent(componentFactory, 0, this.inj);
+            try {
+                // eslint-disable-next-line no-console
+                console.debug('[DI-TRACE] PartialContainer._renderPartial created', {
+                    partial: nv,
+                    createdType: instanceRef?.componentType?.name
+                });
+            } catch {}
             if (instanceRef && instanceRef['instance'] && prefabName) {
                 // @ts-ignore
                 instanceRef['instance'].prefabName = prefabName;
@@ -70,6 +77,8 @@ export class PartialContainerDirective {
         private resolver: ComponentFactoryResolver,
         private partialRefProvider: PartialRefProvider
     ) {
+
+        // NOTE: Avoid importing page directives here to prevent cross-package cycles.
 
         componentInstance.registerPropertyChangeListener((key: string, nv: any, ov?: any) => {
             if (key === 'content') {

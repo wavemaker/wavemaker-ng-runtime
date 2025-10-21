@@ -51,7 +51,7 @@ const markup = `<div
     template: markup
 })
 class MenuWrapperComponent {
-    @ViewChild(MenuComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(MenuComponent, /* TODO: add static flag */ { static: false })
     wmComponent: MenuComponent;
 
     public testdata = 'Op1,op2,op3';
@@ -63,8 +63,9 @@ class MenuWrapperComponent {
 }
 
 const menuComponentModuleDef: ITestModuleDef = {
-    declarations: [MenuWrapperComponent],
-    imports: [MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent, NavigationControlDirective, BsDropdownModule],
+    declarations: [],
+    imports: [MenuComponent, MenuDropdownComponent, MenuDropdownItemComponent, NavigationControlDirective, BsDropdownModule,
+        MenuWrapperComponent],
     providers: [
         provideAnimations(),
         { provide: Router, useValue: Router },

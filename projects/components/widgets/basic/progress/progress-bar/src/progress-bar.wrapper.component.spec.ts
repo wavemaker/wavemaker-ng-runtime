@@ -14,12 +14,13 @@ const markup = `<div wmProgressBar name="progress_bar1" hint="Progress bar" aria
     template: markup
 })
 class ProgressBarWrapperComponent {
-    @ViewChild(ProgressBarComponent, { static: true }) wmComponent: ProgressBarComponent;
+    @ViewChild(ProgressBarComponent, { static: false }) wmComponent: ProgressBarComponent;
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, ProgressBarComponent],
-    declarations: [ProgressBarWrapperComponent],
+    imports: [FormsModule, ProgressBarComponent,
+        ProgressBarWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         provideAsWidgetRef(ProgressBarComponent)

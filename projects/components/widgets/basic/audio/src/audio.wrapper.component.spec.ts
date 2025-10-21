@@ -12,7 +12,7 @@ import {
 } from 'projects/components/base/src/test/common-widget.specs';
 import { compileTestComponent, mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
-@Pipe({ name: 'trustAs' })
+@Pipe({ name: 'trustAs', standalone: false })
 class MockTrustAsPipe implements PipeTransform {
     transform(value: string, type: string): string {
         return value;
@@ -29,8 +29,9 @@ class AudioWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, AudioComponent],
-    declarations: [AudioWrapperComponent, MockTrustAsPipe],
+    imports: [FormsModule, AudioComponent,
+        AudioWrapperComponent],
+    declarations: [MockTrustAsPipe],
     providers: [
         { provide: App, useValue: mockApp },
         provideAsWidgetRef(AudioComponent)

@@ -6,7 +6,7 @@ import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../.
 import { ColorPickerDirective } from "ngx-color-picker";
 import { AUTOCLOSE_TYPE } from "@wm/components/base";
 import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
-import { ComponentFixture } from "@angular/core/testing";
+import { ComponentFixture, waitForAsync } from "@angular/core/testing";
 
 jest.mock("@wm/core", () => ({
     ...jest.requireActual("@wm/core"),
@@ -21,12 +21,13 @@ const markup = `<div wmColorPicker name="colorpicker1" hint="colorpicker" tabind
 })
 
 class ColorPickerWrapperComponent {
-    @ViewChild(ColorPickerComponent, { static: true }) wmComponent: ColorPickerComponent
+    @ViewChild(ColorPickerComponent, { static: false }) wmComponent: ColorPickerComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, ColorPickerDirective, ColorPickerComponent],
-    declarations: [ColorPickerWrapperComponent],
+    imports: [FormsModule, ColorPickerDirective, ColorPickerComponent,
+        ColorPickerWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
     ]
@@ -52,16 +53,19 @@ describe('wm-colorpicker: Component Specific Tests', () => {
     let wmComponent: ColorPickerComponent;
     let fixture: ComponentFixture<ColorPickerWrapperComponent>;
 
-    beforeEach(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, ColorPickerWrapperComponent);
         wrapperComponent = fixture.componentInstance;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         wmComponent = wrapperComponent.wmComponent;
         fixture.detectChanges();
 
         // Clear mock calls before each test
         (addClass as jest.Mock).mockClear();
-        (removeClass as jest.Mock).mockClear()
-    });
+        (removeClass as jest.Mock).mockClear();
+    }));
 
     it('should create color picker component', () => {
         expect(wrapperComponent).toBeTruthy();

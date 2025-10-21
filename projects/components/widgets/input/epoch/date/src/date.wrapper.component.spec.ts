@@ -46,7 +46,7 @@ const markup = `<div wmDate  name="date1" mindate="2019-12-02"  datavalue="${cur
 })
 
 class DateWrapperComponent {
-    @ViewChild(DateComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(DateComponent, /* TODO: add static flag */ { static: false })
     wmComponent: DateComponent;
 
 
@@ -80,8 +80,9 @@ class DateWrapperComponent {
 }
 
 const dateComponentModuleDef: ITestModuleDef = {
-    declarations: [DateWrapperComponent],
-    imports: [FormsModule, BsDatepickerModule.forRoot(), IMaskModule, DateComponent],
+    declarations: [],
+    imports: [FormsModule, BsDatepickerModule.forRoot(), IMaskModule, DateComponent,
+        DateWrapperComponent],
     providers: [
         provideAnimations(),
         { provide: Router, useValue: Router },
@@ -148,12 +149,14 @@ describe('DateComponent', () => {
     let dateWrapperComponent: DateWrapperComponent;
     let wmComponent: DateComponent;
     let fixture: ComponentFixture<DateWrapperComponent>;
-    beforeEach((async () => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(dateComponentModuleDef, DateWrapperComponent);
         dateWrapperComponent = fixture.componentInstance;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         wmComponent = dateWrapperComponent.wmComponent;
         // wmComponent.imask = TestBed.inject(IMaskDirective);
-        fixture.detectChanges();
     }));
     afterEach(() => {
         if (fixture) {
@@ -478,8 +481,8 @@ describe('DateComponent', () => {
 });
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
-    declarations: [DateWrapperComponent],
-    imports: [FormsModule, BsDatepickerModule.forRoot(), IMaskModule, DateComponent],
+    declarations: [],
+    imports: [FormsModule, BsDatepickerModule.forRoot(), IMaskModule, DateComponent, DateWrapperComponent],
     providers: [
         { provide: LOCALE_ID, useValue: 'de' },
         { provide: Router, useValue: Router },
@@ -500,13 +503,15 @@ describe(('Date Component with Localization'), () => {
     let wmComponent: DateComponent;
     let fixture: ComponentFixture<DateWrapperComponent>;
 
-    beforeEach((async () => {
+    beforeEach(waitForAsync(async () => {
         // register the selected locale language
         registerLocaleData(localeDE);
         fixture = compileTestComponent(dateComponentLocaleModuleDef, DateWrapperComponent);
         dateWrapperComponent = fixture.componentInstance;
-        wmComponent = dateWrapperComponent.wmComponent;
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        wmComponent = dateWrapperComponent.wmComponent;
     }));
     afterEach(() => {
         if (fixture) {

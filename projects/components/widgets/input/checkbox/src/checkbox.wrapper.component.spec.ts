@@ -13,12 +13,13 @@ const markup = `<div wmCheckbox hint="checkbox" caption="Label" name="checkbox1"
 })
 
 class CheckboxWrapperComponent {
-    @ViewChild(CheckboxComponent, /* TODO: add static flag */ { static: true }) wmComponent: CheckboxComponent
+    @ViewChild(CheckboxComponent, /* TODO: add static flag */ { static: false }) wmComponent: CheckboxComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, CheckboxComponent],
-    declarations: [CheckboxWrapperComponent],
+    imports: [FormsModule, CheckboxComponent,
+        CheckboxWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
     ]

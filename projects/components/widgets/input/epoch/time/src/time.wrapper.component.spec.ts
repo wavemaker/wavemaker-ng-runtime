@@ -48,7 +48,7 @@ shortcutkey="g" tabindex="0" outputformat="hh:mm:ss"  timepattern="hh:mm:ss" hou
     template: markup
 })
 class TimeWrapperComponent {
-    @ViewChild(TimeComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(TimeComponent, /* TODO: add static flag */ { static: false })
     wmComponent: TimeComponent;
 
     time1Change($event, widget, newVal, oldVal) {
@@ -83,8 +83,9 @@ class TimeWrapperComponent {
 }
 
 const dateComponentModuleDef: ITestModuleDef = {
-    declarations: [TimeWrapperComponent],
-    imports: [TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    declarations: [],
+    imports: [TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot(),
+        TimeWrapperComponent],
     providers: [
         provideAnimations(),
         { provide: App, useValue: mockApp },
@@ -146,11 +147,13 @@ describe("TimeComponent", () => {
     let wmComponent: TimeComponent;
     let fixture: ComponentFixture<TimeWrapperComponent>;
 
-    beforeEach((async () => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(dateComponentModuleDef, TimeWrapperComponent);
         timeWrapperComponent = fixture.componentInstance;
-        wmComponent = timeWrapperComponent.wmComponent;
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        wmComponent = timeWrapperComponent.wmComponent;
     }));
     afterEach(() => {
         if (fixture) {
@@ -164,6 +167,7 @@ describe("TimeComponent", () => {
     // TypeError: Cannot read properties of null (reading 'nativeElement')
     it('should not add the hidden property, element always visible', async () => {
         await fixture.whenStable();
+        fixture.detectChanges();
         const element = fixture.debugElement.query(By.css('.app-timeinput'));
         fixture.whenStable().then(() => {
             expect(element.nativeElement.hasAttribute('hidden')).toBe(false);
@@ -425,8 +429,8 @@ describe("TimeComponent", () => {
 
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
-    declarations: [TimeWrapperComponent],
-    imports: [TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    declarations: [],
+    imports: [TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot(), TimeWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'de' },
@@ -445,13 +449,15 @@ describe('TimeComponent with localization', () => {
     let wmComponent: TimeComponent;
     let fixture: ComponentFixture<TimeWrapperComponent>;
 
-    beforeEach((async () => {
+    beforeEach(waitForAsync(async () => {
         // register the selected locale language
         registerLocaleData(localeDE);
         fixture = compileTestComponent(dateComponentLocaleModuleDef, TimeWrapperComponent);
         timeWrapperComponent = fixture.componentInstance;
-        wmComponent = timeWrapperComponent.wmComponent;
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        wmComponent = timeWrapperComponent.wmComponent;
     }));
 
     afterEach(() => {
@@ -492,8 +498,8 @@ describe('TimeComponent with localization', () => {
 });
 
 const dateComponentROLocaleModuleDef: ITestModuleDef = {
-    declarations: [TimeWrapperComponent],
-    imports: [TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot()],
+    declarations: [],
+    imports: [TimeComponent, FormsModule, TimepickerModule.forRoot(), BsDropdownModule.forRoot(), TimeWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'ro' },
@@ -510,13 +516,15 @@ describe('TimeComponent with ro (Romania) localization', () => {
     let wmComponent: TimeComponent;
     let fixture: ComponentFixture<TimeWrapperComponent>;
 
-    beforeEach((async () => {
+    beforeEach(waitForAsync(async () => {
         // register the selected locale language
         registerLocaleData(localeRO);
         fixture = compileTestComponent(dateComponentROLocaleModuleDef, TimeWrapperComponent);
         timeWrapperComponent = fixture.componentInstance;
-        wmComponent = timeWrapperComponent.wmComponent;
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        wmComponent = timeWrapperComponent.wmComponent;
     }));
 
     afterEach(() => {

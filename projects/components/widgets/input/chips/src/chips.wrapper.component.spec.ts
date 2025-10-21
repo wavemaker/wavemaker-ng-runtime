@@ -22,10 +22,12 @@ jest.mock('@wm/core', () => ({
 const markup = `<ul wmChips name="chips1" readonly="false" class= "text-success" show="true" width="800" height="200" backgroundcolor="#00ff29"
                     placeholder="" tabindex="0" overflow="auto"></ul>`; // placeholder and tabindex are not working because .bind is not working
 @Component({
+    standalone: true,
+    imports: [ChipsComponent, SearchComponent],
     template: markup
 })
 class ChipsWrapperComponent implements OnInit {
-    @ViewChild(ChipsComponent, /* TODO: add static flag */ { static: true }) wmComponent: ChipsComponent;
+    @ViewChild(ChipsComponent, /* TODO: add static flag */ { static: false }) wmComponent: ChipsComponent;
     public testdata: any = [{ name: 'Peter', age: 21 }, { name: 'Tony', age: 42 }, { name: 'John', age: 25 }, { name: 'Peter Son', age: 28 }];
     ngOnInit() {
         setTimeout(() => {
@@ -38,9 +40,10 @@ const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule,
         TypeaheadModule.forRoot(),
-        ChipsComponent, SearchComponent
+        ChipsComponent, SearchComponent,
+        ChipsWrapperComponent
     ],
-    declarations: [ChipsWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -223,6 +226,7 @@ describe('wm-chips: Component Specific Tests', () => {
             chipItem.removeChipItem();
             fixture.detectChanges();
             await fixture.whenStable();
+        fixture.detectChanges();
             expect(wmComponent.chipsList.length).toEqual(0);
         });
     });
@@ -958,6 +962,7 @@ describe('wm-chips: Component Specific Tests', () => {
             wmComponent.setProperty('matchmode', matchMode);
             fixture.detectChanges();
             await fixture.whenStable();
+        fixture.detectChanges();
 
             // Ensure the search component is initialized
             expect(wmComponent.searchComponent).toBeTruthy();
@@ -966,11 +971,13 @@ describe('wm-chips: Component Specific Tests', () => {
             wmComponent.searchComponent.query = value1;
             fixture.detectChanges();
             await fixture.whenStable();
+        fixture.detectChanges();
 
             // Manually trigger the addItem method instead of key events
             (wmComponent as any).addItem(new Event('keyup'));
             fixture.detectChanges();
             await fixture.whenStable();
+        fixture.detectChanges();
 
             console.log(`After adding ${value1}, chipsList:`, wmComponent.chipsList);
             expect(wmComponent.chipsList.length).toEqual(1);
@@ -979,11 +986,13 @@ describe('wm-chips: Component Specific Tests', () => {
             wmComponent.searchComponent.query = value2;
             fixture.detectChanges();
             await fixture.whenStable();
+        fixture.detectChanges();
 
             // Manually trigger the addItem method for the second value
             (wmComponent as any).addItem(new Event('keyup'));
             fixture.detectChanges();
             await fixture.whenStable();
+        fixture.detectChanges();
 
             console.log(`After adding ${value2}, chipsList:`, wmComponent.chipsList);
             expect(wmComponent.chipsList.length).toEqual(2);
@@ -1002,11 +1011,13 @@ describe('wm-chips: Component Specific Tests', () => {
             await addItem(value1, 'keyup');
             fixture.detectChanges();
             await fixture.whenStable();
+        fixture.detectChanges();
             console.log(`After adding ${value1}, chipsList length: ${wmComponent.chipsList.length}`);
             expect(wmComponent.chipsList.length).toEqual(1);
             await addItem(value2, 'keydown');
             fixture.detectChanges();
             await fixture.whenStable();
+        fixture.detectChanges();
             console.log(`After adding ${value2}, chipsList length: ${wmComponent.chipsList.length}`);
             expect(wmComponent.chipsList.length).toEqual(2);
         };
@@ -1017,6 +1028,7 @@ describe('wm-chips: Component Specific Tests', () => {
         wmComponent.searchComponent.query = testValue;
         fixture.detectChanges();
         await fixture.whenStable();
+        fixture.detectChanges();
 
         // Manually trigger the component's addItem method
         (wmComponent as any).addItem(new Event(eventName));
@@ -1024,6 +1036,7 @@ describe('wm-chips: Component Specific Tests', () => {
         // Ensure Angular processes the event
         fixture.detectChanges();
         await fixture.whenStable();
+        fixture.detectChanges();
         fixture.detectChanges();
         return fixture.whenStable();
     }

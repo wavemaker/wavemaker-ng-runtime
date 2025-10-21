@@ -10,7 +10,8 @@ import { mockApp } from 'projects/components/base/src/test/util/component-test-u
     <div wmCaptionPosition>
       <input type="text" placeholder="Test Input">
     </div>
-  `
+  `,
+  standalone: false
 })
 class TestComponent { }
 

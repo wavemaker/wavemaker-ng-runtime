@@ -19,12 +19,13 @@ const markup = `<wm-input type="date" name="text1" hint="date field">`;
 })
 
 class InputCalendarWrapperComponent {
-    @ViewChild(InputCalendarComponent, /* TODO: add static flag */ { static: true }) wmComponent: InputCalendarComponent
+    @ViewChild(InputCalendarComponent, /* TODO: add static flag */ { static: false }) wmComponent: InputCalendarComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule, InputCalendarComponent],
-    declarations: [InputCalendarWrapperComponent],
+    imports: [FormsModule, IMaskModule, InputCalendarComponent,
+        InputCalendarWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

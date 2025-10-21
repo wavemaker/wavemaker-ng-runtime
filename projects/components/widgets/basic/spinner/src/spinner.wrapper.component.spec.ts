@@ -13,12 +13,13 @@ const markup = `<div wmSpinner #wm_spinner1="wmSpinner" [attr.aria-label]="wm_sp
     template: markup
 })
 class SpinnerWrapperComponent {
-    @ViewChild(SpinnerComponent, { static: true }) wmComponent: SpinnerComponent
+    @ViewChild(SpinnerComponent, { static: false }) wmComponent: SpinnerComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [SpinnerComponent, ImagePipe, TrustAsPipe],
-    declarations: [SpinnerWrapperComponent],
+    imports: [SpinnerComponent, ImagePipe, TrustAsPipe,
+        SpinnerWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

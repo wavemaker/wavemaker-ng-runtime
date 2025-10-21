@@ -22,7 +22,7 @@ const markup = `<div blur.event="onBlur($event, widget)"
 })
 
 class CurrencyWrapperComponent {
-    @ViewChild(CurrencyComponent, /* TODO: add static flag */ { static: true }) wmComponent: CurrencyComponent;
+    @ViewChild(CurrencyComponent, /* TODO: add static flag */ { static: false }) wmComponent: CurrencyComponent;
 
     public onChange($event, widget, newVal, oldVal) {
     }
@@ -39,8 +39,9 @@ class CurrencyWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, CurrencyComponent],
-    declarations: [CurrencyWrapperComponent],
+    imports: [FormsModule, CurrencyComponent,
+        CurrencyWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AppDefaults, useValue: AppDefaults },

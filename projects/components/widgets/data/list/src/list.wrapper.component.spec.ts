@@ -52,10 +52,11 @@ jest.mock('jquery', () => jest.fn(() => ({
                 <label wmLabel name="Name" class="p media-heading" caption.bind="item.name" fontsize="1.143" fontunit="em"></label>
             </ng-template>
         </div>
-    `
+    `,
+    standalone: false
 })
 class ListWrapperComponent {
-    @ViewChild(ListComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(ListComponent, /* TODO: add static flag */ { static: false })
     listComponent: ListComponent;
     public testdata: any = [{ name: 'Peter', age: 21 }, { name: 'Tony', age: 42 }];
     public testdata1: any = [{ firstname: 'Peter', id: 1 }, { firstname: '', id: 2 }];
@@ -76,15 +77,16 @@ describe('ListComponent', () => {
     let fixture: ComponentFixture<ListWrapperComponent>;
     let listAnimator: ListAnimator;
 
-    beforeEach(waitForAsync(() => {
+    beforeEach(waitForAsync(async () => {
         TestBed.configureTestingModule({
             imports: [
                 FormsModule,
                 PaginationModule.forRoot(),
                 WmPaginationModule,
                 ListComponent, ListItemDirective
-            ],
-            declarations: [ListWrapperComponent],
+            ,
+        ListWrapperComponent],
+            declarations: [],
             providers: [
                 { provide: App, useValue: mockApp },
                 { provide: ToDatePipe, useClass: ToDatePipe },
@@ -98,8 +100,10 @@ describe('ListComponent', () => {
 
         fixture = TestBed.createComponent(ListWrapperComponent);
         wrapperComponent = fixture.componentInstance;
-        listComponent = wrapperComponent.listComponent;
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        listComponent = wrapperComponent.listComponent;
         listComponent.dataset = wrapperComponent.testdata;
         listComponent.onPropertyChange('dataset', listComponent.dataset);
         listComponent.groupby = "";
@@ -1897,7 +1901,7 @@ describe('ListComponent With groupby', () => {
     let listComponent: ListComponent;
     let fixture: ComponentFixture<ListWrapperComponent>;
 
-    beforeEach(waitForAsync(() => {
+    beforeEach(waitForAsync(async () => {
         TestBed.configureTestingModule({
             imports: [
                 FormsModule,
@@ -1918,9 +1922,11 @@ describe('ListComponent With groupby', () => {
 
         fixture = TestBed.createComponent(ListWrapperComponent);
         wrapperComponent = fixture.componentInstance;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         listComponent = wrapperComponent.listComponent;
 
-        fixture.detectChanges();
         listComponent.groupby = 'firstname';
         listComponent.dataset = wrapperComponent.testdata1;
         listComponent.onPropertyChange('dataset', listComponent.dataset);

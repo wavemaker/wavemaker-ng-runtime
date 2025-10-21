@@ -40,7 +40,7 @@ const markup = `<div
     template: markup
 })
 class CalendarWrapperComponent {
-    @ViewChild(CalendarComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(CalendarComponent, /* TODO: add static flag */ { static: false })
     wmComponent: CalendarComponent;
 
     public testData1 = [{ title: 'event', start: '02/02/2020' }];
@@ -48,8 +48,9 @@ class CalendarWrapperComponent {
 }
 
 const calendarComponentModuleDef: ITestModuleDef = {
-    declarations: [CalendarWrapperComponent],
-    imports: [FormsModule, BsDatepickerModule, IMaskModule, CalendarComponent],
+    declarations: [],
+    imports: [FormsModule, BsDatepickerModule, IMaskModule, CalendarComponent,
+        CalendarWrapperComponent],
     providers: [{ provide: ToDatePipe, useClass: ToDatePipe },
     { provide: App, useValue: mockApp },
     { provide: DatePipe, useClass: DatePipe },

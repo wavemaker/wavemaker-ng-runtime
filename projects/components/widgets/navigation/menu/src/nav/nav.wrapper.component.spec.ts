@@ -1,4 +1,4 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { App, UserDefinedExecutionContext } from '@wm/core';
@@ -20,7 +20,7 @@ const markup = ` <ul wmNav data-element-type="wmNav" data-role="page-header"  ty
 })
 
 class NavWrapperComponent {
-    @ViewChild(NavComponent, /* TODO: add static flag */ { static: true }) wmComponent: NavComponent;
+    @ViewChild(NavComponent, /* TODO: add static flag */ { static: false }) wmComponent: NavComponent;
     public testdata = [
         {
             label: 'Home',
@@ -58,8 +58,9 @@ class NavWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [NavWrapperComponent,],
-    imports: [NavComponent, NavigationControlDirective],
+    declarations: [],
+    imports: [NavComponent, NavigationControlDirective,
+        NavWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: Router, useValue: mockApp },
@@ -84,14 +85,17 @@ describe('Nav Component', () => {
     let fixture: ComponentFixture<NavWrapperComponent>;
     let wrapperComponent: NavWrapperComponent;
     let wmComponent: NavComponent;
-    beforeEach(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, NavWrapperComponent);
         wrapperComponent = fixture.componentInstance;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         wmComponent = wrapperComponent.wmComponent;
         wmComponent.dataset = wrapperComponent.testdata;
         wmComponent.onPropertyChange('dataset', wmComponent.dataset, undefined);
         fixture.detectChanges();
-    });
+    }));
     it('should create the Nav compoent', () => {
         expect(wrapperComponent).toBeTruthy();
     });

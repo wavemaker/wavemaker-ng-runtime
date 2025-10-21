@@ -36,12 +36,13 @@ const markup = `<div wmAlertDialog></div>`;
     template: markup
 })
 class AlertDialogWrapperComponent {
-    @ViewChild(AlertDialogComponent, { static: true }) wmComponent: AlertDialogComponent;
+    @ViewChild(AlertDialogComponent, { static: false }) wmComponent: AlertDialogComponent;
 }
 
 const testModuleDef = {
-    imports: [FormsModule, AlertDialogComponent],
-    declarations: [AlertDialogWrapperComponent],
+    imports: [FormsModule, AlertDialogComponent,
+        AlertDialogWrapperComponent],
+    declarations: [],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(AlertDialogComponent),

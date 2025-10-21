@@ -7,7 +7,8 @@ import { mockApp } from 'projects/components/base/src/test/util/component-test-u
 import { App } from '@wm/core';
 
 @Component({
-    template: '<div wmTableAction></div>'
+    template: '<div wmTableAction></div>',
+    standalone: false
 })
 class TestComponent { }
 

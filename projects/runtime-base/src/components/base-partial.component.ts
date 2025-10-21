@@ -103,11 +103,20 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
             this.pageParams = this.containerWidget.partialParams;
         });
 
-        if(this.spa) {
-            this.pageDirective = this.injector ? this.injector.get(SpaPageDirective) : inject(SpaPageDirective);
+        if (this.spa) {
+            // Resolve optionally because Common/app-level partials can initialize before a page exists
+            this.pageDirective = this.injector ? this.injector.get(SpaPageDirective, null) : (inject as any)(SpaPageDirective, { optional: true });
         } else {
-            this.pageDirective = this.injector ? this.injector.get(PageDirective) : inject(PageDirective);
+            this.pageDirective = this.injector ? this.injector.get(PageDirective, null) : (inject as any)(PageDirective, { optional: true });
         }
+        try {
+            // eslint-disable-next-line no-console
+            console.debug('[DI-TRACE] BasePartialComponent.init resolve PageDirective', {
+                partialName: this.partialName,
+                spa: !!this.spa,
+                hasDirective: !!this.pageDirective
+            });
+        } catch {}
         if (this.pageDirective) {
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
             this.registerDestroyListener(this.pageDirective.subscribe('detach', () => this.ngOnDetach()));
@@ -238,6 +247,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     ngAfterViewInit(): void {
         this.loadScripts().then(() => {
             this.compileContent = true;
+            try { console.debug('[DI-TRACE] BasePartialComponent: compileContent=true for partial', this.partialName); } catch {}
             setTimeout(() => {
                 this.viewInit$.complete();
 

@@ -38,12 +38,13 @@ const markup = `<div wmPartialDialog></div>`;
     template: markup
 })
 class PartialDialogWrapperComponent {
-    @ViewChild(PartialDialogComponent, { static: true }) wmComponent: PartialDialogComponent;
+    @ViewChild(PartialDialogComponent, { static: false }) wmComponent: PartialDialogComponent;
 }
 
 const testModuleDef = {
-    imports: [FormsModule, PartialDialogComponent],
-    declarations: [PartialDialogWrapperComponent,],
+    imports: [FormsModule, PartialDialogComponent,
+        PartialDialogWrapperComponent],
+    declarations: [],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(PartialDialogComponent),

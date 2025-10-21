@@ -61,11 +61,13 @@ export class ComponentTestBase {
                 widgetProps,
                 widgetAttr = replace(this.widgetDef.type, '-', '');
 
-            beforeEach(waitForAsync(() => {
+            beforeEach(waitForAsync(async () => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
+                fixture.detectChanges();
+                await fixture.whenStable();
+                fixture.detectChanges();
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
-                fixture.detectChanges();
             }));
             let count = 0;
             // iterate through all the attributes specified in the markup and verify them against corresponding iScope properties
@@ -126,12 +128,14 @@ export class ComponentTestBase {
                 $element,
                 $inputEl;
 
-            beforeEach(waitForAsync(() => {
+            beforeEach(waitForAsync(async () => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
+                fixture.detectChanges();
+                await fixture.whenStable();
+                fixture.detectChanges();
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
                 $element = fixture.nativeElement.querySelector(this.widgetDef.widgetSelector);
-                fixture.detectChanges();
                 $inputEl = this.widgetDef.inputElementSelector ? fixture.nativeElement.querySelector(this.widgetDef.inputElementSelector) : $element;
             }));
 
@@ -234,11 +238,13 @@ export class ComponentTestBase {
                 fixture,
                 widgetProps;
 
-            beforeEach(waitForAsync(() => {
+            beforeEach(waitForAsync(async () => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
+                fixture.detectChanges();
+                await fixture.whenStable();
+                fixture.detectChanges();
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
-                fixture.detectChanges();
             }));
 
             // check for width and height properties
@@ -355,11 +361,13 @@ export class ComponentTestBase {
                 $element,
                 $inputEl;
 
-            beforeEach((() => {
+            beforeEach(waitForAsync(async () => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
+                fixture.detectChanges();
+                await fixture.whenStable();
+                fixture.detectChanges();
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
-                fixture.detectChanges();
             }));
 
             forEach(eventList, (evtObj) => {
@@ -410,12 +418,14 @@ export class ComponentTestBase {
                 $element,
                 $inputEl;
 
-            beforeEach(waitForAsync(() => {
+            beforeEach(waitForAsync(async () => {
                 fixture = compileTestComponent(this.widgetDef.testModuleDef, this.widgetDef.testComponent);
+                fixture.detectChanges();
+                await fixture.whenStable();
+                fixture.detectChanges();
                 component = fixture.componentInstance.wmComponent;
                 widgetProps = component.widgetProps;
                 $element = fixture.nativeElement.querySelector(this.widgetDef.widgetSelector);
-                fixture.detectChanges();
                 $inputEl = this.widgetDef.inputElementSelector ? fixture.nativeElement.querySelector(this.widgetDef.inputElementSelector) : $element;
             }));
 

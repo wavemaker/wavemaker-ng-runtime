@@ -33,7 +33,7 @@ const markup = `
     template: markup
 })
 class WizardWrapperComponent {
-    @ViewChild(WizardComponent, /* TODO: add static flag */ { static: true }) wmComponent: WizardComponent;
+    @ViewChild(WizardComponent, /* TODO: add static flag */ { static: false }) wmComponent: WizardComponent;
     public wizardstep1Next(widget, currentStep, stepIndex) {
         // console.log('calling on next');
     }
@@ -49,8 +49,9 @@ const testModuleDef: ITestModuleDef = {
     imports: [
         FormsModule, TextContentDirective,
         WizardComponent, WizardStepComponent
-    ],
-    declarations: [WizardWrapperComponent],
+    ,
+        WizardWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         DynamicComponentRefProvider
@@ -74,11 +75,13 @@ describe('wm-wizard: Component Specific Tests', () => {
     let wrapperComponent: WizardWrapperComponent;
     let wmComponent: WizardComponent;
     let fixture: ComponentFixture<WizardWrapperComponent>;
-    beforeEach(waitForAsync(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, WizardWrapperComponent);
         wrapperComponent = fixture.componentInstance;
-        wmComponent = wrapperComponent.wmComponent;
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        wmComponent = wrapperComponent.wmComponent;
     }));
 
     it('should create wizard component', () => {
@@ -91,6 +94,7 @@ describe('wm-wizard: Component Specific Tests', () => {
 
         // Wait for the component to be stable
         await fixture.whenStable();
+        fixture.detectChanges();
 
         // Spy on the invokeEventCallback method
         jest.spyOn(frstStepRef, 'invokeEventCallback');

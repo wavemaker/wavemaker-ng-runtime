@@ -34,7 +34,7 @@ const markup = `
     template: markup
 })
 class TestComponent {
-    @ViewChild(ButtonComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(ButtonComponent, /* TODO: add static flag */ { static: false })
     wmComponent: ButtonComponent;
 
     public disableButton: boolean = false;
@@ -98,12 +98,14 @@ describe('wm-button: Component specific tests: ', () => {
         return fixture.nativeElement.querySelector('.badge');
     };
 
-    beforeEach(waitForAsync(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, TestComponent);
         wrapperComponent = fixture.componentInstance;
         captionEl = fixture.nativeElement.querySelector('.btn-caption');
-        wmComponent = wrapperComponent.wmComponent;
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        wmComponent = wrapperComponent.wmComponent;
     }));
 
     it('should create Button Component', () => {
@@ -218,10 +220,11 @@ describe('wm-button: Component specific tests: ', () => {
 // Button widget without class property in the markup
 const btnMarkup = `<button wmButton name="testbutton1" caption="Test Button1" type="button"></button>`;
 @Component({
-    template: btnMarkup
+    template: btnMarkup,
+    standalone: false
 })
 class BtnTestComponent {
-    @ViewChild(ButtonComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(ButtonComponent, /* TODO: add static flag */ { static: false })
     wmComponent: ButtonComponent;
 }
 const btnTestModuleDef: ITestModuleDef = {

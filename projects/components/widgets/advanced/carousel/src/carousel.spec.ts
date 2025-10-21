@@ -32,10 +32,11 @@ const markup = `
 `;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: false
 })
 class CarouselSpec {
-    @ViewChild('wm_carousel_ref', { static: true }) carousel: CarouselDirective;
+    @ViewChild('wm_carousel_ref', { static: false }) carousel: CarouselDirective;
     public testdata: any = [{ name: 'Peter', age: 21 }, { name: 'Tony', age: 42 }];
 
     onChangeCB(widget, newIndex, oldIndex) { }

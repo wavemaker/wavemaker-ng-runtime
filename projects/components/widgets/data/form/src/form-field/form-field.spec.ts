@@ -1,4 +1,4 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Component, ViewChild } from '@angular/core';
 import { FormFieldDirective } from './form-field.directive';
@@ -27,7 +27,7 @@ const markup = `<div wmFormField></div>`;
     template: markup
 })
 class TestComponent {
-    @ViewChild(FormFieldDirective, { static: true }) wmComponent: FormFieldDirective;
+    @ViewChild(FormFieldDirective, { static: false }) wmComponent: FormFieldDirective;
 }
 
 const testModuleDef = {
@@ -55,7 +55,7 @@ describe("FormFieldDirective", () => {
     let fixture: ComponentFixture<TestComponent>;
     let formComponentMock: jest.Mocked<FormComponent>;
 
-    beforeEach(async () => {
+    beforeEach(waitForAsync(async () => {
         formComponentMock = {
             registerFormFields: jest.fn(),
             onFieldValueChange: jest.fn(),
@@ -64,10 +64,13 @@ describe("FormFieldDirective", () => {
         } as unknown as jest.Mocked<FormComponent>;
 
         fixture = compileTestComponent(testModuleDef, TestComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         wmComponent = fixture.componentInstance.wmComponent;
         wmComponent.form = formComponentMock;
         fixture.detectChanges();
-    });
+    }));
 
     it("should create the component", () => {
         expect(fixture.componentInstance).toBeTruthy();

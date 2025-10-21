@@ -68,8 +68,7 @@ describe('BaseFormCustomComponent', () => {
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            declarations: [TestableBaseFormCustomComponent],
-            imports: [ReactiveFormsModule],
+            imports: [TestableBaseFormCustomComponent, ReactiveFormsModule],
             providers: [
                 {
                     provide: App,

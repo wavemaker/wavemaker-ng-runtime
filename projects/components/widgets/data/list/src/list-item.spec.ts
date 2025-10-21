@@ -13,7 +13,8 @@ jest.mock('@wm/core', () => ({
 }));
 
 @Component({
-    template: `<div wmListItem [item]="testItem"></div>`
+    template: `<div wmListItem [item]="testItem"></div>`,
+    standalone: false
 })
 class TestComponent {
     testItem = { id: 1, name: 'Test Item' };

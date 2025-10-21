@@ -6,7 +6,7 @@ import { ToDatePipe } from "@wm/components/base";
 import { DatePipe } from "@angular/common";
 import { ComponentTestBase, ITestComponentDef, ITestModuleDef } from "../../../../base/src/test/common-widget.specs";
 import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
-import { ComponentFixture } from "@angular/core/testing";
+import { ComponentFixture, waitForAsync } from "@angular/core/testing";
 
 const markup = `<div wmSlider name="slider1" hint="slider" tabindex="1">`;
 
@@ -15,12 +15,13 @@ const markup = `<div wmSlider name="slider1" hint="slider" tabindex="1">`;
 })
 
 class SliderWrapperComponent {
-    @ViewChild(SliderComponent, /* TODO: add static flag */ { static: true }) wmComponent: SliderComponent
+    @ViewChild(SliderComponent, /* TODO: add static flag */ { static: false }) wmComponent: SliderComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, SliderComponent],
-    declarations: [SliderWrapperComponent],
+    imports: [FormsModule, SliderComponent,
+        SliderWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -49,12 +50,15 @@ describe('SliderComponent', () => {
     let component: SliderComponent;
     let fixture: ComponentFixture<SliderWrapperComponent>
 
-    beforeEach(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, SliderWrapperComponent);
         wrapperComponent = fixture.componentInstance;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         component = wrapperComponent.wmComponent;
         component.ngModel = { valid: true } as NgModel;
-    });
+    }));
 
     it('should create the SliderComponent', () => {
         expect(wrapperComponent).toBeTruthy();

@@ -37,12 +37,13 @@ const markup = `<div wmIframeDialog></div>`;
     template: markup
 })
 class IframeDialogWrapperComponent {
-    @ViewChild(IframeDialogComponent, { static: true }) wmComponent: IframeDialogComponent;
+    @ViewChild(IframeDialogComponent, { static: false }) wmComponent: IframeDialogComponent;
 }
 
 const testModuleDef = {
-    imports: [FormsModule, IframeDialogComponent],
-    declarations: [IframeDialogWrapperComponent,],
+    imports: [FormsModule, IframeDialogComponent,
+        IframeDialogWrapperComponent],
+    declarations: [],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(IframeDialogComponent),

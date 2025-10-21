@@ -15,8 +15,9 @@ class IconWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [IconComponent],
-    declarations: [IconWrapperComponent,],
+    imports: [IconComponent,
+        IconWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
     ]

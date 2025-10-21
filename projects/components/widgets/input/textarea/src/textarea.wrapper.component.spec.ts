@@ -5,7 +5,7 @@ import { FormsModule, NgModel } from "@angular/forms";
 import { App, AppDefaults } from "@wm/core";
 import { ToDatePipe } from "@wm/components/base";
 import { DatePipe } from "@angular/common";
-import { ComponentFixture } from "@angular/core/testing";
+import { ComponentFixture, waitForAsync } from "@angular/core/testing";
 import { compileTestComponent, mockApp } from "projects/components/base/src/test/util/component-test-util";
 import { By } from "@angular/platform-browser";
 
@@ -15,12 +15,13 @@ const markup = `<wm-textarea name="textarea1" hint="textarea field">`;
     template: markup
 })
 class TextareaWrapperComponent {
-    @ViewChild(TextareaComponent, { static: true }) wmComponent: TextareaComponent;
+    @ViewChild(TextareaComponent, { static: false }) wmComponent: TextareaComponent;
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, TextareaComponent],
-    declarations: [TextareaWrapperComponent],
+    imports: [FormsModule, TextareaComponent,
+        TextareaWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -44,11 +45,13 @@ TestBase.verifyAccessibility();
 describe('TextareaComponent', () => {
     let wmComponent: TextareaComponent;
     let fixture: ComponentFixture<TextareaWrapperComponent>, testElement;
-    beforeEach(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, TextareaWrapperComponent);
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         wmComponent = fixture.componentInstance.wmComponent;
-    });
+    }));
 
     it('should create the component', () => {
         expect(wmComponent).toBeTruthy();

@@ -71,7 +71,7 @@ shortcutkey="t" showweeks="true" class="input-group-lg" readonly="true" required
 })
 class DatetimeWrapperComponent {
 
-    @ViewChild(DatetimeComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(DatetimeComponent, /* TODO: add static flag */ { static: false })
     wmComponent: DatetimeComponent;
 
     datetime1Tap(evt, widget) {
@@ -103,8 +103,9 @@ class DatetimeWrapperComponent {
 }
 
 const dateComponentModuleDef: ITestModuleDef = {
-    declarations: [DatetimeWrapperComponent],
-    imports: [DatetimeComponent, FormsModule, BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    declarations: [],
+    imports: [DatetimeComponent, FormsModule, BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot(),
+        DatetimeWrapperComponent],
     providers: [
         provideAnimations(),
         { provide: Router, useValue: Router },
@@ -172,11 +173,13 @@ describe("DatetimeComponent", () => {
     let wmComponent: DatetimeComponent;
     let fixture: ComponentFixture<DatetimeWrapperComponent>;
 
-    beforeEach((async () => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(dateComponentModuleDef, DatetimeWrapperComponent);
         dateWrapperComponent = fixture.componentInstance;
-        wmComponent = dateWrapperComponent.wmComponent;
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        wmComponent = dateWrapperComponent.wmComponent;
     }));
 
     afterEach(() => {
@@ -378,8 +381,8 @@ describe("DatetimeComponent", () => {
 });
 
 const dateComponentLocaleModuleDef: ITestModuleDef = {
-    declarations: [DatetimeWrapperComponent],
-    imports: [DatetimeComponent, FormsModule, BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    declarations: [],
+    imports: [DatetimeComponent, FormsModule, BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot(), DatetimeWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'de' },
@@ -400,13 +403,15 @@ describe(('Datetime Component with Localization'), () => {
     let wmComponent: DatetimeComponent;
     let fixture: ComponentFixture<DatetimeWrapperComponent>;
 
-    beforeEach((async () => {
+    beforeEach(waitForAsync(async () => {
         // register the selected locale language
         registerLocaleData(localeDE);
         fixture = compileTestComponent(dateComponentLocaleModuleDef, DatetimeWrapperComponent);
         dateWrapperComponent = fixture.componentInstance;
-        wmComponent = dateWrapperComponent.wmComponent;
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        wmComponent = dateWrapperComponent.wmComponent;
     }));
     afterEach(() => {
         if (fixture) {
@@ -1023,8 +1028,8 @@ describe(('Datetime Component with Localization'), () => {
 
 
 const dateComponentROLocaleModuleDef: ITestModuleDef = {
-    declarations: [DatetimeWrapperComponent],
-    imports: [DatetimeComponent, FormsModule, BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot()],
+    declarations: [],
+    imports: [DatetimeComponent, FormsModule, BsDropdownModule.forRoot(), TimepickerModule.forRoot(), BsDatepickerModule.forRoot(), DatetimeWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: LOCALE_ID, useValue: 'ro' },
@@ -1044,13 +1049,15 @@ describe(('Datetime Component with ro(Romania) Localization'), () => {
     let wmComponent: DatetimeComponent;
     let fixture: ComponentFixture<DatetimeWrapperComponent>;
 
-    beforeEach((async () => {
+    beforeEach(waitForAsync(async () => {
         // register the selected locale language
         registerLocaleData(localeRO);
         fixture = compileTestComponent(dateComponentROLocaleModuleDef, DatetimeWrapperComponent);
         dateWrapperComponent = fixture.componentInstance;
-        wmComponent = dateWrapperComponent.wmComponent;
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        wmComponent = dateWrapperComponent.wmComponent;
     }));
 
     afterEach(() => {

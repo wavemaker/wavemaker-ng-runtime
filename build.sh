@@ -150,11 +150,11 @@ bundleWeb() {
         ./libraries/core/bundles/index.umd.js \
         ./libraries/swipey/bundles/index.umd.js \
         ./libraries/transpiler/bundles/index.umd.js \
+        ./libraries/components/transpile/bundles/index.umd.js \
         ./libraries/http/bundles/index.umd.js \
         ./libraries/oAuth/bundles/index.umd.js \
         ./libraries/security/bundles/index.umd.js \
         ./libraries/components/base/bundles/index.umd.js \
-        ./libraries/build-task/bundles/index.umd.js \
         ./libraries/components/input/base-form/bundles/index.umd.js \
         ./libraries/components/input/button/bundles/index.umd.js \
         ./libraries/components/input/base-form-custom/bundles/index.umd.js \

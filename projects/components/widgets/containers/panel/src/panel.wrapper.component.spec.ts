@@ -1,4 +1,4 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { PanelComponent } from './panel.component';
 import { Component, ViewChild } from '@angular/core';
 import { By } from '@angular/platform-browser';
@@ -21,7 +21,7 @@ const markup = `<div wmPanel badgevalue="Test val" #wm_panel1="wmPanel" expanded
 })
 
 class PanelWrapperComponent {
-    @ViewChild(PanelComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(PanelComponent, /* TODO: add static flag */ { static: false })
     wmComponent: PanelComponent;
 
     public testData = "Option1, Option2, Option3";
@@ -31,8 +31,9 @@ class PanelWrapperComponent {
 }
 
 const panelComponentModuleDef: ITestModuleDef = {
-    declarations: [PanelWrapperComponent,],
-    imports: [BsDropdownModule, PanelComponent, MenuComponent, MenuDropdownItemComponent, MenuDropdownComponent, NavigationControlDirective],
+    declarations: [],
+    imports: [BsDropdownModule, PanelComponent, MenuComponent, MenuDropdownItemComponent, MenuDropdownComponent, NavigationControlDirective,
+        PanelWrapperComponent],
     providers: [
         { provide: Router, useValue: Router },
         { provide: App, useValue: mockApp },
@@ -76,11 +77,13 @@ describe("PanelComponent", () => {
     }
 
     // Creating the panelcomponent instance and activating the change detection.
-    beforeEach((async () => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(panelComponentModuleDef, PanelWrapperComponent);
         panelWrapperComponent = fixture.componentInstance;
-        wmComponent = panelWrapperComponent.wmComponent;
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        wmComponent = panelWrapperComponent.wmComponent;
     }));
 
     async function togglePanel(expand: string) {
@@ -91,10 +94,12 @@ describe("PanelComponent", () => {
 
         // Wait for the fixture to stabilize
         await fixture.whenStable();
+        fixture.detectChanges();
 
         // Trigger change detection
         fixture.detectChanges();
         await fixture.whenStable();
+        fixture.detectChanges();
     }
 
     it('should create the Panel component', () => {
@@ -113,6 +118,7 @@ describe("PanelComponent", () => {
 
         // Wait for the fixture to stabilize
         await fixture.whenStable();
+        fixture.detectChanges();
 
         // Get the menu dropdown element and spy on the callback
         let menudropdownEle = getMenudropdownEle();
@@ -121,6 +127,7 @@ describe("PanelComponent", () => {
         // Trigger change detection
         fixture.detectChanges();
         await fixture.whenStable();
+        fixture.detectChanges();
 
         // Get the list item elements and click the first one
         let liElements = menudropdownEle.query(By.css('li.app-menu-item'));
@@ -129,6 +136,7 @@ describe("PanelComponent", () => {
         // Trigger change detection again and wait for stabilization
         fixture.detectChanges();
         await fixture.whenStable();
+        fixture.detectChanges();
 
         // Assert that the callback was called
         expect(panelWrapperComponent.panel1Actionsclick).toHaveBeenCalledTimes(1);
@@ -142,10 +150,12 @@ describe("PanelComponent", () => {
         fullscreenBtn.nativeElement.click();
         // Wait for the fixture to stabilize
         await fixture.whenStable();
+        fixture.detectChanges();
 
         // Trigger change detection
         fixture.detectChanges();
         await fixture.whenStable();
+        fixture.detectChanges();
 
         // Assert that the panel is expanded
         expect(wmComponent.expanded).toBeTruthy();
@@ -157,10 +167,12 @@ describe("PanelComponent", () => {
 
         // Wait for the fixture to stabilize
         await fixture.whenStable();
+        fixture.detectChanges();
 
         // Trigger change detection
         fixture.detectChanges();
         await fixture.whenStable();
+        fixture.detectChanges();
 
         expect(wmComponent.getWidget().show).toBeFalsy();
     });
@@ -176,18 +188,22 @@ describe("PanelComponent", () => {
         collapseBtn.nativeElement.click();
 
         await fixture.whenStable();
+        fixture.detectChanges();
 
         fixture.detectChanges();
         await fixture.whenStable();
+        fixture.detectChanges();
 
         panelHeaderEle = fixture.debugElement.query(By.css('.panel-heading'));
         const expandBtn = panelHeaderEle.query(By.css('.wi-plus'));
         expandBtn.nativeElement.click();
 
         await fixture.whenStable();
+        fixture.detectChanges();
 
         fixture.detectChanges();
         await fixture.whenStable();
+        fixture.detectChanges();
 
         // Assert that the panel is expanded
         expect(wmComponent.expanded).toBeTruthy();
@@ -203,9 +219,11 @@ describe("PanelComponent", () => {
         helpIcon.nativeElement.click();
 
         await fixture.whenStable();
+        fixture.detectChanges();
 
         fixture.detectChanges();
         await fixture.whenStable();
+        fixture.detectChanges();
 
         let helpTextContainer = fixture.debugElement.query(By.css('.show-help'));
         expect(helpTextContainer).toBeTruthy();

@@ -29,8 +29,8 @@ describe('TableColumnGroupDirective', () => {
         } as any;
 
         TestBed.configureTestingModule({
-            imports: [TableColumnGroupDirective],
-            declarations: [TestComponent],
+            imports: [TableColumnGroupDirective, TestComponent],
+            declarations: [],
             providers: [
                 { provide: TableComponent, useValue: tableComponent },
                 { provide: 'EXPLICIT_CONTEXT', useValue: {} },

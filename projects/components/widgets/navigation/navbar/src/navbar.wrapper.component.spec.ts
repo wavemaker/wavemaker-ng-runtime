@@ -12,12 +12,13 @@ const markup = `<div wmNavbar aria-label="breadcrumb" name="navbar1"></div>`;
     template: markup
 })
 class NavbarWrapperComponent {
-    @ViewChild(NavbarComponent, { static: true }) wmComponent: NavbarComponent;
+    @ViewChild(NavbarComponent, { static: false }) wmComponent: NavbarComponent;
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, NavbarComponent],
-    declarations: [NavbarWrapperComponent],
+    imports: [FormsModule, NavbarComponent,
+        NavbarWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
     ]

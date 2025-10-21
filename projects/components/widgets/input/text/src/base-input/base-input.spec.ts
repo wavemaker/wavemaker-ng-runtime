@@ -58,8 +58,7 @@ describe('BaseInput', () => {
         mockInjector = new MockInjector();
 
         await TestBed.configureTestingModule({
-            declarations: [TestInputComponent],
-            imports: [FormsModule],
+            imports: [TestInputComponent, FormsModule],
             providers: [
                 { provide: Injector, useValue: mockInjector },
                 { provide: WidgetConfig, useClass: MockWidgetConfig },

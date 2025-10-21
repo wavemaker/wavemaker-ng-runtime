@@ -19,12 +19,13 @@ const markup = `<wm-input type="color" name="text1" hint="colorpicker">`;
 })
 
 class InputColorWrapperComponent {
-    @ViewChild(InputColorComponent, /* TODO: add static flag */ { static: true }) wmComponent: InputColorComponent
+    @ViewChild(InputColorComponent, /* TODO: add static flag */ { static: false }) wmComponent: InputColorComponent
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, IMaskModule, InputColorComponent],
-    declarations: [InputColorWrapperComponent],
+    imports: [FormsModule, IMaskModule, InputColorComponent,
+        InputColorWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

@@ -17,13 +17,14 @@ const markup = `<div wmCheckboxset hint="checkboxset1" caption="Label" required 
 })
 
 class checkboxSetWrapperComponent {
-    @ViewChild(CheckboxsetComponent, /* TODO: add static flag */ { static: true }) wmComponent: CheckboxsetComponent
+    @ViewChild(CheckboxsetComponent, /* TODO: add static flag */ { static: false }) wmComponent: CheckboxsetComponent
 }
 
 
 const checkboxSetModuleDef: ITestModuleDef = {
-    imports: [FormsModule, CheckboxsetComponent],
-    declarations: [checkboxSetWrapperComponent],
+    imports: [FormsModule, CheckboxsetComponent,
+        checkboxSetWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },

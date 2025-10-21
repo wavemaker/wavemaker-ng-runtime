@@ -14,16 +14,17 @@ const markup = `<div wmComposite #wm_composite
     template: markup
 })
 class CompositeWrapperComponent {
-    @ViewChild(CompositeDirective, { static: true }) wmComponent: CompositeDirective;
+    @ViewChild(CompositeDirective, { static: false }) wmComponent: CompositeDirective;
 }
 
 const testModuleDef = {
-    declarations: [CompositeWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: WidgetRef, useValue: { widget: {} } }
     ],
-    imports: [CompositeDirective],
+    imports: [CompositeDirective,
+        CompositeWrapperComponent],
 };
 
 const componentDef: ITestComponentDef = {

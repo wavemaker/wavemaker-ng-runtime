@@ -15,11 +15,12 @@ const markup = `<div wmSwitch #wm_switch1="wmSwitch" [attr.aria-label]="wm_switc
     template: markup
 })
 class SwitchWrapperComponent {
-    @ViewChild(SwitchComponent, /* TODO: add static flag */ { static: true }) wmComponent: SwitchComponent;
+    @ViewChild(SwitchComponent, /* TODO: add static flag */ { static: false }) wmComponent: SwitchComponent;
 }
 const testModuleDef: ITestModuleDef = {
-    imports: [FormsModule, SwitchComponent],
-    declarations: [SwitchWrapperComponent],
+    imports: [FormsModule, SwitchComponent,
+        SwitchWrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: ToDatePipe, useClass: ToDatePipe },
@@ -48,11 +49,13 @@ describe('wm-switch: Component specific tests: ', () => {
     let wmComponent: SwitchComponent;
     let fixture: ComponentFixture<SwitchWrapperComponent>;
 
-    beforeEach(waitForAsync(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, SwitchWrapperComponent);
         wrapperComponent = fixture.componentInstance;
-        wmComponent = wrapperComponent.wmComponent;
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
+        wmComponent = wrapperComponent.wmComponent;
     }));
 
     it('should create switch compoent', () => {

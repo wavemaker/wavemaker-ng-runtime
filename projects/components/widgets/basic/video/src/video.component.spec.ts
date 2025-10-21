@@ -1,4 +1,4 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { ToDatePipe, TrustAsPipe } from '@wm/components/base';
 import { VideoComponent } from './video.component';
@@ -26,7 +26,7 @@ const markup = `<video wmVideo
     template: markup
 })
 class TestComponent {
-    @ViewChild(VideoComponent, { static: true }) wmComponent: VideoComponent;
+    @ViewChild(VideoComponent, { static: false }) wmComponent: VideoComponent;
 }
 
 const testModuleDef: ITestModuleDef = {
@@ -59,11 +59,13 @@ describe("Video Component", () => {
     let wmComponent: VideoComponent;
     let fixture: ComponentFixture<TestComponent>;
 
-    beforeEach(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, TestComponent);
         fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         wmComponent = fixture.componentInstance.wmComponent;
-    });
+    }));
 
     it("should create the component", () => {
         expect(fixture.componentInstance).toBeTruthy();

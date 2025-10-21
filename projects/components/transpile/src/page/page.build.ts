@@ -1,4 +1,4 @@
-import {Attribute, Element, ParseSourceSpan, Text} from '@angular/compiler';
+import {Element, ParseSourceSpan, Text} from '@angular/compiler';
 
 import {IDGenerator} from '@wm/core';
 import {getAttrMarkup, IBuildTaskDef, register} from '@wm/transpiler';
@@ -12,7 +12,7 @@ const findChild = (node: Element, childName: string): Element => {
 };
 
 const createElement = name => {
-    return new Element(name, [], [], [], false, noSpan, noSpan, null, false);
+    return new Element(name, [], [], [], false, noSpan, noSpan, noSpan, false);
 };
 
 const getElementNode = (name, node) => {
@@ -44,13 +44,9 @@ register('wm-page', (): IBuildTaskDef => {
                  pageContentNode = getElementNode('wm-page-content',  getElementNode('wm-content', node));
             }
             if (pageContentNode) {
-                // Use *ngIf structural directive
-                const conditionalNode = createElement('ng-container');
-                const ngIfAttr = new Attribute('*ngIf', 'compilePageContent', noSpan, undefined, noSpan, undefined, undefined);
-                conditionalNode.attrs.push(ngIfAttr);
-                conditionalNode.children = conditionalNode.children.concat(pageContentNode.children);
-                conditionalNode.children.push(new Text('{{onPageContentReady()}}', null, undefined, undefined));
-                pageContentNode.children = [conditionalNode];
+                // Just append onPageContentReady() to trigger initialization
+                // No conditional wrapping needed - content should render immediately
+                pageContentNode.children.push(new Text('{{onPageContentReady()}}', null, undefined, undefined));
             }
         },
         pre: (attrs) => {

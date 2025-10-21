@@ -70,7 +70,7 @@ const markup = `
     template: markup
 })
 class PopoverwrapperComponent {
-    @ViewChild(PopoverComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(PopoverComponent, /* TODO: add static flag */ { static: false })
     wmComponent: PopoverComponent;
 
     onClick() { }
@@ -79,8 +79,8 @@ class PopoverwrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    imports: [PopoverModule.forRoot(), PopoverComponent, AnchorComponent],
-    declarations: [PopoverwrapperComponent],
+    imports: [PopoverModule.forRoot(), PopoverComponent, AnchorComponent, PopoverwrapperComponent],
+    declarations: [],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: PopoverConfig },
@@ -107,16 +107,19 @@ describe('PopoverComponent', () => {
     let wmComponent: PopoverComponent;
     let fixture: ComponentFixture<PopoverwrapperComponent>;
 
-    beforeEach(waitForAsync(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, PopoverwrapperComponent);
         popoverWrapperComponent = fixture.componentInstance;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         wmComponent = popoverWrapperComponent.wmComponent;
         //$('body').addClass('wm-app');
-        fixture.detectChanges();
     }));
 
     it('should create the popover Component', async () => {
         await fixture.whenStable();
+        fixture.detectChanges();
         expect(popoverWrapperComponent).toBeTruthy();
     });
 

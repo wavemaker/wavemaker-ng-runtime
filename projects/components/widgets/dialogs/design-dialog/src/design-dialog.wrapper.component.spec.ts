@@ -34,10 +34,11 @@ class MockAbstractDialogService {
 const markup = `<div wmDialog></div>`;
 
 @Component({
-    template: markup
+    template: markup,
+    standalone: false
 })
 class DialogWrapperComponent {
-    @ViewChild(DialogComponent, { static: true }) wmComponent: DialogComponent;
+    @ViewChild(DialogComponent, { static: false }) wmComponent: DialogComponent;
 }
 
 @Component({

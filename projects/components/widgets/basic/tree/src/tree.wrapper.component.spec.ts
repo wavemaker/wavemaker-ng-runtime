@@ -21,7 +21,7 @@ const markup = `<ul wmTree name="tree1" class="testClass" height="800" width="20
     template: markup
 })
 class TreeWrapperComponent {
-    @ViewChild(TreeComponent, /* TODO: add static flag */ { static: true }) wmComponent: TreeComponent;
+    @ViewChild(TreeComponent, /* TODO: add static flag */ { static: false }) wmComponent: TreeComponent;
 
     treenodeItem;
     treePath;
@@ -66,8 +66,9 @@ class TreeWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [TreeWrapperComponent,],
-    imports: [TreeComponent],
+    declarations: [],
+    imports: [TreeComponent,
+        TreeWrapperComponent],
     providers: [
         { provide: App, useValue: mockApp },
         { provide: AbstractI18nService, useClass: MockAbstractI18nService }

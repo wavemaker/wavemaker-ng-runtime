@@ -1,4 +1,4 @@
-import { ComponentFixture } from '@angular/core/testing';
+import { ComponentFixture, waitForAsync } from '@angular/core/testing';
 import { Component, ViewChild } from '@angular/core';
 import { AbstractDialogService, App } from '@wm/core';
 import { FileUploadComponent } from './file-upload.component';
@@ -22,7 +22,7 @@ const markup = `<div wmFileUpload name="testfileupload" select.event="onSelect($
 })
 
 class FileUploadWrapperComponent {
-    @ViewChild(FileUploadComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(FileUploadComponent, /* TODO: add static flag */ { static: false })
     wmComponent: FileUploadComponent;
     files: Array<File>;
 
@@ -36,8 +36,9 @@ class FileUploadWrapperComponent {
 }
 
 const testModuleDef: ITestModuleDef = {
-    declarations: [FileUploadWrapperComponent],
-    imports: [FileUploadComponent, FileSizePipe, FileIconClassPipe, StateClassPipe],
+    declarations: [],
+    imports: [FileUploadComponent, FileSizePipe, FileIconClassPipe, StateClassPipe,
+        FileUploadWrapperComponent],
     providers: [{ provide: App, useValue: mockApp }, AbstractDialogService]
 };
 
@@ -59,12 +60,14 @@ describe('Fileupload Component', () => {
     let fixture: ComponentFixture<FileUploadWrapperComponent>;
     let wrapperComponent: FileUploadWrapperComponent;
     let wmComponent: FileUploadComponent;
-    beforeEach(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, FileUploadWrapperComponent);
         wrapperComponent = fixture.componentInstance;
-        wmComponent = wrapperComponent.wmComponent;
         fixture.detectChanges();
-    });
+        await fixture.whenStable();
+        fixture.detectChanges();
+        wmComponent = wrapperComponent.wmComponent;
+    }));
     it('should create the Fileupload Component', () => {
         expect(wrapperComponent).toBeTruthy();
     });
@@ -745,9 +748,12 @@ describe('Fileupload Component WIth multiple', () => {
     let fixture: ComponentFixture<FileUploadWrapperComponent>;
     let wrapperComponent: FileUploadWrapperComponent;
     let wmComponent: FileUploadComponent;
-    beforeEach(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, FileUploadWrapperComponent);
         wrapperComponent = fixture.componentInstance;
+        fixture.detectChanges();
+        await fixture.whenStable();
+        fixture.detectChanges();
         wmComponent = wrapperComponent.wmComponent;
         (global as any).$ = {
             extend: jest.fn((...args) => Object.assign({}, ...args))
@@ -755,7 +761,7 @@ describe('Fileupload Component WIth multiple', () => {
         fixture.detectChanges();
         wmComponent.multiple = true;
         fixture.detectChanges();
-    });
+    }));
     it('should create fileupload component', () => {
         expect(wrapperComponent).toBeTruthy();
     });

@@ -8,7 +8,7 @@ import { FormsModule } from "@angular/forms";
 import { DatePipe } from '@angular/common';
 import { ToDatePipe } from '@wm/components/base';
 import { RatingComponent } from "./rating.component";
-import { ComponentFixture } from "@angular/core/testing";
+import { ComponentFixture, waitForAsync } from "@angular/core/testing";
 import { By } from "@angular/platform-browser";
 import { Component, ViewChild } from "@angular/core";
 import { AbstractI18nService, App, AppDefaults } from '@wm/core';
@@ -19,7 +19,7 @@ const markup = `<div tabindex="1"  wmRating  name="rating1"></div>`;
     template: markup
 })
 class TestComponent {
-    @ViewChild(RatingComponent, /* TODO: add static flag */ { static: true }) wmComponent: RatingComponent;
+    @ViewChild(RatingComponent, /* TODO: add static flag */ { static: false }) wmComponent: RatingComponent;
 }
 
 const testModuleDef: ITestModuleDef = {
@@ -48,12 +48,14 @@ TestBase.verifyStyles();
 describe("wm-rating: Component Specific tests", () => {
     let wmComponent: RatingComponent;
     let fixture: ComponentFixture<TestComponent>, testElement;
-    beforeEach(() => {
+    beforeEach(waitForAsync(async () => {
         fixture = compileTestComponent(testModuleDef, TestComponent);
+        fixture.detectChanges();
+        await fixture.whenStable();
         fixture.detectChanges();
         wmComponent = fixture.componentInstance.wmComponent;
         testElement = fixture.debugElement.queryAll(By.css("label"))[3];
-    });
+    }));
     it("should create the component", () => {
         expect(fixture.componentInstance).toBeTruthy();
         expect(wmComponent).toBeTruthy();

@@ -368,7 +368,7 @@ const summaryRowData: any = [
 })
 
 class TableWrapperComponent {
-    @ViewChild(TableComponent, /* TODO: add static flag */ { static: true })
+    @ViewChild(TableComponent, /* TODO: add static flag */ { static: false })
     wmComponent: TableComponent;
 }
 
@@ -425,8 +425,9 @@ let providers = [
 ]
 
 const testModuleDef: ITestModuleDef = {
-    imports: [...declarations, ...imports],
-    declarations: [TableWrapperComponent],
+    imports: [...declarations, ...imports,
+        TableWrapperComponent],
+    declarations: [],
     providers: providers,
     teardown: { destroyAfterEach: false }
 };
@@ -757,13 +758,13 @@ describe("DataTable", () => {
                     template: inline_edit_markup
                 })
                 class InlineTableWrapperComponent {
-                    @ViewChild(TableComponent, /* TODO: add static flag */ { static: true })
+                    @ViewChild(TableComponent, /* TODO: add static flag */ { static: false })
                     wmComponent: TableComponent;
                 }
 
                 const inlineTestModuleDef: ITestModuleDef = {
-                    imports: [...declarations, ...imports],
-                    declarations: [InlineTableWrapperComponent],
+                    imports: [...declarations, ...imports, InlineTableWrapperComponent],
+                    declarations: [],
                     providers: providers,
                     teardown: { destroyAfterEach: false }
                 };
@@ -2368,14 +2369,14 @@ describe("DataTable", () => {
                     template: quick_edit_markup
                 })
                 class QuickEditTableWrapperComponent {
-                    @ViewChild(TableComponent, /* TODO: add static flag */ { static: true })
+                    @ViewChild(TableComponent, /* TODO: add static flag */ { static: false })
                     wmComponent: TableComponent;
                     UserTable1Rowselect($event, widget, row) { }
                 }
 
                 const quickeditTestModuleDef: ITestModuleDef = {
-                    imports: [...declarations, ...imports],
-                    declarations: [QuickEditTableWrapperComponent],
+                    imports: [...declarations, ...imports, QuickEditTableWrapperComponent],
+                    declarations: [],
                     providers: providers,
                     teardown: { destroyAfterEach: false }
                 };
@@ -2681,7 +2682,7 @@ describe("DataTable", () => {
                     template: summary_row_markup
                 })
                 class SummaryRowWrapperComponent {
-                    @ViewChild(TableComponent, /* TODO: add static flag */ { static: true })
+                    @ViewChild(TableComponent, /* TODO: add static flag */ { static: false })
                     wmComponent: TableComponent;
                     UserTable1Beforedatarender(widget, data, columns) {
                         const internalMarks = data.find(o => o.exam === 'Internal');
@@ -2753,8 +2754,8 @@ describe("DataTable", () => {
                 }
 
                 const summaryRowTestModuleDef: ITestModuleDef = {
-                    imports: [...declarations, ...imports],
-                    declarations: [SummaryRowWrapperComponent],
+                    imports: [...declarations, ...imports, SummaryRowWrapperComponent],
+                    declarations: [],
                     providers: providers,
                     teardown: { destroyAfterEach: false }
                 };

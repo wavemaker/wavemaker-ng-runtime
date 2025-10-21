@@ -17,7 +17,8 @@ jest.mock('lodash-es', () => ({
 }));
 @Component({
     selector: 'test-dataset-aware-form',
-    template: '<div></div>'
+    template: '<div></div>',
+    standalone: false
 })
 class TestComponent extends DatasetAwareFormComponent {
     constructor(inj: Injector) {

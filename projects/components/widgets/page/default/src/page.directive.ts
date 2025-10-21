@@ -33,7 +33,9 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
     }
 
     constructor(inj: Injector, private titleService: Title, private viewport: Viewport, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+        console.log('[PageDirective] Constructor called!', { widgetConfig: WIDGET_CONFIG });
         super(inj, WIDGET_CONFIG, explicitContext);
+        console.log('[PageDirective] After super(), classes should be:', this.nativeElement?.className);
     }
 
     /**

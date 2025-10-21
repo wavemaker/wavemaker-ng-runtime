@@ -72,13 +72,24 @@ export default [
             globals: rollupGlobals
         }
     },
+    // Commented out - build-task library is not being compiled, causing build failures
+    // {
+    //     input: './libraries/build-task/fesm2022/index.mjs',
+    //     external: [ ...rollupExternals ],
+    //     output: {
+    //         file: './libraries/build-task/bundles/index.umd.js',
+    //         format: 'umd',
+    //         name: 'wm.buildTask',
+    //         globals: rollupGlobals
+    //     }
+    // },
     {
-        input: './libraries/build-task/fesm2022/index.mjs',
+        input: './libraries/components/transpile/fesm2022/index.mjs',
         external: [ ...rollupExternals ],
         output: {
-            file: './libraries/build-task/bundles/index.umd.js',
+            file: './libraries/components/transpile/bundles/index.umd.js',
             format: 'umd',
-            name: 'wm.buildTask',
+            name: 'wm.components.transpile',
             globals: rollupGlobals
         }
     },

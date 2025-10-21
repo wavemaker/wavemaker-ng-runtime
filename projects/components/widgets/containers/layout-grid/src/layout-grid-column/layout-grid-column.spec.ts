@@ -22,10 +22,11 @@ jest.mock('@wm/components/base', () => ({
 
 // Create a test component
 @Component({
-    template: '<div wmLayoutGridColumn height="100px"></div>'
+    template: '<div wmLayoutGridColumn height="100px"></div>',
+    standalone: false
 })
 class TestComponent {
-    @ViewChild(LayoutGridColumnDirective, { static: true }) gridColumnDirective: LayoutGridColumnDirective;
+    @ViewChild(LayoutGridColumnDirective, { static: false }) gridColumnDirective: LayoutGridColumnDirective;
 }
 
 describe('LayoutGridColumnDirective', () => {

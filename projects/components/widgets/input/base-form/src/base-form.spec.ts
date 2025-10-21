@@ -43,7 +43,7 @@ describe('BaseFormComponent', () => {
         mockGetWidgetPropsByType.mockReturnValue(new Map());
 
         await TestBed.configureTestingModule({
-            declarations: [TestFormComponent],
+            imports: [TestFormComponent],
             providers: [
                 { provide: App, useValue: mockApp },
                 { provide: WidgetConfig, useClass: MockWidgetConfig },

@@ -37,12 +37,13 @@ const markup = `<div wmConfirmDialog></div>`;
     template: markup
 })
 class ConfirmDialogWrapperComponent {
-    @ViewChild(ConfirmDialogComponent, { static: true }) wmComponent: ConfirmDialogComponent;
+    @ViewChild(ConfirmDialogComponent, { static: false }) wmComponent: ConfirmDialogComponent;
 }
 
 const testModuleDef = {
-    imports: [FormsModule, ConfirmDialogComponent],
-    declarations: [ConfirmDialogWrapperComponent],
+    imports: [FormsModule, ConfirmDialogComponent,
+        ConfirmDialogWrapperComponent],
+    declarations: [],
     schemas: [NO_ERRORS_SCHEMA],
     providers: [
         provideAsWidgetRef(ConfirmDialogComponent),
