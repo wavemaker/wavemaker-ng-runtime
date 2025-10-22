@@ -196,7 +196,7 @@ const PREFAB_DIRECTIVE: ImportDef[] = [{ from: '@wm/components/prefab', name: 'P
 const RICH_TEXT_EDITOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/rich-text-editor', name: 'RichTextEditorComponent' }];
 const TREE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/tree', name: 'TreeComponent' }];
 const ACCESSROLES_DIRECTIVE = [{from: '@wm/runtime/base', name: 'AccessrolesDirective'}];
-
+const SHOW_IN_DEVICE_DIRECTIVE: ImportDef[] = [{from: '@wm/components/base', name: 'ShowInDeviceDirective'}];
 // Pipes
 const TO_DATE_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'ToDatePipe' }];
 const TO_CURRENCY_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'ToCurrencyPipe' }];
@@ -308,6 +308,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-repeat-template', REPEAT_TEMPLATE_DIRECTIVE],
     ['wm-composite', COMPOSITE_DIRECTIVE],
     ['accessroles', ACCESSROLES_DIRECTIVE],
+    ['showindevice', SHOW_IN_DEVICE_DIRECTIVE],
 
     ['toDate', TO_DATE_PIPE],
     ['toCurrency', TO_CURRENCY_PIPE],

@@ -351,6 +351,7 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
                 child.attrs.forEach(function(attr){
                     if (attr.name === 'showindevice') {
                         showInDeviceAttr = attr;
+                        importCollector(WIDGET_IMPORTS.get("showindevice"))
                     } else if (attr.name === 'accessroles') {
                         accessRolesAttr = attr;
                         importCollector(WIDGET_IMPORTS.get('accessroles'));
