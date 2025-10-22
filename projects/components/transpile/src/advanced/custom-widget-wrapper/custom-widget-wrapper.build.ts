@@ -4,7 +4,8 @@ import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 const tagName = 'section';
 const noSpan = ({} as ParseSourceSpan);
 const createElement = name => {
-    return new Element(name, [], [], noSpan, noSpan, noSpan);
+    // Angular 20: Element constructor requires 9 arguments
+    return new Element(name, [], [], [], false, noSpan, noSpan, null, false);
 };
 
 const addAtrribute = (node: Element, name: string, value: string) => {

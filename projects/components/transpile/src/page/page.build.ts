@@ -12,7 +12,8 @@ const findChild = (node: Element, childName: string): Element => {
 };
 
 const createElement = name => {
-    return new Element(name, [], [], noSpan, noSpan, noSpan);
+    // Angular 20: Element constructor requires 9 arguments
+    return new Element(name, [], [], [], false, noSpan, noSpan, null, false);
 };
 
 const getElementNode = (name, node) => {

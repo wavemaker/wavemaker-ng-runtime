@@ -4,7 +4,8 @@ import { Element, ParseSourceSpan, Text } from "@angular/compiler";
 const tagName = 'div';
 
 const createElement = name => {
-    return new Element(name, [], [], noSpan, noSpan, noSpan);
+    // Angular 20: Element constructor requires 9 arguments
+    return new Element(name, [], [], [], false, noSpan, noSpan, null, false);
 };
 
 const noSpan = ({} as ParseSourceSpan);

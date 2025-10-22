@@ -89,6 +89,6 @@
     "angularCompilerOptions": {
         "compilationMode": "full",
         "strictMetadataEmit": false,
-        "fullTemplateTypeCheck": false
+        "strictTemplates": false
     }
 }
