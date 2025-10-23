@@ -57,6 +57,8 @@ export class WizardStepComponent extends StylableComponent implements OnInit, Af
     private isdynamic: boolean;
     public $lazyLoad = noop;
     isDone: boolean = false;
+    nextCBInProgress: boolean = false;
+    prevCBInProgress: boolean = false;
 
     private status: STEP_STATUS = STEP_STATUS.DISABLED;
     private wizardComponent: WizardComponent;

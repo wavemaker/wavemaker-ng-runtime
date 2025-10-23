@@ -365,12 +365,16 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     private handleNext(value: boolean | Promise<boolean>, currentStep, currentStepIndex) {
         if (this.isPromise(value)) {
             (value as Promise<boolean>).then(response => {
+                this.currentStep.nextCBInProgress = false;
                 if (response === false) {
                     return;
                 }
                 this.extendNextFn(currentStep, currentStepIndex);
-            }, err => err);
+            }, err => {
+                this.currentStep.nextCBInProgress = false;
+            })
         } else {
+            this.currentStep.nextCBInProgress = false;
             if (value === false) {
                 return;
             }
@@ -379,14 +383,20 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     }
 
     public next(eventName: string = 'next') {
+        if (this.currentStep.nextCBInProgress) {
+            return;
+        }
+
         const currentStep = this.currentStep;
         const currentStepIndex = this.getCurrentStepIndex();
 
         // abort if onSkip method returns false
         if (eventName === 'skip') {
+            this.currentStep.nextCBInProgress = true;
             const response =  currentStep.invokeSkipCB(currentStepIndex);
             this.handleNext(response, currentStep, currentStepIndex);
         } else if (this.currentStep.isValid && eventName === 'next') {
+            this.currentStep.nextCBInProgress = true;
             const response  =  currentStep.invokeNextCB(currentStepIndex);
             this.handleNext(response, currentStep, currentStepIndex);
         } else if (this.enablenext && !this.currentStep.isValid){
@@ -431,19 +441,28 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     }
     // Method to navigate to previous step
     public prev() {
+        if (this.currentStep.prevCBInProgress) {
+            return;
+        }
+
         const currentStep = this.currentStep;
         const currentStepIndex = this.getCurrentStepIndex();
 
+        this.currentStep.prevCBInProgress = true;
         // abort if onPrev method returns false.
         const response = currentStep.invokePrevCB(currentStepIndex);
         if (this.isPromise(response)) {
             (response as Promise<boolean>).then( response => {
+                this.currentStep.prevCBInProgress = false;
                 if (response === false) {
                     return;
                 }
                 this.extendPrevFn(currentStep, currentStepIndex);
-            }, err => err);
+            }, err => {
+                this.currentStep.prevCBInProgress = false;
+            });
         } else {
+            this.currentStep.prevCBInProgress = false;
             if (response === false) {
                 return;
             }
