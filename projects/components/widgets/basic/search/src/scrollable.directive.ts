@@ -6,7 +6,7 @@ declare const $;
 
 @Directive({
   standalone: true,
-    selector: '[scrollable]'
+    selector: '[scrollableHandler]'
 })
 export class ScrollableDirective implements AfterContentInit, AfterViewInit {
     private elementRef: ElementRef;

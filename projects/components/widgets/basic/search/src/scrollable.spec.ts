@@ -5,7 +5,7 @@ import { ScrollableDirective } from './scrollable.directive';
 import { SearchComponent } from './search.component';
 
 @Component({
-    template: '<div scrollable></div>'
+    template: '<div scrollableHandler></div>'
 })
 class TestComponent { }
 
