@@ -7,13 +7,14 @@ export default [
             name: "ng.core",
             globals: {
                 "@angular/core": "ng.core",
+                "@angular/core/primitives/di": "ng.di",
                 "@angular/core/primitives/signals": "ng.signals",
                 "@angular/core/primitives/event-dispatch": "ng.event-dispatch",
                 "rxjs": "rxjs",
                 "rxjs/operators": "rxjs.operators",
             }
         },
-        external: ["rxjs", "rxjs/operators", "@angular/core/primitives/signals", "@angular/core/primitives/event-dispatch"],
+        external: ["rxjs", "rxjs/operators", "@angular/core/primitives/di", "@angular/core/primitives/signals", "@angular/core/primitives/event-dispatch"],
     },
     {
         input: "node_modules/@angular/animations/fesm2022/animations.mjs",
@@ -101,6 +102,16 @@ export default [
         external: ["@angular/core", "@angular/common", "rxjs", "rxjs/operators"],
     },
     {
+        input: 'node_modules/@angular/core/fesm2022/primitives/di.mjs',
+        output: {
+            file: 'node_modules/@angular/core/bundles/core-di.umd.js',
+            format: 'umd',
+            name: 'ng.di',
+            globals: {}
+        },
+        external: [],
+    },
+    {
         input: 'node_modules/@angular/core/fesm2022/primitives/signals.mjs',
         output: {
             file: 'node_modules/@angular/core/bundles/core-signals.umd.js',
@@ -119,6 +130,20 @@ export default [
             globals: {}
         },
         external: [],
+    },
+    {
+        input: 'node_modules/@angular/core/fesm2022/rxjs-interop.mjs',
+        output: {
+            file: 'node_modules/@angular/core/bundles/core-rxjs-interop.umd.js',
+            format: 'umd',
+            name: 'ng.core.rxjsInterop',
+            globals: {
+                "@angular/core": "ng.core",
+                "rxjs": "rxjs",
+                "rxjs/operators": "rxjs.operators"
+            }
+        },
+        external: ["@angular/core", "rxjs", "rxjs/operators"],
     },
     {
         input: "node_modules/@angular/forms/fesm2022/forms.mjs",

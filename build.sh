@@ -427,6 +427,11 @@ buildTsLib() {
 
 buildNgxBootstrap() {
     execCommand "rollup" "ngx-bootstrap-libs" "${ROLLUP} -c ./config/rollup.ngxBootstrap.config.mjs"
+    
+    # Patch ngx-bootstrap PositioningService for Angular 20 compatibility
+    echo "Patching PositioningService for Angular 20..."
+    node patch-positioning.mjs
+    
     arr=(./node_modules/ngx-bootstrap/collapse/bundles/ngx-bootstrap-collapse.umd.js \
     ./node_modules/ngx-bootstrap/chronos/bundles/ngx-bootstrap-chronos.umd.js \
     ./node_modules/ngx-bootstrap/utils/bundles/ngx-bootstrap-utils.umd.js \
@@ -484,8 +489,11 @@ bundleJS() {
         ./node_modules/zone.js/bundles/zone.umd.js \
         ./node_modules/rxjs/dist/bundles/rxjs.umd.js \
         ./node_modules/@angular/compiler/bundles/compiler.umd.js \
+        ./node_modules/@angular/core/bundles/core-di.umd.js \
         ./node_modules/@angular/core/bundles/core-signals.umd.js \
+        ./node_modules/@angular/core/bundles/core-event-dispatch.umd.js \
         ./node_modules/@angular/core/bundles/core.umd.js \
+        ./node_modules/@angular/core/bundles/core-rxjs-interop.umd.js \
         ./node_modules/@angular/common/bundles/common.umd.js \
         ./node_modules/@angular/animations/bundles/animations.umd.js \
         ./node_modules/@angular/animations/bundles/animations-browser.umd.js \

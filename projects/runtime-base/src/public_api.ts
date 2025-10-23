@@ -8,6 +8,7 @@ export * from './components/base-prefab.component';
 export * from './components/base-layout.component';
 export * from './overrides/wm_dom_renderer';
 export * from './overrides/wm_shared_styles_host';
+export { WMPositioningService } from './overrides/positioning.service';
 export * from './components/base-spa-page.component'
 export {
     InitializeApp,

@@ -13,16 +13,11 @@ const noSpan = ({} as ParseSourceSpan);
 register('wm-page-content', (): IBuildTaskDef => {
     return {
         template: (node: Element) => {
+            // For SPA pages, just append onPageContentReady() without conditional wrapping
             for(let attr of node.attrs) {
                 if(attr.name === 'spa' && attr.value === 'true') {
-                    const conditionalNode = createElement('ng-container');
-                    const ifOpenText = new Text('@if (compilePageContent) {', null, undefined, undefined);
-                    conditionalNode.children.push(ifOpenText);
-                    conditionalNode.children = conditionalNode.children.concat(node.children);
-                    conditionalNode.children.push(new Text('{{onPageContentReady()}}', null, undefined, undefined));
-                    const ifCloseText = new Text('}', null, undefined, undefined);
-                    conditionalNode.children.push(ifCloseText);
-                    node.children = [conditionalNode];
+                    // No conditional wrapping needed - content should render immediately
+                    node.children.push(new Text('{{onPageContentReady()}}', null, undefined, undefined));
                     break;
                 }
             }
