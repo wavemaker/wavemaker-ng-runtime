@@ -1,4 +1,4 @@
-import { ImportDef } from './build';
+import {ImportDef} from './build';
 
 // Angular Core Modules
 const NG_FORM_MODULE: ImportDef[] = [{ from: '@angular/forms', name: 'FormsModule', as: 'ngFormsModule' }];
@@ -197,6 +197,7 @@ const RICH_TEXT_EDITOR_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/r
 const TREE_COMPONENT: ImportDef[] = [{ from: '@wm/components/basic/tree', name: 'TreeComponent' }];
 const ACCESSROLES_DIRECTIVE = [{from: '@wm/runtime/base', name: 'AccessrolesDirective'}];
 const SHOW_IN_DEVICE_DIRECTIVE: ImportDef[] = [{from: '@wm/components/base', name: 'ShowInDeviceDirective'}];
+const LAZY_LOAD_DIRECTIVE: ImportDef[] = [{from: '@wm/components/base', name: 'LazyLoadDirective'}];
 // Pipes
 const TO_DATE_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'ToDatePipe' }];
 const TO_CURRENCY_PIPE: ImportDef[] = [{ from: '@wm/components/base', name: 'ToCurrencyPipe' }];
@@ -309,6 +310,7 @@ export const WIDGET_IMPORTS: Map<string, ImportDef[]> = new Map([
     ['wm-composite', COMPOSITE_DIRECTIVE],
     ['accessroles', ACCESSROLES_DIRECTIVE],
     ['showindevice', SHOW_IN_DEVICE_DIRECTIVE],
+    ['lazyload', LAZY_LOAD_DIRECTIVE],
 
     ['toDate', TO_DATE_PIPE],
     ['toCurrency', TO_CURRENCY_PIPE],
