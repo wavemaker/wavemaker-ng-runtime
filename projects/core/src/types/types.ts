@@ -158,6 +158,7 @@ export abstract class AbstractI18nService {
     protected abstract loadMomentLocaleBundle(localeLang);
     protected abstract loadLocaleBundles(localeLang);
     public abstract setTimezone(locale, compInstance?);
+    public abstract setTimezoneEarly(): Promise<any>;
     public abstract getFormatsByLocale();
     public abstract getTimezone(compInstance?);
     public abstract getPrefabLocaleBundle(prefabName: string): any;

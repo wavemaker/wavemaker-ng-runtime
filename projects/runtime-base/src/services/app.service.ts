@@ -141,6 +141,9 @@ export class AppRef {
         if (moduleName === 'moment') {
             return moment;
         }
+        else if (moduleName === 'moment-tz-data') {
+            return this.i18nService.setTimezoneEarly();
+        }
     }
 
     public getDependency(injToken) {
