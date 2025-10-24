@@ -61,7 +61,7 @@ export class ContainerDirective extends BaseContainerComponent {
                 this.direction = nv;
                 if (nv === 'column') this.hasWrap = false; // disable wrap for column direction
 
-                this.$element.css({'flex-direction': nv, display: 'flex'});
+                this.$element.css({display: 'flex', flexDirection : nv});
                 this.applyAlignment(this.alignment); 
                 break;
             case 'wrap':
@@ -89,6 +89,7 @@ export class ContainerDirective extends BaseContainerComponent {
             this.alignment = nv;
             this.applyAlignment(nv);
         }
+       if(key === 'width' || key === 'height'){
         if (nv === 'fill') {
             if (key === 'width') this.$element.css('width', '100%');
             if (key === 'height') {
@@ -103,6 +104,9 @@ export class ContainerDirective extends BaseContainerComponent {
             if (key === 'width') this.$element.css('width', 'fit-content');
             if (key === 'height') this.$element.css('height', 'fit-content');
         }
+      }else if (key === 'padding') {
+            this.$element.css('padding', nv)
+      }
         super.onStyleChange(key, nv, ov);
     }
 

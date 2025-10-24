@@ -19,7 +19,8 @@ const propsMap = new Map(
         ['showindevice', {displayType: 'inline-block', value: 'all', ...PROP_STRING}],
         ['subheading', PROP_STRING],
         ['tabindex', {value: 0, ...PROP_NUMBER}],
-        ['title', PROP_STRING]
+        ['title', PROP_STRING],
+        ['itemsperrow', PROP_STRING],
     ]
 );
 
