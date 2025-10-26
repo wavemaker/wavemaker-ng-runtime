@@ -234,6 +234,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     statehandler;
     selectedItemChange = new Subject();
     selectedItemChange$: Observable<any> = this.selectedItemChange.asObservable();
+    selectedItemChangeSubscription;
 
     actions = [];
     _actions = {
@@ -1175,7 +1176,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     return;
                 }
                 this._isDependent = true;
-                this.selectedItemChange$
+                // Unsubscribe previous subscription if exists to prevent memory leak
+                if (this.selectedItemChangeSubscription) {
+                    this.selectedItemChangeSubscription.unsubscribe();
+                }
+                this.selectedItemChangeSubscription = this.selectedItemChange$
                     .pipe(debounceTime(250))
                     .subscribe(this.triggerWMEvent.bind(this));
             })
@@ -1273,15 +1278,23 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         this.renderOperationColumns();
         this.gridOptions.colDefs = this.fieldDefs;
 
-        this.datagridElement.datatable(this.gridOptions);
-        this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+        // Defer initialization to ensure datatable.js is loaded (Angular 20 timing issue in dev server)
+        const initTable = () => {
+            if (typeof this.datagridElement.datatable === 'function') {
+                this.datagridElement.datatable(this.gridOptions);
+                this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
+                this.applyProps.forEach(args => this.callDataGridMethod(...args));
+            } else {
+                // Retry if datatable not loaded yet
+                setTimeout(initTable, 50);
+            }
+        };
+        setTimeout(initTable, 0);
         // if(this.gridOptions.data.length || this.variableInflight) {
         //     this.callDataGridMethod('setStatus', 'loading', this.loadingdatamsg);
         // } else {
         //     this.callDataGridMethod('setStatus', 'nodata', this.nodatamessage);
         // }
-
-        this.applyProps.forEach(args => this.callDataGridMethod(...args));
 
         if (this.editmode === EDIT_MODE.QUICK_EDIT) {
             this.documentClickBind = this._documentClickBind.bind(this);
@@ -1512,6 +1525,14 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         }
         if (this.navigatorMaxResultWatch) {
             this.navigatorMaxResultWatch.unsubscribe();
+        }
+        // Unsubscribe from selectedItemChange subscription to prevent memory leak
+        if (this.selectedItemChangeSubscription) {
+            this.selectedItemChangeSubscription.unsubscribe();
+        }
+        // Complete the Subject to release all subscriptions
+        if (this.selectedItemChange) {
+            this.selectedItemChange.complete();
         }
         super.ngOnDestroy();
     }

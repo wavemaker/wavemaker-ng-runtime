@@ -363,6 +363,7 @@ buildApp() {
 
     if [[ "${sourceModified}" == true ]]; then
         buildWMComponentUmdLibs
+        buildTranspilationFiles
         bundleWeb
     fi
 }
@@ -474,6 +475,10 @@ buildAngularUmdLibs() {
 
 buildWMComponentUmdLibs() {
     execCommand "rollup" "wm-components-umd" "${ROLLUP} -c ./config/rollup.wm-components.config.mjs"
+}
+
+buildTranspilationFiles() {
+    execCommand "rollup" "transpilation-files" "${ROLLUP} -c ./config/rollup.build-task.mjs"
 }
 
 bundleWebLibs() {

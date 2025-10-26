@@ -7,6 +7,7 @@ import {
     ElementRef,
     Inject,
     Injector,
+    OnDestroy,
     Optional
 } from '@angular/core';
 
@@ -31,7 +32,7 @@ const WIDGET_CONFIG = {widgetType: 'wm-livetable', hostClass: DEFAULT_CLS};
         provideAsWidgetRef(LiveTableComponent)
     ]
 })
-export class LiveTableComponent extends StylableComponent implements AfterContentInit {
+export class LiveTableComponent extends StylableComponent implements AfterContentInit, OnDestroy {
     static initializeProps = registerProps();
     @ContentChild(TableComponent) table: TableComponent;
 
@@ -40,6 +41,7 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
 
     private dialogId;
     private $queue = [];
+    private selectedItemChangeSubscription;
 
     private tableOptions: any = {
         'multiselect': false,
@@ -68,25 +70,35 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         super.ngAfterContentInit();
         if (this.table) {
             this.table._liveTableParent = this;
-            this.table.datagridElement.datatable('option', this.tableOptions);
+            
+            // Defer live-table configuration to ensure parent table datatable is initialized (Angular 20 timing)
+            const configureLiveTable = () => {
+                if (typeof this.table.datagridElement.datatable === 'function' && this.table.datagridElement.datatable('instance')) {
+                    this.table.datagridElement.datatable('option', this.tableOptions);
 
-            this.table.selectedItemChange$
-                .pipe(debounceTime(250))
-                .subscribe(this.onSelectedItemChange.bind(this));
+                    this.selectedItemChangeSubscription = this.table.selectedItemChange$
+                        .pipe(debounceTime(250))
+                        .subscribe(this.onSelectedItemChange.bind(this));
 
-            if (!this.isLayoutDialog && !this.form) {
-                this.table.datagridElement.datatable('option', {
-                    'beforeRowUpdate' : () => {
-                        this.showErrorMessage();
-                    },
-                    'beforeRowDelete' : () => {
-                        this.showErrorMessage();
-                    },
-                    'beforeRowInsert' : () => {
-                        this.showErrorMessage();
+                    if (!this.isLayoutDialog && !this.form) {
+                        this.table.datagridElement.datatable('option', {
+                            'beforeRowUpdate' : () => {
+                                this.showErrorMessage();
+                            },
+                            'beforeRowDelete' : () => {
+                                this.showErrorMessage();
+                            },
+                            'beforeRowInsert' : () => {
+                                this.showErrorMessage();
+                            }
+                        });
                     }
-                });
-            }
+                } else {
+                    // Parent table not initialized yet, retry
+                    setTimeout(configureLiveTable, 50);
+                }
+            };
+            setTimeout(configureLiveTable, 0);
         }
     }
 
@@ -259,5 +271,13 @@ export class LiveTableComponent extends StylableComponent implements AfterConten
         setTimeout(() => {
             triggerFn(this.$queue.pop());
         });
+    }
+
+    ngOnDestroy() {
+        // Unsubscribe from selectedItemChange subscription to prevent memory leak
+        if (this.selectedItemChangeSubscription) {
+            this.selectedItemChangeSubscription.unsubscribe();
+        }
+        super.ngOnDestroy();
     }
 }

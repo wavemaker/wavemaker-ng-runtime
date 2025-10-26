@@ -8,6 +8,7 @@ import {
     ElementRef,
     Inject,
     Injector,
+    OnDestroy,
     OnInit,
     Optional,
     TemplateRef,
@@ -61,7 +62,7 @@ let activePopover: PopoverComponent;
     ]
 })
 
-export class PopoverComponent extends StylableComponent implements OnInit, AfterViewInit {
+export class PopoverComponent extends StylableComponent implements OnInit, AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
 
     public event: string;
@@ -459,7 +460,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         this.bsPopoverDirective.hide();
     }
 
-    OnDestroy() {
+    ngOnDestroy() {
         if (this.documentClickHandler) {
             document.removeEventListener('click', this.documentClickHandler, true);
         }
@@ -467,5 +468,10 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (index > -1) {
             PopoverComponent.activePopovers.splice(index, 1);
         }
+        // Clear timeout to prevent memory leak
+        if (this.closePopoverTimeout) {
+            clearTimeout(this.closePopoverTimeout);
+        }
+        super.ngOnDestroy();
     }
 }

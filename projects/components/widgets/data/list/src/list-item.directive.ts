@@ -7,6 +7,7 @@ import {
     inject,
     Injector,
     Input,
+    OnDestroy,
     OnInit,
     Optional,
     ViewContainerRef
@@ -27,7 +28,7 @@ declare const $;
     selector: '[wmListItem]',
     exportAs: 'listItemRef'
 })
-export class ListItemDirective implements OnInit, AfterViewInit {
+export class ListItemDirective implements OnInit, AfterViewInit, OnDestroy {
 
     public item;
     public context;
@@ -43,6 +44,12 @@ export class ListItemDirective implements OnInit, AfterViewInit {
      * To avoid re-rendering of widget, passing unique id as contextKey to createCustomInjector
      */
     protected trackId = widgetIdGenerator.nextUid();
+
+    // Store event listener references for cleanup
+    private editClickHandler;
+    private deleteClickHandler;
+    private mouseEnterHandler;
+    private mouseLeaveHandler;
 
     @HostBinding('class.active') isActive = false;
     @HostBinding('class.disable-item') disableItem = false;
@@ -126,28 +133,32 @@ export class ListItemDirective implements OnInit, AfterViewInit {
 
         if ($editItem) {
             // Triggered on click of edit action
-            $editItem.addEventListener('click', evt => {
+            this.editClickHandler = evt => {
                 this.listComponent.update();
-            });
+            };
+            $editItem.addEventListener('click', this.editClickHandler);
         }
 
         if ($deleteItem) {
             // Triggered on click of delete action
-            $deleteItem.addEventListener('click', evt => {
+            this.deleteClickHandler = evt => {
                 this.listComponent.delete();
-            });
+            };
+            $deleteItem.addEventListener('click', this.deleteClickHandler);
         }
     }
     ngOnInit() {
         if (this.listComponent.mouseEnterCB) {
-            this.nativeElement.addEventListener('mouseenter', ($event) => {
+            this.mouseEnterHandler = ($event) => {
                 this.listComponent.invokeEventCallback('mouseenter', {widget: this, $event});
-            });
+            };
+            this.nativeElement.addEventListener('mouseenter', this.mouseEnterHandler);
         }
         if (this.listComponent.mouseLeaveCB) {
-            this.nativeElement.addEventListener('mouseleave', ($event) => {
+            this.mouseLeaveHandler = ($event) => {
                 this.listComponent.invokeEventCallback('mouseleave', {widget: this, $event});
-            });
+            };
+            this.nativeElement.addEventListener('mouseleave', this.mouseLeaveHandler);
         }
         // adding item attribute on every list item
         $(this.nativeElement).attr('listitemindex', this.$index);
@@ -163,5 +174,27 @@ export class ListItemDirective implements OnInit, AfterViewInit {
                 }
             }
         });
+    }
+
+    ngOnDestroy() {
+        // Remove event listeners to prevent memory leaks
+        const $editItem = this.nativeElement.querySelector('.edit-list-item');
+        const $deleteItem = this.nativeElement.querySelector('.delete-list-item');
+
+        if ($editItem && this.editClickHandler) {
+            $editItem.removeEventListener('click', this.editClickHandler);
+        }
+        if ($deleteItem && this.deleteClickHandler) {
+            $deleteItem.removeEventListener('click', this.deleteClickHandler);
+        }
+        if (this.mouseEnterHandler) {
+            this.nativeElement.removeEventListener('mouseenter', this.mouseEnterHandler);
+        }
+        if (this.mouseLeaveHandler) {
+            this.nativeElement.removeEventListener('mouseleave', this.mouseLeaveHandler);
+        }
+
+        // Complete the destroy subject
+        this.destroy.complete();
     }
 }

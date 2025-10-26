@@ -1,128 +1,16 @@
-import { ApplicationConfig, importProvidersFrom, APP_INITIALIZER, LOCALE_ID, Compiler, RendererFactory2 } from "@angular/core";
+import { ApplicationConfig, importProvidersFrom, LOCALE_ID, Compiler, RendererFactory2 } from "@angular/core";
 import { provideRouter, RouteReuseStrategy, withComponentInputBinding, withHashLocation } from "@angular/router";
 import { provideHttpClient, withXsrfConfiguration, withInterceptorsFromDi, withFetch } from "@angular/common/http";
 import { provideAnimations } from "@angular/platform-browser/animations";
 import { XhrFactory } from "@angular/common";
 import { InjectionToken } from "@angular/core";
 import { routes } from "./app.routes";
-
-// XhrFactory implementation for Angular 20
-class BrowserXhrFactory extends XhrFactory {
-    build(): XMLHttpRequest {
-        return new XMLHttpRequest();
-    }
-}
-
-/**
- * Custom PositioningService that fixes Angular 20 compatibility issue
- * with ngx-bootstrap's PositioningService using takeUntilDestroyed()
- * inside runOutsideAngular() callback
- */
-@Injectable({ providedIn: 'root' })
-class WMPositioningService {
-    private update$$ = new Subject<void>();
-    private positionElements = new Map<HTMLElement, any>();
-    private isDisabled = false;
-    private triggerEvent$: any;
-    private options: any;
-    private destroyRef = inject(DestroyRef); // Inject in constructor context
-
-    constructor(
-        private ngZone: NgZone,
-        private rendererFactory: RendererFactory2,
-        @Inject(PLATFORM_ID) private platformId: Object
-    ) {
-        if (isPlatformBrowser(this.platformId)) {
-            // Fix: Capture destroyRef before entering runOutsideAngular
-            const destroyRef = this.destroyRef;
-            
-            this.ngZone.runOutsideAngular(() => {
-                this.triggerEvent$ = merge(
-                    fromEvent(window, 'scroll', { passive: true }),
-                    fromEvent(window, 'resize', { passive: true }),
-                    of(0, animationFrameScheduler),
-                    this.update$$
-                );
-
-                // Pass destroyRef explicitly to fix injection context issue
-                this.triggerEvent$.pipe(
-                    takeUntilDestroyed(destroyRef)
-                ).subscribe(() => {
-                    if (this.isDisabled) {
-                        return;
-                    }
-
-                    this.positionElements.forEach((positionElement: any) => {
-                        positionElements(
-                            this._getHtmlElement(positionElement.target),
-                            this._getHtmlElement(positionElement.element),
-                            positionElement.attachment,
-                            positionElement.appendToBody,
-                            this.options,
-                            this.rendererFactory.createRenderer(null, null)
-                        );
-                    });
-                });
-            });
-        }
-    }
-
-    position(options: any): void {
-        this.addPositionElement(options);
-    }
-
-    get event$(): any {
-        return this.triggerEvent$;
-    }
-
-    disable(): void {
-        this.isDisabled = true;
-    }
-
-    enable(): void {
-        this.isDisabled = false;
-    }
-
-    addPositionElement(options: any): void {
-        this.positionElements.set(this._getHtmlElement(options.element), options);
-    }
-
-    calcPosition(): void {
-        this.update$$.next();
-    }
-
-    deletePositionElement(elRef: ElementRef | HTMLElement): void {
-        this.positionElements.delete(this._getHtmlElement(elRef));
-    }
-
-    setOptions(options: any): void {
-        this.options = options;
-    }
-
-    private _getHtmlElement(element: HTMLElement | ElementRef | string | any): HTMLElement {
-        // it means that we got a selector
-        if (typeof element === 'string') {
-            return document.querySelector(element) as HTMLElement;
-        }
-
-        if (element instanceof ElementRef) {
-            return element.nativeElement;
-        }
-
-        return element ?? null;
-    }
-}
-
-// Create the internal injection token that HttpXhrBackend actually uses
-const XHR_FACTORY_TOKEN = new InjectionToken<XhrFactory>('XhrFactory', {
-    providedIn: 'root',
-    factory: () => new BrowserXhrFactory()
-});
-
 import { HttpServiceImpl } from "@wm/http";
 import { SecurityService } from "@wm/security";
 import { VariablesService, MetadataService } from "@wm/variables";
 import { OAuthService } from "@wm/oAuth";
+
+
 import {
     AppJSProvider,
     AppVariablesProvider,
@@ -181,6 +69,20 @@ import { ComponentRefProviderService } from "./services/component-ref-provider.s
 import { PrefabConfigProviderService } from "./services/prefab-config-provider.service";
 import { AppResourceManagerService } from "./services/app-resource-manager.service";
 import { CustomPipe, DialogServiceImpl, FilterPipe, ImagePipe, SanitizePipe, ToDatePipe, TrailingZeroDecimalPipe, TrustAsPipe } from "@wm/components/base";
+
+
+// XhrFactory implementation for Angular 20
+class BrowserXhrFactory extends XhrFactory {
+    build(): XMLHttpRequest {
+        return new XMLHttpRequest();
+    }
+}
+
+// Create the internal injection token that HttpXhrBackend actually uses
+const XHR_FACTORY_TOKEN = new InjectionToken<XhrFactory>('XhrFactory', {
+    providedIn: 'root',
+    factory: () => new BrowserXhrFactory()
+});
 
 export const xsrfHeaderName = "X-WM-XSRF-TOKEN";
 
@@ -242,7 +144,6 @@ export const appConfig: ApplicationConfig = {
         
         // Custom renderer overrides (must be early)
         { provide: RendererFactory2, useClass: WMDomRendererFactory2 },
-        
         // Provide HttpService EARLY (AppManagerService needs it)
         { provide: AbstractHttpService, useClass: HttpServiceImpl },
         HttpServiceImpl,  // Also provide directly (some components may inject the class directly)
@@ -302,6 +203,7 @@ export const appConfig: ApplicationConfig = {
             ToastNoAnimationModule.forRoot({ maxOpened: 1, autoDismiss: true }),
             ModalModule.forRoot()
         ),
+        // APP_INITIALIZER removed - initialization will happen after bootstrap in main.ts
         // LOCALE_ID set to default value - will be updated after bootstrap
         {
             provide: LOCALE_ID,

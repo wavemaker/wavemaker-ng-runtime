@@ -448,6 +448,23 @@ window.requestAnimationFrame = (function () {
             };
         }
     }
+    // Validate expression syntax
+    function isValidExpression(expr) {
+        // Check for trailing commas: ,) or ,}
+        if (/,\s*[\)\}]/.test(expr)) {
+            return false;
+        }
+        // Check for leading commas: (, or {,
+        if (/[\(\{]\s*,/.test(expr)) {
+            return false;
+        }
+        // Check for multiple consecutive commas
+        if (/,\s*,/.test(expr)) {
+            return false;
+        }
+        return true;
+    }
+    
     // Angular parser to parse the expression inside the interpolation
     function compile(script) {
         var tArr = [];
@@ -463,7 +480,20 @@ window.requestAnimationFrame = (function () {
                 script = script.substring(match.index + expression.length);
                 expression = expression.substring(3, expression.length - 2);
                 tArr.push(prefix);
-                tArr.push($parse(expression).bind({}));
+                
+                // Validate expression before parsing
+                if (!isValidExpression(expression)) {
+                    // Silently skip invalid expressions
+                    tArr.push(function() { return ''; });
+                    continue;
+                }
+                
+                try {
+                    tArr.push($parse(expression).bind({}));
+                } catch (e) {
+                    // Silently handle parse errors - return a no-op function to prevent breaking the animation
+                    tArr.push(function() { return ''; });
+                }
             }
             tArr.push(script);
             return function () {

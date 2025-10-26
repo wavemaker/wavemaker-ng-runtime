@@ -1,4 +1,4 @@
-import { Attribute, Element, ParseSourceSpan } from '@angular/compiler';
+import { Attribute, Element, ParseSourceSpan, Text } from '@angular/compiler';
 import { getAttrMarkup, IBuildTaskDef, register } from '@wm/transpiler';
 
 const tagName = 'section';
@@ -15,11 +15,9 @@ const addAtrribute = (node: Element, name: string, value: string) => {
 register('wm-custom-widget-container', (): IBuildTaskDef => {
     return {
         template: (node: Element)  => {
-            const conditionalNode = createElement('ng-container');
-            // addAtrribute(conditionalNode, '*ngIf', 'compileContent');
-            conditionalNode.children = conditionalNode.children.concat(node.children);
-            node.children.length = 0;
-            node.children.push(conditionalNode);
+            // Wrap content in @if block with proper newlines to avoid template syntax errors
+            node.children.unshift(new Text('@if (compileContent) {\n', null, undefined, undefined));
+            node.children.push(new Text('\n}', null, undefined, undefined));
         },
         pre: attrs => `<${tagName} wmCustomWidget data-role="widget" ${getAttrMarkup(attrs)}>`,
         post: () => `</${tagName}>`

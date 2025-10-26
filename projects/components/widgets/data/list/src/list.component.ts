@@ -177,6 +177,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private statePersistence: StatePersistence;
     private paginationService: PaginationService;
     private binddatasource: string;
+    private listClickHandler;
+    private addItemClickHandler;
     private match: string;
     private dateformat: string;
     private groupedData: any;
@@ -748,6 +750,17 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this._listAnimator.$btnSubscription.unsubscribe();
         }
         this._listenerDestroyers.forEach(d => d && d());
+        
+        // Remove event listeners to prevent memory leaks
+        const listContainer = this.nativeElement.querySelector('ul.app-livelist-container');
+        if (listContainer && this.listClickHandler) {
+            listContainer.removeEventListener('click', this.listClickHandler, true);
+        }
+        const $addItem = document.getElementsByClassName("add-list-item")[0];
+        if ($addItem && this.addItemClickHandler) {
+            $addItem.removeEventListener('click', this.addItemClickHandler);
+        }
+        
         super.ngOnDestroy();
     }
 
@@ -1214,14 +1227,15 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.cdRef.detectChanges();
         });
         // handle click event in capturing phase.
-        this.nativeElement.querySelector('ul.app-livelist-container').addEventListener('click', ($event) => {
+        this.listClickHandler = ($event) => {
             let target = $($event.target).closest('.app-list-item');
             // Recursively find the current list item
             while (target.get(0) && (target.closest('ul.app-livelist-container').get(0) !== $event.currentTarget)) {
                 target = target.parent().closest('.app-list-item');
             }
             this.triggerListItemSelection(target, $event);
-        }, true);
+        };
+        this.nativeElement.querySelector('ul.app-livelist-container').addEventListener('click', this.listClickHandler, true);
     }
 
     // Triggers on drag start while reordering.
@@ -1359,9 +1373,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const $addItem = document.getElementsByClassName("add-list-item")[0];
         if ($addItem) {
             // Triggered on click of add action
-            $addItem.addEventListener('click', evt => {
+            this.addItemClickHandler = evt => {
                 this.create();
-            });
+            };
+            $addItem.addEventListener('click', this.addItemClickHandler);
         }
     }
 }
