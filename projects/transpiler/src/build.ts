@@ -1,11 +1,5 @@
-import {
-    HtmlParser,
-    Element,
-    Text,
-    Comment,
-    getHtmlTagDefinition, ParseSourceSpan
-} from '@angular/compiler';
-import { WIDGET_IMPORTS } from './imports';
+import {Comment, Element, getHtmlTagDefinition, HtmlParser, ParseSourceSpan, Text} from '@angular/compiler';
+import {WIDGET_IMPORTS} from './imports';
 import {find, isEqual, isFunction, remove, sortBy, uniqWith} from "lodash-es";
 
 const CSS_REGEX = {
@@ -351,11 +345,13 @@ export const processNode = (node, importCollector: (i: ImportDef[]) => void, pro
                 child.attrs.forEach(function(attr){
                     if (attr.name === 'showindevice') {
                         showInDeviceAttr = attr;
+                        importCollector(WIDGET_IMPORTS.get("showindevice"))
                     } else if (attr.name === 'accessroles') {
                         accessRolesAttr = attr;
                         importCollector(WIDGET_IMPORTS.get('accessroles'));
                     } else if (attr.name === 'deferload') {
                         deferLoadAttr = attr;
+                        importCollector(WIDGET_IMPORTS.get('lazyload'));
                     } else if (attr.name === 'show') {
                         showAttr = attr;
                     }

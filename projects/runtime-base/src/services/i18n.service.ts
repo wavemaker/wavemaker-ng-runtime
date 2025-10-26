@@ -171,34 +171,11 @@ export class I18nServiceImpl extends AbstractI18nService {
         });
     }
 
-    protected loadMomentTimeZoneBundle(locale, compInstance?) {
-        return new Promise<void>(resolve => {
+    protected loadMomentTimeZoneBundle(): Promise<any> {
             const _cdnUrl = _WM_APP_PROJECT.cdnUrl || _WM_APP_PROJECT.ngDest;
             window['moment'] = moment; //moment-timezone-with-data.js need moment as require('moment') to be available in window
             const path = _cdnUrl + `locales/moment-timezone/moment-timezone-with-data.js`;
-            loadScripts([path], true).then(()=>{
-                /**
-                 * If locale is provided in the form of offset and not timezone name, deduce the name.
-                 * If locale is provided as GMT+9, name will be deduced as Asia/Tokyo
-                 */
-
-                let localeObj = locale;
-                locale = localeObj['timezone'];
-                const localeIndex = locale.indexOf('+');
-                if (localeIndex > -1) {
-                    if (localeIndex > 0) {
-                        locale = locale.substr(localeIndex);
-                    }
-                    localeObj['timezone'] = find((moment as any).tz.names(), (timezoneName) => {
-                        return locale === (moment as any).tz(timezoneName).format('Z');
-                    });
-                }
-                (moment as any).tz.setDefault(locale);
-                const localeData =  compInstance && compInstance.formatsByLocale ? compInstance.formatsByLocale : this.formatsByLocale;
-                Object.assign(localeData, localeObj);
-                resolve();
-            }, resolve);
-        });
+            return loadScripts([path], true)
     }
 
     protected loadLocaleBundles(libLocale) {
@@ -221,7 +198,34 @@ export class I18nServiceImpl extends AbstractI18nService {
     }
 
     public setTimezone(locale, compInstance?) {
-        this.loadMomentTimeZoneBundle(locale, compInstance);
+        new Promise<void>(resolve => {
+        this.loadMomentTimeZoneBundle().then(()=>{
+            /**
+             * If locale is provided in the form of offset and not timezone name, deduce the name.
+             * If locale is provided as GMT+9, name will be deduced as Asia/Tokyo
+             */
+
+            let localeObj = locale;
+            locale = localeObj['timezone'];
+            const localeIndex = locale.indexOf('+');
+            if (localeIndex > -1) {
+                if (localeIndex > 0) {
+                    locale = locale.substr(localeIndex);
+                }
+                localeObj['timezone'] = find((moment as any).tz.names(), (timezoneName) => {
+                    return locale === (moment as any).tz(timezoneName).format('Z');
+                });
+            }
+            (moment as any).tz.setDefault(locale);
+            const localeData =  compInstance && compInstance.formatsByLocale ? compInstance.formatsByLocale : this.formatsByLocale;
+            Object.assign(localeData, localeObj);
+            resolve();
+        },resolve);
+        });
+    }
+    
+    public setTimezoneEarly(): Promise<any> {
+       return this.loadMomentTimeZoneBundle()
     }
 
     public getTimezone(compInstance?) {
