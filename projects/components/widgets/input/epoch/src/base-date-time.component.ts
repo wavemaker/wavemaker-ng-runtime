@@ -80,6 +80,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
     public removeKeyupListener;
     public loadNativeDateInput;
     public showcustompicker;
+    protected deregisterEventListener;
     public next;
     public prev;
     public clicked = false;
@@ -923,10 +924,15 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      * This method sets the mouse events to Datepicker popup. These events are required when we navigate date picker through mouse.
      */
     private addDatepickerMouseEvents() {
-        $(".bs-datepicker-head .previous span").attr("aria-hidden", 'true');
-        $(".bs-datepicker-head .next span").attr("aria-hidden", 'true');
+        // Cache jQuery selectors for better performance
+        const $datepickerHead = $(".bs-datepicker-head");
+        const $datepickerPrevSpan = $datepickerHead.find(".previous span");
+        const $datepickerNextSpan = $datepickerHead.find(".next span");
+        
+        $datepickerPrevSpan.attr("aria-hidden", 'true');
+        $datepickerNextSpan.attr("aria-hidden", 'true');
 
-        $(".bs-datepicker-head").on("click", ".previous", (event) => {
+        $datepickerHead.on("click", ".previous", (event) => {
             this.next = this.getMonth(this.activeDate, 0);
             this.prev = this.getMonth(this.activeDate, -2);
             this.clicked = true;
@@ -940,15 +946,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.hightlightToday(new Date());
             }
             setTimeout(() => {
-                $(".bs-datepicker-head .previous span").attr("aria-hidden", 'true');
-                $(".bs-datepicker-head .next span").attr("aria-hidden", 'true');
-                $(".bs-datepicker-head .next").attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
-                $(".bs-datepicker-head .previous").attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
-                $('.bs-datepicker-head .current').first().append(`<h2 aria-hidden="false" aria-atomic="true" aria-live='polite' class="sr-only">Changed to Previous Month, ${prevMon.fullMonth} and year ${prevMon.date.getFullYear()}</h2>`);
-                $('.bs-datepicker-head').on('focus', '.current', function () {
-                    $('.bs-datepicker-head .current').find('h2').remove();
+                // Reuse cached selectors
+                const $head = $(".bs-datepicker-head");
+                $head.find(".previous span").attr("aria-hidden", 'true');
+                $head.find(".next span").attr("aria-hidden", 'true');
+                $head.find(".next").attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
+                $head.find(".previous").attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
+                const $current = $head.find('.current').first();
+                $current.append(`<h2 aria-hidden="false" aria-atomic="true" aria-live='polite' class="sr-only">Changed to Previous Month, ${prevMon.fullMonth} and year ${prevMon.date.getFullYear()}</h2>`);
+                $head.on('focus', '.current', function () {
+                    $head.find('.current h2').remove();
                 })
-                $(`.bs-datepicker-head .previous`).focus();
+                $head.find(".previous").focus();
 
             });
 
@@ -967,15 +976,18 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                 this.hightlightToday(current);
             }
             setTimeout(() => {
-                $(".bs-datepicker-head .previous span").attr("aria-hidden", 'true');
-                $(".bs-datepicker-head .next span").attr("aria-hidden", 'true');
-                $(".bs-datepicker-head .next").attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
-                $(".bs-datepicker-head .previous").attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
-                $('.bs-datepicker-head .current').first().append(`<h2 aria-hidden="false" aria-atomic="true" aria-live='polite' class="sr-only">Changed to Next Month, ${nextMon.fullMonth} and year ${nextMon.date.getFullYear()}</h2>`);
-                $('.bs-datepicker-head').on('focus', '.current', function () {
-                    $('.bs-datepicker-head .current').find('h2').remove();
+                // Reuse cached selectors
+                const $head = $(".bs-datepicker-head");
+                $head.find(".previous span").attr("aria-hidden", 'true');
+                $head.find(".next span").attr("aria-hidden", 'true');
+                $head.find(".next").attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
+                $head.find(".previous").attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
+                const $current = $head.find('.current').first();
+                $current.append(`<h2 aria-hidden="false" aria-atomic="true" aria-live='polite' class="sr-only">Changed to Next Month, ${nextMon.fullMonth} and year ${nextMon.date.getFullYear()}</h2>`);
+                $head.on('focus', '.current', function () {
+                    $head.find('.current h2').remove();
                 })
-                $(`.bs-datepicker-head .next`).focus();
+                $head.find(".next").focus();
             });
 
         });
@@ -993,8 +1005,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             }
         });
         // if(!this.clicked) {
-        $(".bs-datepicker-head .next").attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
-        $(".bs-datepicker-head .previous").attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
+        $datepickerHead.find(".next").attr('aria-label', `Next Month, ${this.next.fullMonth} ${this.next.date.getFullYear()}`);
+        $datepickerHead.find(".previous").attr('aria-label', `Previous Month, ${this.prev.fullMonth} ${this.prev.date.getFullYear()}`);
         //  }
     }
 
@@ -1112,6 +1124,10 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
         }
         if(this.cancelLocaleChangeSubscription) {
             this.cancelLocaleChangeSubscription();
+        }
+        // Remove event listener to prevent memory leaks
+        if (this.deregisterEventListener) {
+            this.deregisterEventListener();
         }
 
         super.ngOnDestroy();

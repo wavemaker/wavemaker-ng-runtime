@@ -175,6 +175,8 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
         if(this.cancelSubscription) {
             this.cancelSubscription();
         }
+        // Remove contextmenu event listener to prevent memory leaks
+        this.nativeElement.removeEventListener('contextmenu', disableContextMenu);
         super.ngOnDestroy();
     }
 }

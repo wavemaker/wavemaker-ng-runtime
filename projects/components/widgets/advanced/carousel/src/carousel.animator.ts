@@ -161,23 +161,26 @@ export class CarouselAnimator extends SwipeAnimation {
 
     // Sets active item, leftItem, rightItem by removing / adding respective classes.
     private setActiveItem() {
-        const items = this._items,
-            left = this._activeIndex - 1,
-            right = this._activeIndex + 1;
-        // if there is only one carousel-item then there won't be any right or left-item.
-        if (items.length === 1) {
-            items.eq(0).removeClass('left-item right-item');
-            return;
-        }
+        // Run DOM manipulation outside Angular zone for better performance
+        this.ngZone.runOutsideAngular(() => {
+            const items = this._items,
+                left = this._activeIndex - 1,
+                right = this._activeIndex + 1;
+            // if there is only one carousel-item then there won't be any right or left-item.
+            if (items.length === 1) {
+                items.eq(0).removeClass('left-item right-item');
+                return;
+            }
 
-        this._indicators.find('>.active').removeClass('active');
-        this._indicators.find('> li').eq((items.length + this._activeIndex) % items.length).addClass('active');
+            this._indicators.find('>.active').removeClass('active');
+            this._indicators.find('> li').eq((items.length + this._activeIndex) % items.length).addClass('active');
 
 
-        items.filter('.active').removeClass('active');
-        items.addClass('left-item');
-        items.eq((items.length + left) % items.length).addClass('left-item').removeClass('right-item');
-        items.eq((items.length + this._activeIndex) % items.length).removeClass('left-item right-item').addClass('active');
-        items.eq((items.length + right) % items.length).addClass('right-item').removeClass('left-item');
+            items.filter('.active').removeClass('active');
+            items.addClass('left-item');
+            items.eq((items.length + left) % items.length).addClass('left-item').removeClass('right-item');
+            items.eq((items.length + this._activeIndex) % items.length).removeClass('left-item right-item').addClass('active');
+            items.eq((items.length + right) % items.length).addClass('right-item').removeClass('left-item');
+        });
     }
 }

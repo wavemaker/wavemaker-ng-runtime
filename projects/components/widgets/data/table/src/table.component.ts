@@ -6,6 +6,7 @@ import { MenuComponent } from '@wm/components/navigation/menu';
 import {
     AfterContentInit,
     Attribute,
+    ChangeDetectorRef,
     Component,
     ContentChild,
     ContentChildren,
@@ -219,6 +220,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     statehandler;
     selectedItemChange = new Subject();
     selectedItemChange$: Observable<any> = this.selectedItemChange.asObservable();
+    private selectedItemChangeSubscription;
 
     actions = [];
     _actions = {
@@ -724,12 +726,13 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     row,
                     rowDef,
                     containerLoad: (widget) => {
-                        setTimeout(() => {
+                        // Use requestAnimationFrame for UI updates
+                        requestAnimationFrame(() => {
                             $overlay.hide();
                             $target.show();
                             this.rowDefInstances[rowId] = widget;
                             this.rowInstance.invokeEventCallback('rowexpand', {$event, row, $data: widget});
-                        }, 500);
+                        });
                     }};
             const rootNode = this.rowDetailViewRef.createEmbeddedView(this.rowExpansionTmpl, context).rootNodes[0];
             $target[0].appendChild(rootNode);
@@ -1076,6 +1079,7 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         @Attribute('datasource.bind') public binddatasource,
         @Attribute('readonlygrid') public readonlygrid,
         private ngZone: NgZone,
+        private cdr: ChangeDetectorRef,
         private trustAsPipe: TrustAsPipe,
         @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
@@ -1127,7 +1131,11 @@ export class TableComponent extends StylableComponent implements AfterContentIni
                     return;
                 }
                 this._isDependent = true;
-                this.selectedItemChange$
+                // Unsubscribe previous subscription if exists to prevent memory leak
+                if (this.selectedItemChangeSubscription) {
+                    this.selectedItemChangeSubscription.unsubscribe();
+                }
+                this.selectedItemChangeSubscription = this.selectedItemChange$
                     .pipe(debounceTime(250))
                     .subscribe(this.triggerWMEvent.bind(this));
             })
@@ -1457,12 +1465,25 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     }
 
     ngOnDestroy() {
+        // Clear dynamic table view container to prevent view leaks
+        if (this.dynamicTableRef) {
+            this.dynamicTableRef.clear();
+        }
+        
         document.removeEventListener('click', this.documentClickBind);
         if (this.navigatorResultWatch) {
             this.navigatorResultWatch.unsubscribe();
         }
         if (this.navigatorMaxResultWatch) {
             this.navigatorMaxResultWatch.unsubscribe();
+        }
+        // Unsubscribe from selectedItemChange subscription to prevent memory leak
+        if (this.selectedItemChangeSubscription) {
+            this.selectedItemChangeSubscription.unsubscribe();
+        }
+        // Complete the selectedItemChange subject to prevent observable leaks
+        if (this.selectedItemChange && !this.selectedItemChange.closed) {
+            this.selectedItemChange.complete();
         }
         super.ngOnDestroy();
     }

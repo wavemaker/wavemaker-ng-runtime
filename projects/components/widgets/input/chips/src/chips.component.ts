@@ -6,6 +6,7 @@ import {
     Component,
     Inject,
     Injector,
+    OnDestroy,
     OnInit,
     Optional,
     ViewChild
@@ -54,7 +55,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(ChipsComponent)
     ]
 })
-export class ChipsComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit {
+export class ChipsComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
     public allowonlyselect: boolean;
     public enablereorder: boolean;
@@ -737,5 +738,23 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
             });
         }
         super.onPropertyChange(key, nv, ov);
+    }
+
+    ngOnDestroy() {
+        // Destroy jQuery UI sortable to prevent memory leaks
+        if (this.$element && this.$element.hasClass('ui-sortable')) {
+            this.$element.sortable('destroy');
+        }
+        // Remove jQuery data to prevent DOM reference leaks
+        if (this.$element) {
+            this.$element.removeData('oldIndex');
+            
+            // Remove jQuery event handlers to prevent memory leaks
+            const chipElements = this.$element.find('.chip-item a.app-chip');
+            if (chipElements.length) {
+                chipElements.off('dragstart');
+            }
+        }
+        super.ngOnDestroy();
     }
 }

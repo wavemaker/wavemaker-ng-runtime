@@ -364,5 +364,12 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         if(this.cancelLocaleChangeSubscription) {
             this.cancelLocaleChangeSubscription();
         }
+        // Complete Subjects to prevent memory leaks
+        if (this.dataset$ && !this.dataset$.closed) {
+            this.dataset$.complete();
+        }
+        if (this.datavalue$ && !this.datavalue$.closed) {
+            this.datavalue$.complete();
+        }
     }
 }

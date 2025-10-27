@@ -9,6 +9,7 @@ import {
     ElementRef,
     Inject,
     Injector,
+    OnDestroy,
     OnInit,
     Optional,
     TemplateRef,
@@ -62,7 +63,7 @@ let activePopover: PopoverComponent;
     ]
 })
 
-export class PopoverComponent extends StylableComponent implements OnInit, AfterViewInit {
+export class PopoverComponent extends StylableComponent implements OnInit, AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
 
     public event: string;
@@ -98,8 +99,10 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     private documentClickHandler: (e: MouseEvent) => void;
     private isClosingProgrammatically = false;
     private static activePopovers: PopoverComponent[] = [];
+    private zoneStableSubscription;
     private isHandlingClick = false;
     private preventFocusShift: boolean = false;
+    private popoverClickHandler: (event: Event) => void;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;
@@ -233,8 +236,17 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     }
 
     private adjustPopoverArrowPosition(popoverElem, popoverLeftShift) {
-        this.bsPopoverDirective._popover._ngZone.onStable.subscribe(() => {
+        // Clean up previous subscription if exists
+        if (this.zoneStableSubscription) {
+            this.zoneStableSubscription.unsubscribe();
+        }
+        this.zoneStableSubscription = this.bsPopoverDirective._popover._ngZone.onStable.subscribe(() => {
             popoverElem.find('.popover-arrow').css('left', popoverLeftShift + 'px');
+            // Unsubscribe after first execution as this only needs to run once
+            if (this.zoneStableSubscription) {
+                this.zoneStableSubscription.unsubscribe();
+                this.zoneStableSubscription = null;
+            }
         });
     }
 
@@ -299,9 +311,10 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             popoverContainer.setAttribute('data-popover-id', this.widgetId);
 
             // Add click event listener to stop propagation
-            popoverContainer.addEventListener('click', (event: Event) => {
+            this.popoverClickHandler = (event: Event) => {
                 event.stopPropagation();
-            });
+            };
+            popoverContainer.addEventListener('click', this.popoverClickHandler);
         }
         setCSSFromObj(popoverContainer, {
             height: this.popoverheight,
@@ -460,7 +473,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         this.bsPopoverDirective.hide();
     }
 
-    OnDestroy() {
+    ngOnDestroy() {
         if (this.documentClickHandler) {
             document.removeEventListener('click', this.documentClickHandler, true);
         }
@@ -468,5 +481,21 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         if (index > -1) {
             PopoverComponent.activePopovers.splice(index, 1);
         }
+        // Remove popover container click listener
+        if (this.popoverClickHandler) {
+            const popoverContainer = document.querySelector(`.${this.popoverContainerCls}`) as HTMLElement;
+            if (popoverContainer) {
+                popoverContainer.removeEventListener('click', this.popoverClickHandler);
+            }
+        }
+        // Clear timeout to prevent memory leak
+        if (this.closePopoverTimeout) {
+            clearTimeout(this.closePopoverTimeout);
+        }
+        // Unsubscribe from zone stable subscription to prevent memory leak
+        if (this.zoneStableSubscription) {
+            this.zoneStableSubscription.unsubscribe();
+        }
+        super.ngOnDestroy();
     }
 }

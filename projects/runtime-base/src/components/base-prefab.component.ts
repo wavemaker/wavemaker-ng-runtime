@@ -1,4 +1,4 @@
-import { AfterViewInit, Injector, inject, OnDestroy, ViewChild, Directive } from '@angular/core';
+import { Injector, inject, OnDestroy, ViewChild, Directive, AfterViewChecked } from '@angular/core';
 import { Subject } from 'rxjs';
 
 import {
@@ -23,7 +23,7 @@ import { FragmentMonitor } from '../util/fragment-monitor';
 import {each, startsWith, trim} from "lodash-es";
 
 @Directive()
-export abstract class BasePrefabComponent extends FragmentMonitor implements AfterViewInit, OnDestroy {
+export abstract class BasePrefabComponent extends FragmentMonitor implements AfterViewChecked, OnDestroy {
     Widgets: any;
     Variables: any;
     Actions: any;
@@ -35,12 +35,13 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     prefabName: string;
     i18nService: AbstractI18nService;
     appLocale: any;
-    @ViewChild(PrefabContainerDirective) prefabContainerDirective;
+    @ViewChild(PrefabContainerDirective, { static: false }) prefabContainerDirective?: PrefabContainerDirective;
     scriptLoaderService: ScriptLoaderService;
     compileContent = false;
     pageDirective: PageDirective | SpaPageDirective;
     Viewport: Viewport;
     spa: boolean;
+    private scriptsLoaded = false;
 
     destroy$ = new Subject();
     viewInit$ = new Subject();
@@ -72,9 +73,10 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
         }
 
         if (this.spa) {
-            this.pageDirective = this.injector ? this.injector.get(SpaPageDirective) : inject(SpaPageDirective);
+            // Resolve optionally because prefabs can initialize before a page exists
+            this.pageDirective = this.injector ? this.injector.get(SpaPageDirective, null) : (inject as any)(SpaPageDirective, { optional: true });
         } else {
-            this.pageDirective = this.injector ? this.injector.get(PageDirective) : inject(PageDirective);
+            this.pageDirective = this.injector ? this.injector.get(PageDirective, null) : (inject as any)(PageDirective, { optional: true });
         }
         if (this.pageDirective) {
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
@@ -223,6 +225,11 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
 
     private loadScripts() {
         return new Promise<void>((resolve) => {
+            if (!this.prefabContainerDirective) {
+                resolve();
+                return;
+            }
+
             const scriptsRequired = this.prefabContainerDirective.$element.attr('scripts-to-load');
             if (scriptsRequired) {
                 this.scriptLoaderService
@@ -264,20 +271,30 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     }
 
 
-    ngAfterViewInit(): void {
-        this.loadScripts().then(() => {
-            this.compileContent = true;
-            this.registerChangeListeners();
-            setTimeout(() => {
-                // trigger viewInit$.complete after a timeout so that the widget listeners are ready before Variable xhr call.
-                this.viewInit$.complete();
-                this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
-            }, 100);
-        });
+    ngAfterViewChecked(): void {
+        if (!this.scriptsLoaded && this.prefabContainerDirective) {
+            this.scriptsLoaded = true;
+            this.loadScripts().then(() => {
+                this.compileContent = true;
+                this.registerChangeListeners();
+                setTimeout(() => {
+                    // trigger viewInit$.complete after a timeout so that the widget listeners are ready before Variable xhr call.
+                    this.viewInit$.complete();
+                    this.fragmentsLoaded$.subscribe(noop, noop, () => this.invokeOnReady());
+                }, 100);
+            });
+        }
     }
 
     ngOnDestroy(): void {
         this.destroy$.complete();
+        // Complete all subjects to prevent memory leaks
+        if (this.viewInit$ && !this.viewInit$.closed) {
+            this.viewInit$.complete();
+        }
+        if (this.fragmentsLoaded$ && !this.fragmentsLoaded$.closed) {
+            this.fragmentsLoaded$.complete();
+        }
     }
 
     // user overrides this

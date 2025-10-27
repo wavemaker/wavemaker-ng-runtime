@@ -1,3 +1,4 @@
+import { NgZone } from '@angular/core';
 import { SwipeAnimation } from '@swipey';
 
 import { $appDigest, addClass, setCSS, setCSSFromObj } from '@wm/core';
@@ -10,7 +11,7 @@ export class TabsAnimator extends SwipeAnimation {
 
     private _$el;
 
-    public constructor(private tabs: TabsComponent) {
+    public constructor(private tabs: TabsComponent, private ngZone?: NgZone) {
         super();
         this._$el = $(this.tabs.getNativeElement()).find('>.tab-content');
         this.init(this._$el);
@@ -72,15 +73,19 @@ export class TabsAnimator extends SwipeAnimation {
         }
     }
     public transitionTabIntoView() {
-        const {activeTabIndex, noOfTabs, panes} = this.calibrate();
-        const maxWidth = `${noOfTabs * 100}%`;
-        setCSSFromObj(this._$el[0], {maxWidth: maxWidth, width: maxWidth});
-        addClass(this.tabs.getNativeElement(), 'has-transition');
-        const width = `${100 / noOfTabs}%`;
-        panes.forEach(p => {
-            setCSS(p as any, 'width', width);
+        // Run DOM operations outside Angular zone for better performance
+        const runInZone = (fn) => this.ngZone ? this.ngZone.runOutsideAngular(fn) : fn();
+        runInZone(() => {
+            const {activeTabIndex, noOfTabs, panes} = this.calibrate();
+            const maxWidth = `${noOfTabs * 100}%`;
+            setCSSFromObj(this._$el[0], {maxWidth: maxWidth, width: maxWidth});
+            addClass(this.tabs.getNativeElement(), 'has-transition');
+            const width = `${100 / noOfTabs}%`;
+            panes.forEach(p => {
+                setCSS(p as any, 'width', width);
+            });
+            setCSS(this._$el[0], 'transform', `translate3d(${-1 *  activeTabIndex / noOfTabs * 100}%, 0, 0)`);
         });
-        setCSS(this._$el[0], 'transform', `translate3d(${-1 *  activeTabIndex / noOfTabs * 100}%, 0, 0)`);
     }
 
     public onUpper($event?: Event) {

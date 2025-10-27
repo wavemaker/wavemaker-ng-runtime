@@ -65,7 +65,7 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     public hint: string;
     public arialabel: string;
 
-    private deregisterEventListener;
+    protected deregisterEventListener;
     private app: App;
     private displayInputElem: HTMLElement;
 

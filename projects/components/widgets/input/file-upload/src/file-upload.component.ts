@@ -78,6 +78,9 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     private uploadProgressSubscription: Subscription;
     private deleteProgressSubscription: Subscription;
     private idGenerator = new IDGenerator('file-');
+    private dragOverCbBound;
+    private dropCbBound;
+    private disableDropZoneBound;
     /*_hasOnSuccessEvt = WM.isDefined(attrs.onSuccess);
      _hasOnErrorEvt = WM.isDefined(attrs.onError);*/
 
@@ -213,12 +216,20 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
         $event.stopPropagation();
 
         // when the filepicker is not there on the window, remove the dropzone highlight
-        window.addEventListener('focus', this.disableDropZone.bind(this));
+        // Remove previous listener if it exists to prevent multiple listeners
+        if (this.disableDropZoneBound) {
+            window.removeEventListener('focus', this.disableDropZoneBound);
+        }
+        this.disableDropZoneBound = this.disableDropZone.bind(this);
+        window.addEventListener('focus', this.disableDropZoneBound);
     }
 
     disableDropZone() {
         this.highlightDropArea = false;
-        window.removeEventListener('focus', this.disableDropZone);
+        if (this.disableDropZoneBound) {
+            window.removeEventListener('focus', this.disableDropZoneBound);
+            this.disableDropZoneBound = null;
+        }
     }
 
     /*this function to clear the specified file. if argument is not provided, it clears the complete list  */
@@ -436,11 +447,15 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     ngOnInit() {
         super.ngOnInit();
         // adding, dragover and drop on the document as when file is dragged on to the page highlight the dropzones and remove highlight on file drop
-        document.addEventListener('dragover', this.dragOverCb.bind(this));
-        document.addEventListener('drop', this.dropCb.bind(this));
+        // Store bound references for proper cleanup
+        this.dragOverCbBound = this.dragOverCb.bind(this);
+        this.dropCbBound = this.dropCb.bind(this);
+        
+        document.addEventListener('dragover', this.dragOverCbBound);
+        document.addEventListener('drop', this.dropCbBound);
 
         // adding mouseleave evnt to remove highlight when file is dropped outside the window
-        document.addEventListener('mouseleave', this.dropCb.bind(this));
+        document.addEventListener('mouseleave', this.dropCbBound);
     }
 
     ngAfterViewInit() {
@@ -448,16 +463,33 @@ export class FileUploadComponent extends StylableComponent implements OnInit, Af
     }
 
     ngOnDestroy() {
-        document.removeEventListener('dragover', this.dragOverCb);
-        document.removeEventListener('drop', this.dropCb);
-        document.removeEventListener('mouseleave', this.dropCb);
-        super.ngOnDestroy();
-
+        // Remove event listeners using correct bound references
+        if (this.dragOverCbBound) {
+            document.removeEventListener('dragover', this.dragOverCbBound);
+        }
+        if (this.dropCbBound) {
+            document.removeEventListener('drop', this.dropCbBound);
+            document.removeEventListener('mouseleave', this.dropCbBound);
+        }
+        if (this.disableDropZoneBound) {
+            window.removeEventListener('focus', this.disableDropZoneBound);
+        }
+        
         const subscriptions = [this.uploadProgressSubscription, this.deleteProgressSubscription];
         subscriptions.forEach(subscription => {
             if (subscription) {
                 subscription.unsubscribe();
             }
         });
+        
+        // Complete subjects to prevent observable leaks
+        if (this.progressObservable && !this.progressObservable.closed) {
+            this.progressObservable.complete();
+        }
+        if (this.deleteFileObservable && !this.deleteFileObservable.closed) {
+            this.deleteFileObservable.complete();
+        }
+        
+        super.ngOnDestroy();
     }
 }

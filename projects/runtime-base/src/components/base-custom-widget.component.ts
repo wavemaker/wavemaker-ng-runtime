@@ -375,6 +375,10 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
 
     ngOnDestroy(): void {
         this.destroy$.complete();
+        // Complete viewInit$ subject to prevent memory leak
+        if (this.viewInit$ && !this.viewInit$.closed) {
+            this.viewInit$.complete();
+        }
     }
 
     ngOnAttach(refreshData) {

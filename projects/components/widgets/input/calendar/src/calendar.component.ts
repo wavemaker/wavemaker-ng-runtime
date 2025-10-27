@@ -736,6 +736,9 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     }
 
     ngOnDestroy() {
+        if (this.$fullCalendar) {
+            this.$fullCalendar.destroy();
+        }
         if(this.cancelLocaleChangeSubscription) {
             this.cancelLocaleChangeSubscription();
         }
