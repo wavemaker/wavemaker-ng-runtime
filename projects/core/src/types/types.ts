@@ -92,6 +92,7 @@ export abstract class App {
     subscribe: (eventName, callback: (data: any) => void) => () => void;
     dynamicComponentContainerRef: any;
     clearPageCache: (pageName?: string) => void;
+    isPrism: boolean;
 
     activePageName: string;
     activePage: any;
