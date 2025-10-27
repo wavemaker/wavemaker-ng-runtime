@@ -1,4 +1,4 @@
-import { Directive, Inject, Self } from '@angular/core';
+import { Directive, Inject, Self, OnDestroy } from '@angular/core';
 import { $appDigest, DataSource, DataType, debounce, FormWidgetType, getClonedObject, isDefined } from '@wm/core';
 import { applyFilterOnField, fetchDistinctValues, getDistinctValuesForField, getEmptyMatchMode, getEnableEmptyFilter, getRangeFieldValue, getRangeMatchMode, isDataSetWidget } from '@wm/components/base';
 
@@ -15,7 +15,7 @@ const noop = () => {};
   standalone: true,
     selector: '[wmLiveFilter]'
 })
-export class LiveFilterDirective {
+export class LiveFilterDirective implements OnDestroy {
     static  initializeProps = registerLiveFilterProps();
     private _options;
 
@@ -343,5 +343,23 @@ export class LiveFilterDirective {
     registerFormWidget(widget) {
         const name = widget.key || widget.name;
         this.form.filterWidgets[name] = widget;
+    }
+
+    ngOnDestroy() {
+        // CRITICAL FIX: Clear all bound function references to prevent memory leaks
+        // These bound functions create strong references preventing garbage collection
+        if (this.form) {
+            this.form.clearFilter = null;
+            this.form.applyFilter = null;
+            this.form.filter = null;
+            this.form.filterOnDefault = null;
+            this.form.execute = null;
+            this.form.onFieldDefaultValueChange = null;
+            this.form.onMaxDefaultValueChange = null;
+            this.form.onDataSourceChange = null;
+            this.form.onFieldValueChange = null;
+            this.form.submitForm = null;
+            this.form.registerFormWidget = null;
+        }
     }
 }
