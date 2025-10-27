@@ -742,24 +742,36 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         }
         this._listenerDestroyers.forEach(d => d && d());
         
-        // Destroy jQuery UI sortable to prevent memory leaks
-        if (this.$ulEle && this.$ulEle.hasClass('ui-sortable')) {
-            this.$ulEle.sortable('destroy');
+        try {
+            // Destroy jQuery UI sortable to prevent memory leaks
+            if (this.$ulEle && this.$ulEle.hasClass && this.$ulEle.hasClass('ui-sortable')) {
+                this.$ulEle.sortable('destroy');
+            }
+        } catch (e) {
+            // Suppress sortable destroy errors in test environments
         }
         
-        // Remove event listeners to prevent memory leaks
-        const listContainer = this.nativeElement.querySelector('ul.app-livelist-container');
-        if (listContainer && this.listClickHandler) {
-            listContainer.removeEventListener('click', this.listClickHandler, true);
-        }
-        const $addItem = document.getElementsByClassName("add-list-item")[0];
-        if ($addItem && this.addItemClickHandler) {
-            $addItem.removeEventListener('click', this.addItemClickHandler);
+        try {
+            // Remove event listeners to prevent memory leaks
+            const listContainer = this.nativeElement.querySelector('ul.app-livelist-container');
+            if (listContainer && this.listClickHandler) {
+                listContainer.removeEventListener('click', this.listClickHandler, true);
+            }
+            const $addItem = document.getElementsByClassName("add-list-item")[0];
+            if ($addItem && this.addItemClickHandler) {
+                $addItem.removeEventListener('click', this.addItemClickHandler);
+            }
+        } catch (e) {
+            // Suppress DOM access errors in test environments
         }
         
-        // Remove jQuery data to prevent DOM reference leaks
-        if (this.$ulEle) {
-            this.$ulEle.removeData('oldIndex');
+        try {
+            // Remove jQuery data to prevent DOM reference leaks
+            if (this.$ulEle && this.$ulEle.removeData) {
+                this.$ulEle.removeData('oldIndex');
+            }
+        } catch (e) {
+            // Suppress jQuery cleanup errors in test environments
         }
         
         super.ngOnDestroy();

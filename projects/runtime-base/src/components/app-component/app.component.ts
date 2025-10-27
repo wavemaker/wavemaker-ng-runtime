@@ -67,6 +67,11 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
     public enableSkipToMainContent = getWmProjectProperties().enableSkipToMainContent === 'true' || getWmProjectProperties().enableSkipToMainContent === true;
     private retryCount = 0;
     private navigationEndSubscription!: Subscription;
+    private routerEventsSubscription!: Subscription;
+    private oAuthSubscription!: Subscription;
+    private spinnerSubscription!: Subscription;
+    private pageReadyUnsubscribe: () => void;
+    private pageAttachUnsubscribe: () => void;
     appLocale: any = {};
 
     @ViewChild(RouterOutlet) routerOutlet: RouterOutlet;
@@ -100,7 +105,7 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
         this.appManager.beforeAppReady();
 
         // subscribe to OAuth changes
-        oAuthService.getOAuthProvidersAsObservable().subscribe((providers: any) => {
+        this.oAuthSubscription = oAuthService.getOAuthProvidersAsObservable().subscribe((providers: any) => {
             this.providersConfig = providers;
             if (providers.length) {
                 this.showOAuthDialog();
@@ -110,7 +115,7 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
         });
 
         // Subscribe to the message source to show/hide app spinner
-        this.spinnerService.getMessageSource().asObservable().subscribe((data: any) => {
+        this.spinnerSubscription = this.spinnerService.getMessageSource().asObservable().subscribe((data: any) => {
             // setTimeout is to avoid 'ExpressionChangedAfterItHasBeenCheckedError'
             setTimeout(() => {
                 this.spinner.show = data.show;
@@ -126,7 +131,8 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
 
         let onPageRendered = noop;
 
-        this.router.events.subscribe(e => {
+        // Store router events subscription to prevent memory leak
+        this.routerEventsSubscription = this.router.events.subscribe(e => {
             if (e instanceof NavigationStart) {
                 let page = e.url.split('?')[0];
                 page = page.substring(1);
@@ -162,10 +168,10 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
                 }, 1000);
             }
         });
-        this.appManager.subscribe('pageReady', () => {
+        this.pageReadyUnsubscribe = this.appManager.subscribe('pageReady', () => {
             onPageRendered();
         });
-        this.appManager.subscribe('pageAttach', () => {
+        this.pageAttachUnsubscribe = this.appManager.subscribe('pageAttach', () => {
             onPageRendered();
         });
     }
@@ -255,8 +261,24 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        // Unsubscribe from all subscriptions to prevent memory leaks
         if (this.navigationEndSubscription){
             this.navigationEndSubscription.unsubscribe();
+        }
+        if (this.routerEventsSubscription) {
+            this.routerEventsSubscription.unsubscribe();
+        }
+        if (this.oAuthSubscription) {
+            this.oAuthSubscription.unsubscribe();
+        }
+        if (this.spinnerSubscription) {
+            this.spinnerSubscription.unsubscribe();
+        }
+        if (this.pageReadyUnsubscribe) {
+            this.pageReadyUnsubscribe();
+        }
+        if (this.pageAttachUnsubscribe) {
+            this.pageAttachUnsubscribe();
         }
     }
 }

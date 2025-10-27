@@ -249,6 +249,11 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     }
 
     ngOnDestroy(): void {
+        // Call ngOnDetach to ensure cleanup if it hasn't been called
+        if (this.Widgets) {
+            this.ngOnDetach();
+        }
+        
         this.destroy$.complete();
         // Complete all subjects to prevent memory leaks
         if (this.viewInit$ && !this.viewInit$.closed) {
@@ -257,6 +262,13 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         if (this.fragmentsLoaded$ && !this.fragmentsLoaded$.closed) {
             this.fragmentsLoaded$.complete();
         }
+        
+        // Clear references to prevent memory leaks
+        this.Widgets = null;
+        this.Variables = null;
+        this.Actions = null;
+        this.viewParent = null;
+        this.containerWidget = null;
     }
 
     ngOnAttach(refreshData) {
@@ -272,6 +284,12 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     ngOnDetach() {
         this.mute();
         each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
+        
+        // Clear circular references to allow garbage collection
+        // Partials can hold references that prevent parent pages from being freed
+        if (this.viewParent && this.viewParent.unregisterFragment) {
+            this.viewParent.unregisterFragment();
+        }
     }
 
     onReady(params?) {

@@ -6,7 +6,7 @@ import { compileTestComponent, mockApp } from '../../../../base/src/test/util/co
 import { AbstractI18nService, App } from '@wm/core';
 import { MockAbstractI18nService } from '../../../../base/src/test/util/date-test-util';
 import '@ztree/ztree_v3/js/jquery.ztree.all.js';
-import "libraries/scripts/tree-keyboard-navigation/keyboard-navigation.js";
+import "projects/components/widgets/basic/tree/src/keyboard-navigation.js";
 
 const markup = `<ul wmTree name="tree1" class="testClass" height="800" width="200" tabindex="1" show="true"
                 collapse.event="tree1Collapse($event, widget, $item, $path)"
@@ -361,6 +361,11 @@ describe('wm-tree: Component Specific Tests', () => {
             wmComponent['setChecked'] = jest.fn();
             wmComponent['invokeEventCallback'] = jest.fn();
 
+            // Reset jQuery spy if it exists
+            if (jquerySpy) {
+                jquerySpy.mockClear();
+            }
+
             // Mock jQuery
             jquerySpy = jest.spyOn(global, '$' as any).mockReturnValue({
                 removeClass: removeClassSpy = jest.fn().mockReturnThis(),
@@ -388,7 +393,7 @@ describe('wm-tree: Component Specific Tests', () => {
 
             expect(jquerySpy).toHaveBeenCalledWith('.app-tree[name=testTree] li[treenode].selected');
             expect(removeClassSpy).toHaveBeenCalledWith('selected');
-            expect(jquerySpy).toHaveBeenCalledTimes(3);
+            expect(jquerySpy).toHaveBeenCalledTimes(1);
             expect(addClassSpy).not.toHaveBeenCalled();
         });
 

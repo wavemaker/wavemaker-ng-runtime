@@ -396,6 +396,17 @@ export abstract class BaseSpaPageComponent extends FragmentMonitor implements Af
         this.savePageSnapShot();
         this.mute();
         each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
+        // CRITICAL FIX: Clear App.activePage and App.Widgets references to allow garbage collection
+        // This prevents memory leaks when navigating between pages
+        if (this.App) {
+            if (this.App.activePage === this) {
+                this.App.activePage = null;
+            }
+            // Clear App.Widgets reference to prevent retaining page widget references
+            if ((this.App as any).Widgets) {
+                (this.App as any).Widgets = null;
+            }
+        }
         this.appManager.notify('pageDetach', {'name' : this.pageName, instance: this});
     }
 

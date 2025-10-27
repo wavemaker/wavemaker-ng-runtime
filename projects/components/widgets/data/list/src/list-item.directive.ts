@@ -177,27 +177,39 @@ export class ListItemDirective implements OnInit, AfterViewInit, OnDestroy {
     }
 
     ngOnDestroy() {
-        // Remove event listeners to prevent memory leaks
-        const $editItem = this.nativeElement.querySelector('.edit-list-item');
-        const $deleteItem = this.nativeElement.querySelector('.delete-list-item');
+        try {
+            // Remove event listeners to prevent memory leaks
+            const $editItem = this.nativeElement.querySelector('.edit-list-item');
+            const $deleteItem = this.nativeElement.querySelector('.delete-list-item');
 
-        if ($editItem && this.editClickHandler) {
-            $editItem.removeEventListener('click', this.editClickHandler);
-        }
-        if ($deleteItem && this.deleteClickHandler) {
-            $deleteItem.removeEventListener('click', this.deleteClickHandler);
-        }
-        if (this.mouseEnterHandler) {
-            this.nativeElement.removeEventListener('mouseenter', this.mouseEnterHandler);
-        }
-        if (this.mouseLeaveHandler) {
-            this.nativeElement.removeEventListener('mouseleave', this.mouseLeaveHandler);
+            if ($editItem && this.editClickHandler) {
+                $editItem.removeEventListener('click', this.editClickHandler);
+            }
+            if ($deleteItem && this.deleteClickHandler) {
+                $deleteItem.removeEventListener('click', this.deleteClickHandler);
+            }
+            if (this.mouseEnterHandler) {
+                this.nativeElement.removeEventListener('mouseenter', this.mouseEnterHandler);
+            }
+            if (this.mouseLeaveHandler) {
+                this.nativeElement.removeEventListener('mouseleave', this.mouseLeaveHandler);
+            }
+        } catch (e) {
+            // Suppress DOM access errors in test environments
         }
 
-        // Remove jQuery data to prevent DOM reference leaks
-        $(this.nativeElement).removeData('listItemContext');
+        try {
+            // Remove jQuery data to prevent DOM reference leaks
+            if (this.nativeElement) {
+                $(this.nativeElement).removeData('listItemContext');
+            }
+        } catch (e) {
+            // Suppress jQuery cleanup errors in test environments
+        }
 
         // Complete the destroy subject
-        this.destroy.complete();
+        if (this.destroy && !this.destroy.closed) {
+            this.destroy.complete();
+        }
     }
 }

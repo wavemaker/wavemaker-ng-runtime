@@ -268,6 +268,12 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
     ngOnDetach() {
         this.mute();
         each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
+        
+        // Clear circular references to allow garbage collection
+        // Prefabs can hold references that prevent parent pages from being freed
+        if (this.viewParent && this.viewParent.unregisterFragment) {
+            this.viewParent.unregisterFragment();
+        }
     }
 
 
@@ -295,6 +301,13 @@ export abstract class BasePrefabComponent extends FragmentMonitor implements Aft
         if (this.fragmentsLoaded$ && !this.fragmentsLoaded$.closed) {
             this.fragmentsLoaded$.complete();
         }
+        
+        // Clear references to prevent memory leaks in prefabs
+        this.Widgets = null;
+        this.Variables = null;
+        this.Actions = null;
+        this.containerWidget = null;
+        this.viewParent = null;
     }
 
     // user overrides this
