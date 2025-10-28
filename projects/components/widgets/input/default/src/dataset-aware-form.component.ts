@@ -371,5 +371,10 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         if (this.datavalue$ && !this.datavalue$.closed) {
             this.datavalue$.complete();
         }
+        
+        // CRITICAL FIX: Call super.ngOnDestroy() to unwatch all watchers
+        // Dataset-aware form widgets (select, checkbox, radioset, etc.) have many watchers
+        // Without this, all watchers registered via registerDestroyListener remain in memory
+        super.ngOnDestroy();
     }
 }

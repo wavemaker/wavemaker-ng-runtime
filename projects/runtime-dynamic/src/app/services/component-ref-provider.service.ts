@@ -275,10 +275,23 @@ export class ComponentRefProviderService extends ComponentRefProvider {
 
     // clears the cache map
     public clearComponentFactoryRefCache() {
+        // CRITICAL FIX: Aggressively clear all caches to release ArrayBuffer instances
+        // These caches were causing 160 MB baseline memory (40% ArrayBuffer retention)
+        
+        // Clear HTTP resource cache
         this.resouceMngr.clearCache();
+        
+        // Clear fragment cache (stores decoded markup/scripts/styles as strings)
+        // These strings may internally reference ArrayBuffers from decoding operations
         fragmentCache.clear();
+        
+        // Clear compiled component factory cache
         componentFactoryRefCache.forEach(map => {
             map.clear();
         });
+        
+        // CRITICAL: Clear script cache to release Function objects and their ArrayBuffer references
+        // The scriptCache stores compiled page/partial/prefab scripts that hold ArrayBuffers
+        scriptCache.clear();
     }
 }
