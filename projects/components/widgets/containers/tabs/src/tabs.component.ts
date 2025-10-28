@@ -14,6 +14,7 @@ import {
 
 import {
     addClass,
+    App,
     appendNode,
     DynamicComponentRefProvider,
     noop,
@@ -76,6 +77,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public type;
     public nodatamessage;
     public autoActivation:boolean;
+    isPrism: boolean;
 
     @HostBinding('attr.icon-position') iconposition: string = '';
 
@@ -87,7 +89,8 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         @Attribute('transition') _transition: string,
         @Attribute('tabsposition') _tabsPosition: string,
         statePersistence: StatePersistence,
-        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
+        @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any,
+        public app: App
     ) {
         // handle to the promise resolver
         let resolveFn: Function = noop;
@@ -103,7 +106,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.promiseResolverFn = resolveFn;
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.CONTAINER);
-
+        this.isPrism = this.app.isPrism;
     }
 
     animateIn (element: HTMLElement) {

@@ -13,7 +13,7 @@
         }
         <span [textContent]="pane.title"></span>
         @if (pane.badgevalue) {
-          <span class="label label-{{pane.badgetype}}" [textContent]="pane.badgevalue"></span>
+          <span class="label label-{{pane.badgetype}}" [ngClass]="{'app-label badge d-inline-flex': isPrism}" style="line-height: 1px; margin-left: 5px;" [textContent]="pane.badgevalue"></span>
         }
       </a>
     </li>

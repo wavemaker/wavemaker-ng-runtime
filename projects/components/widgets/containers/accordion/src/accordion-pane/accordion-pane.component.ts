@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { AfterViewInit, Component, ContentChildren, Inject, Injector, Optional } from '@angular/core';
-import { noop, removeAttr } from '@wm/core';
+import { App, noop, removeAttr } from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
     IWidgetConfig,
@@ -40,11 +40,12 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
     private isdynamic: boolean;
     public tabindex;
     public name: string;
+    isPrism: boolean;
 
     // reference to the components which needs a redraw(eg, grid, chart) when the height of this component changes
     @ContentChildren(RedrawableDirective, { descendants: true }) reDrawableComponents;
 
-    constructor(inj: Injector, private accordionRef: AccordionDirective, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any) {
+    constructor(inj: Injector, private accordionRef: AccordionDirective, @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any, public app: App) {
         super(inj, WIDGET_CONFIG, explicitContext);
 
         styler(this.nativeElement, this, APPLY_STYLES_TYPE.SHELL);
@@ -52,6 +53,7 @@ export class AccordionPaneComponent extends StylableComponent implements AfterVi
         // title property here serves the purpose of heading.
         // remove title property as attribute
         removeAttr(this.nativeElement, 'title');
+        this.isPrism = this.app.isPrism;
     }
 
     /**
