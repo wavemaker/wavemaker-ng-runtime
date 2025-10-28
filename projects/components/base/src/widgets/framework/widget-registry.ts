@@ -19,7 +19,8 @@ export const getById = (widgetId: string) => registryById.get(widgetId);
 export const register = (widget: any, viewParent: any, widgetId: string, name?: string): () => void => {
     let registered = false;
     registryById.set(widgetId, widget);
-    if (name) {
+    // DEFENSIVE FIX: Check if viewParent exists (might be null if parent destroyed during initialization)
+    if (name && viewParent) {
         if (isDefined(viewParent.Widgets)) {
             registered = true;
             viewParent.Widgets[name] = widget;
@@ -29,7 +30,8 @@ export const register = (widget: any, viewParent: any, widgetId: string, name?: 
     // Unregister method.
     return () => {
         registryById.delete(widgetId);
-        if (registered) {
+        // DEFENSIVE FIX: Check if viewParent still exists during cleanup
+        if (registered && viewParent && viewParent.Widgets) {
             viewParent.Widgets[name] = undefined;
         }
     };
@@ -39,7 +41,8 @@ export const register = (widget: any, viewParent: any, widgetId: string, name?: 
  * Deregisters the oldname in widgets registry and sets new name
  */
 export const renameWidget = (viewParent: any, widget: any, nv: string, ov?: string) => {
-    if (!isDefined(viewParent.Widgets)) {
+    // DEFENSIVE FIX: Check if viewParent exists before accessing Widgets
+    if (!viewParent || !isDefined(viewParent.Widgets)) {
         return;
     }
     if (ov) {

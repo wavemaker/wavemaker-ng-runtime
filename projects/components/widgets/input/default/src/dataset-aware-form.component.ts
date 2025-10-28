@@ -248,7 +248,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         });
 
         this.displayValue = this.multiple ? displayValues : displayValues[0] || '';
-        if(this.viewParent.containerWidget && this.viewParent.containerWidget._isCustom)
+        // DEFENSIVE FIX: Check if viewParent exists (might be null if component destroyed)
+        // This method can be called via debounced function after ngOnDestroy
+        if(this.viewParent && this.viewParent.containerWidget && this.viewParent.containerWidget._isCustom)
             this.viewParent.containerWidget.displayValue = this.displayValue.length ? this.displayValue : '';
     }
 
