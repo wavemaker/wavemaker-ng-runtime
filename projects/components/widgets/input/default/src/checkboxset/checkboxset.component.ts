@@ -77,7 +77,8 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName === 'click') {
-            this.eventManager.addEventListener(
+            // CRITICAL FIX: Store the cleanup function to prevent memory leaks
+            const removeListener = this.eventManager.addEventListener(
                 node,
                 eventName,
                 e => {
@@ -88,6 +89,8 @@ export class CheckboxsetComponent extends DatasetAwareFormComponent {
                     return callback();
                 }
             );
+            // Register cleanup to be called in ngOnDestroy
+            this.registerDestroyListener(removeListener);
         } else if (!includes(['change'], eventName)) {
             super.handleEvent(node, eventName, callback, locals);
         }

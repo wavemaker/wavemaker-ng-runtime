@@ -83,7 +83,9 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         // this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
         this.viewParent = this.containerWidget.viewParent;
 
-        if (this.viewParent.registerFragment) {
+        // DEFENSIVE FIX: Check if viewParent exists before calling registerFragment
+        // containerWidget.viewParent might be null if the container was destroyed
+        if (this.viewParent && this.viewParent.registerFragment) {
             this.viewParent.registerFragment();
         }
 

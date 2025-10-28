@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { WmComponentsModule } from "@wm/components/base";
 import { MenuDropdownItemComponent } from '../menu-dropdown-item/menu-dropdown-item.component';
-import { AfterViewInit, Component, ElementRef, Input } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnDestroy } from '@angular/core';
 
 import { addClass } from '@wm/core';
 
@@ -39,9 +39,10 @@ const DEFAULT_CLS = 'dropdown-menu';
     selector: 'ul[wmMenuDropdown]',
     templateUrl: './menu-dropdown.component.html'
 })
-export class MenuDropdownComponent implements AfterViewInit {
+export class MenuDropdownComponent implements AfterViewInit, OnDestroy {
     private readonly nativeElement;
     private hasExecutedCallback;
+    private observer: IntersectionObserver;
     @Input() items;
 
     constructor(elRef: ElementRef, private menuRef: MenuComponent) {
@@ -106,8 +107,17 @@ export class MenuDropdownComponent implements AfterViewInit {
             threshold: 1,
             once: true
         };
-        const observer = new IntersectionObserver(callback.bind(this), options);
-        observer.observe(target.nativeElement);
+        this.observer = new IntersectionObserver(callback.bind(this), options);
+        this.observer.observe(target.nativeElement);
+    }
+
+    ngOnDestroy() {
+        // CRITICAL FIX: Disconnect IntersectionObserver to prevent memory leaks
+        // Observers keep references to DOM elements and callbacks
+        if (this.observer) {
+            this.observer.disconnect();
+            this.observer = null;
+        }
     }
 
 }

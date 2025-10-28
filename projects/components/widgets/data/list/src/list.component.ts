@@ -789,7 +789,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             doubletap: 'dblclick'
         };
         if (includes(['click', 'tap', 'dblclick', 'doubletap'], eventName)) {
-            this.eventManager.addEventListener(
+            // CRITICAL FIX: Store the cleanup function returned by eventManager.addEventListener
+            // Without this, the event listener is never removed, causing memory leaks
+            const removeListener = this.eventManager.addEventListener(
                 this.nativeElement,
                 touchToMouse[eventName] || eventName,
                 (evt) => {
@@ -806,6 +808,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     }
                 }
             );
+            // Add the cleanup function to _listenerDestroyers so it's called in ngOnDestroy
+            this._listenerDestroyers.push(removeListener);
         }
     }
 
