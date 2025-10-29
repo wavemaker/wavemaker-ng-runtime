@@ -86,6 +86,7 @@ export class PageDirective extends StylableComponent implements AfterViewInit, O
     }
 
     public ngOnDestroy() {
+        super.ngOnDestroy();
         this.invokeEventCallback('destroy', { widget: this });
         this._eventNotifier.destroy();
     }

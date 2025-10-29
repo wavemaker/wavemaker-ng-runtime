@@ -57,8 +57,9 @@ export class SliderComponent extends BaseFormCustomComponent {
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName !== 'change' && eventName !== 'blur') {
-            super.handleEvent(node, eventName, callback, locals);
+            return super.handleEvent(node, eventName, callback, locals);
         }
+        return ()=>{}
     }
 
     public handleChange(newVal: boolean) {

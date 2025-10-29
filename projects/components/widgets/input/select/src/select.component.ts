@@ -88,8 +88,9 @@ export class SelectComponent extends DatasetAwareFormComponent implements AfterV
     // Change event is registered from the template, Prevent the framework from registering one more event
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
         if (!['blur', 'change'].includes(eventName)) {
-            super.handleEvent(this.selectEl.nativeElement, eventName, eventCallback, locals);
+            return super.handleEvent(this.selectEl.nativeElement, eventName, eventCallback, locals);
         }
+        return () => {}
     }
 
     onSelectValueChange($event) {

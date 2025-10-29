@@ -13,7 +13,7 @@ import {
 } from '@wm/core';
 import {DISPLAY_TYPE, ImagePipe, IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, TextContentDirective} from '@wm/components/base';
 
-import {registerProps} from './anchor.props'; 
+import {registerProps} from './anchor.props';
 
 const DEFAULT_CLS = 'app-anchor';
 const WIDGET_CONFIG: IWidgetConfig = {
@@ -23,9 +23,6 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 const regex = /Actions.goToPage_(\w+)\.invoke\(\)/g;
-export const disableContextMenu = ($event: Event) => {
-    $event.preventDefault();
-};
 
 @Component({
     standalone: true,
@@ -93,12 +90,13 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
         }
     }
 
+    private _eventNotifierSubscription: () => void;
     public onActive(callback: (data: any) =>void) {
-        this._eventNotifier.subscribe('on-active', callback);
+        this._eventNotifierSubscription = this._eventNotifier.subscribe('on-active', callback);
     }
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any, meta?: string) {
-        super.handleEvent(
+        return super.handleEvent(
             node,
             eventName,
             e => {
@@ -112,11 +110,15 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
         );
     }
 
+    disableContextMenu ($event: Event) {
+        $event.preventDefault();
+    };
+
     onPropertyChange(key: string, nv: any, ov?: any) {
         if (key === 'hyperlink') {
             if (!nv) {
                 setAttr(this.nativeElement, 'href', 'javascript:void(0)');
-                this.nativeElement.addEventListener('contextmenu', disableContextMenu);
+                this.nativeElement.addEventListener('contextmenu', this.disableContextMenu);
                 return;
             }
             if (this.encodeurl) {
@@ -127,7 +129,7 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
                 nv = `//${nv}`;
             }
             setAttr(this.nativeElement, 'href', nv);
-            this.nativeElement.removeEventListener('contextmenu', disableContextMenu);
+            this.nativeElement.removeEventListener('contextmenu', this.disableContextMenu);
         } else {
             super.onPropertyChange(key, nv, ov);
         }
@@ -170,10 +172,14 @@ export class AnchorComponent extends StylableComponent implements AfterViewInit,
     }
 
     public ngOnDestroy() {
+        super.ngOnDestroy();
+        console.log("Anchor destoy");
         this._eventNotifier.destroy();
         if(this.cancelSubscription) {
             this.cancelSubscription();
         }
-        super.ngOnDestroy();
+        this.nativeElement.removeEventListener('contextmenu', this.disableContextMenu);
+        this._eventNotifierSubscription?.();
+
     }
 }

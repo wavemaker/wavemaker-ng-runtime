@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
 import {DatePipe} from '@angular/common';
 
@@ -18,6 +18,7 @@ import {SecurityService} from '@wm/security';
 import {$rootScope, MetadataService, VariablesService} from '@wm/variables';
 import {extend, forEach, get, isEmpty, isObject, isUndefined, merge, trim} from "lodash-es";
 import { getModesFromLocalStorage } from '../public_api';
+import {Subscription} from "rxjs";
 
 enum POST_MESSAGES {
     HIDE_TEMPLATES_SHOW_CASE = 'hide-templates-show-case',
@@ -30,7 +31,7 @@ enum POST_MESSAGES {
 
 
 @Injectable()
-export class AppManagerService {
+export class AppManagerService implements OnDestroy {
     static readonly SERVICE_NAME = 'AppManagerService';
 
     private appVariablesLoaded = false;
@@ -38,6 +39,11 @@ export class AppManagerService {
     private _noRedirect = false;
     private templates: Array<any>;
     private lastLoggedUserId;
+    private messageListener: (event: MessageEvent) => void;
+    private readonly toggleVariableStateSubscription: () => void;
+    private readonly userLoggedInSubscription: () => void;
+    private readonly userLoggedOutSubscription: () => void;
+    private readonly http401Subscription: () => void;
 
     constructor(
         private $http: AbstractHttpService,
@@ -56,7 +62,7 @@ export class AppManagerService {
 
         this.$variables.registerDependency('appManager', this);
 
-        this.$app.subscribe('toggle-variable-state', (data) => {
+        this.toggleVariableStateSubscription = this.$app.subscribe('toggle-variable-state', (data) => {
             const variable = data.variable,
                 active = data.active;
             if (!isEmpty(trim(variable.spinnerContext))) {
@@ -85,7 +91,7 @@ export class AppManagerService {
                 }
             }
         });
-        this.$app.subscribe('userLoggedIn', () => {
+        this.userLoggedInSubscription = this.$app.subscribe('userLoggedIn', () => {
             this.setLandingPage();
             if (this.lastLoggedUserId) {
                 this.$security.getConfig(config => {
@@ -95,10 +101,10 @@ export class AppManagerService {
                 }, null);
             }
         });
-        this.$app.subscribe('userLoggedOut', () => this.setLandingPage().then(() => {
+        this.userLoggedOutSubscription =this.$app.subscribe('userLoggedOut', () => this.setLandingPage().then(() => {
             this.$app.clearPageCache();
         }));
-        this.$app.subscribe('http401', (d = {}) => this.handle401(d.page, d.options));
+        this.http401Subscription = this.$app.subscribe('http401', (d = {}) => this.handle401(d.page, d.options));
     }
 
     /**
@@ -546,13 +552,13 @@ export class AppManagerService {
         }
     }
 
-    initAppModes(): void {    
+    initAppModes(): void {
         // get modes from local storage
         let storedModes = getModesFromLocalStorage();
-        
+
         // Apply restored modes
         this.$app.setMode(storedModes);
-    
+
         // Listener for postMessage-based mode changes
         window.addEventListener('message', (event) => {
             const { key, modes, shouldPersist } = event.data || {};
@@ -560,5 +566,17 @@ export class AppManagerService {
                 this.$app.setMode(modes, !shouldPersist);
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        console.log('AppManagerService ngOnDestroy');
+        if (this.messageListener) {
+            window.removeEventListener('message', this.messageListener);
+            this.messageListener = null;
+        }
+        this.toggleVariableStateSubscription?.();
+        this.userLoggedInSubscription?.();
+        this.userLoggedOutSubscription?.();
+        this.http401Subscription?.();
     }
 }

@@ -77,8 +77,9 @@ export class ColorPickerComponent extends BaseFormCustomComponent {
 
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName !== 'change' && eventName !== 'blur') {
-            super.handleEvent(this.inputEl.nativeElement, eventName, callback, locals);
+            return super.handleEvent(this.inputEl.nativeElement, eventName, callback, locals);
         }
+        return () => {}
     }
 
     public handleChange(newVal: boolean) {

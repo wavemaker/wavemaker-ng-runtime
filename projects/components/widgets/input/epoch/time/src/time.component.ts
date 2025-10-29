@@ -365,8 +365,9 @@ export class TimeComponent extends BaseDateTimeComponent implements OnDestroy {
     // Change event is registered from the template, Prevent the framework from registering one more event
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
         if (!includes(['blur', 'focus', 'change', 'click'], eventName)) {
-            super.handleEvent(node, eventName, eventCallback, locals);
+            return super.handleEvent(node, eventName, eventCallback, locals);
         }
+        return () => {}
     }
 
     public hideTimepickerDropdown() {

@@ -594,10 +594,10 @@ export class ChipsComponent extends DatasetAwareFormComponent implements OnInit,
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
         if (eventName === 'remove' || eventName === 'beforeremove' || eventName === 'chipselect'
             || eventName === 'chipclick' || eventName === 'add' || eventName === 'reorder' || eventName === 'change') {
-            return;
+            return () => {};
         }
 
-        super.handleEvent(node, eventName, eventCallback, locals);
+        return super.handleEvent(node, eventName, eventCallback, locals);
     }
 
     // Configures the reordable feature in chips widgets.

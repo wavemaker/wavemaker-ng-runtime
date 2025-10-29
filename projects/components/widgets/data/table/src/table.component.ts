@@ -1513,6 +1513,8 @@ export class TableComponent extends StylableComponent implements AfterContentIni
         if (this.navigatorMaxResultWatch) {
             this.navigatorMaxResultWatch.unsubscribe();
         }
+
+        this.callDataGridMethod('destroy');
         super.ngOnDestroy();
     }
 
@@ -2369,8 +2371,9 @@ export class TableComponent extends StylableComponent implements AfterContentIni
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName !== 'select') {
-            super.handleEvent(this.nativeElement, eventName, callback, locals);
+            return super.handleEvent(this.nativeElement, eventName, callback, locals);
         }
+        return () =>{}
     }
 
     triggerUploadEvent($event, eventName, fieldName, row) {

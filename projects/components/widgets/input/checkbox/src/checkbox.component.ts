@@ -139,8 +139,9 @@ export class CheckboxComponent extends BaseFormCustomComponent implements OnInit
         if (eventName !== 'change' && eventName !== 'blur') {
             // applying tap (Hammer event) on the label as the event handler is not getting triggered on the input.
             const $el = eventName === 'tap' ? this.nativeElement.querySelector('label') : this.checkboxEl.nativeElement;
-            super.handleEvent($el, eventName, callback, locals);
+            return super.handleEvent($el, eventName, callback, locals);
         }
+        return () => {}
     }
 
     handleChange(newVal: boolean) {

@@ -73,6 +73,7 @@ export class PrefabDirective extends StylableComponent implements OnDestroy {
     protected handleEvent() {
         // do not call the super;
         // prevent events from getting registered
+        return () => {};
     }
 
     private prepareProps(props = {}) {

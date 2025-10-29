@@ -21,8 +21,9 @@ export const register = (widget: any, viewParent: any, widgetId: string, name?: 
     registryById.set(widgetId, widget);
     if (name) {
         if (isDefined(viewParent.Widgets)) {
+            console.log('register', registryById.get(widgetId));
             registered = true;
-            viewParent.Widgets[name] = widget;
+            //viewParent.Widgets[name] = widget;
         }
     }
 
@@ -30,7 +31,8 @@ export const register = (widget: any, viewParent: any, widgetId: string, name?: 
     return () => {
         registryById.delete(widgetId);
         if (registered) {
-            viewParent.Widgets[name] = undefined;
+            console.log('destroy', registryById.get(widgetId));
+           viewParent.Widgets[name] = undefined;
         }
     };
 };

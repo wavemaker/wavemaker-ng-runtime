@@ -763,7 +763,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             doubletap: 'dblclick'
         };
         if (includes(['click', 'tap', 'dblclick', 'doubletap'], eventName)) {
-            this.eventManager.addEventListener(
+            return this.eventManager.addEventListener(
                 this.nativeElement,
                 touchToMouse[eventName] || eventName,
                 (evt) => {
@@ -781,6 +781,7 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                 }
             );
         }
+        return () => {}
     }
 
     private getConfiguredState() {

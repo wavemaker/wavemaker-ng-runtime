@@ -13,7 +13,7 @@ import {
 } from '@angular/core';
 import {EventManager} from '@angular/platform-browser';
 
-import {ReplaySubject, Subject} from 'rxjs';
+import {ReplaySubject, Subject, Subscription} from 'rxjs';
 
 import {
     $invokeWatchers,
@@ -29,7 +29,8 @@ import {
     setAttr,
     setCSS,
     setCSSFromObj,
-    switchClass
+    switchClass,
+    removeNode
 } from '@wm/core';
 
 import {getWidgetPropsByType} from '../../framework/widget-props';
@@ -63,7 +64,7 @@ const updateStyles = (nv, ov, el) => {
         });
     }
     if (nv && isObject(nv)) {
-        setCSSFromObj(el, nv);
+        setCSSFromObj(el, nv, true);
     }
 
 };
@@ -117,7 +118,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * View parent component
      * eg, Page, Partial, Prefab
      */
-    protected readonly viewParent: any;
+    protected viewParent: any;
 
     /**
      * EventManger to add/remove events
@@ -256,7 +257,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         // }
         this.widget = this.createProxy();
         this.eventManager = inj.get(EventManager);
-        (this.nativeElement as any).widget = this.widget;
+        //(this.nativeElement as any).widget = this.widget;
 
         this.appLocale = inj.get(App).appLocale || {};
 
@@ -328,13 +329,15 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.propertyChange.next({key, nv, ov});
     }
 
+    private styleChangeSubscription: Subscription;
     public registerStyleChangeListener(fn: ChangeListener, ctx?: any) {
         if (ctx) {
             fn = fn.bind(ctx);
         }
-        this.styleChange.subscribe(({key, nv, ov}) => fn(key, nv, ov));
+        this.styleChangeSubscription = this.styleChange.subscribe(({key, nv, ov}) => fn(key, nv, ov));
     }
 
+    private readyStateSubscription: Subscription;
     public registerReadyStateListener(fn: Function, ctx?: any) {
         if (ctx) {
             fn = fn.bind(ctx);
@@ -343,21 +346,23 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             fn();
             return;
         }
-        this.readyState.subscribe(() => fn());
+        this.readyStateSubscription = this.readyState.subscribe(() => fn());
     }
 
+    private propertyChangeSubscription: Subscription;
     public registerPropertyChangeListener(fn: ChangeListener, ctx?: any) {
         if (ctx) {
             fn = fn.bind(ctx);
         }
-        this.propertyChange.subscribe(({key, nv, ov}) => fn(key, nv, ov));
+        this.propertyChangeSubscription = this.propertyChange.subscribe(({key, nv, ov}) => fn(key, nv, ov));
     }
 
+    private destroySubscription: Subscription
     public registerDestroyListener(fn: Function, ctx?: any) {
         if (ctx) {
             fn = fn.bind(ctx);
         }
-        this.destroy.subscribe(() => {}, () => {}, () => fn());
+        this.destroySubscription = this.destroy.subscribe(() => {}, () => {}, () => fn());
     }
 
     public getDisplayType(): string {
@@ -439,11 +444,11 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         if (key === 'show') {
             this.nativeElement.hidden = !nv;
         } else if (key === 'hint') {
-            setAttr(this.nativeElement, 'title', nv);
+            setAttr(this.nativeElement, 'title', nv, true);
         } else if (key === 'class') {
             switchClass(this.nativeElement, nv, ov);
         } else if (key === 'name' || key === 'tabindex') {
-            setAttr(this.nativeElement, key, nv);
+            setAttr(this.nativeElement, key, nv, true);
             if (key === 'name' && nv) {
                 renameWidget(this.viewParent, this.widget, nv, ov);
             }
@@ -494,7 +499,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Components can override this method to execute custom logic before invoking the user callback
      */
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any, meta?: string) {
-        this.eventManager.addEventListener(
+        return this.eventManager.addEventListener(
             node,
             eventName,
             e => {
@@ -518,9 +523,9 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      */
     protected processEventAttr(eventName: string, expr: string, meta?: string, child?: Child) {
         const fn = $parseEvent(expr);
-        const locals = this.context;
+        let locals = this.context;
         locals.widget = child ? child.widget : this.widget;
-        const boundFn = fn.bind(undefined, child ? this.viewParent.viewParent : this.viewParent, locals);
+        let boundFn = fn.bind(undefined, child ? this.viewParent.viewParent : this.viewParent, locals);
 
         let widget          = child ? child.widget : this,
             nativeElement   = child ? child.nativeElement : this.nativeElement;
@@ -555,7 +560,14 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
         // events needs to be setup after viewInit
         this.toBeSetupEventsQueue.push(() => {
-            this.handleEvent(nativeElement, this.getMappedEventName(eventName), eventCallback, locals, meta);
+            const unsubscribeHandleEvent = this.handleEvent(nativeElement, this.getMappedEventName(eventName), eventCallback, locals, meta)
+            this.registerDestroyListener(() => {
+                unsubscribeHandleEvent();
+                widget[onEventName] = undefined;
+                widget.eventHandlers.clear()
+                boundFn = undefined;
+                locals = undefined;
+            });
         });
     }
 
@@ -635,7 +647,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
             if (attrName === 'class') {
                 removeClass(this.nativeElement, attrValue);
             } else if (attrName === 'tabindex' || attrName === 'name') {
-                removeAttr(this.nativeElement, attrName);
+                removeAttr(this.nativeElement, attrName, true);
             }
 
             this.initState.set(propName, attrValue);
@@ -706,7 +718,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 widgetProps.set(k, v);
             });
         }
-        widgetProps.forEach((v, k) => {
+        (widgetProps || []).forEach((v, k) => {
             if (isDefined(v.value)) {
                 this.initState.set(k, v.value);
             }
@@ -716,7 +728,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
 
         this.processAttrs();
 
-        this.registerWidget(this.initState.get('name'));
+       this.registerWidget(this.initState.get('name'));
     }
 
     /**
@@ -730,7 +742,7 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.initState.forEach((v, k) => {
             // name is already set, ignore name
             // if the key is part of to be ignored attributes list do not set it on the component instance
-            if ((this.widgetProps.get(k) || isStyle(k)) && k !== 'name') {
+            if (((this.widgetProps || new Map()).get(k) || isStyle(k)) && k !== 'name') {
                 this.widget[k] = v;
             }
         });
@@ -851,5 +863,18 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.propertyChange.complete();
         this.destroy.complete();
         this.isAttached = false;
+        console.log('destroy widget');
+        this.styleChangeSubscription?.unsubscribe();
+        this.readyStateSubscription?.unsubscribe()
+        this.propertyChangeSubscription?.unsubscribe()
+        this.destroySubscription?.unsubscribe();
+        this.customInjectorMap = {};
+        this.eventHandlers.clear();
+        (this.nativeElement as any).widget = null;
+        removeNode(this.nativeElement, true);
+        this.nativeElement.remove();
+        this.context = {};
+        this.viewContainerRef?.clear();
+        this.viewParent = null;
     }
 }

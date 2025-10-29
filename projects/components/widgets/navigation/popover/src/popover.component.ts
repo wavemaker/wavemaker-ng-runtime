@@ -11,7 +11,8 @@ import {
     OnInit,
     Optional,
     TemplateRef,
-    ViewChild
+    ViewChild,
+    OnDestroy
 } from '@angular/core';
 
 import {PopoverDirective, PopoverModule} from 'ngx-bootstrap/popover';
@@ -61,7 +62,7 @@ let activePopover: PopoverComponent;
     ]
 })
 
-export class PopoverComponent extends StylableComponent implements OnInit, AfterViewInit {
+export class PopoverComponent extends StylableComponent implements OnInit, AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
 
     public event: string;
@@ -99,6 +100,8 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     private static activePopovers: PopoverComponent[] = [];
     private isHandlingClick = false;
     private preventFocusShift: boolean = false;
+    private onStableSubscription: any;
+    private deRegister: any;
 
     @ViewChild(PopoverDirective) private bsPopoverDirective;
     @ViewChild('anchor', { static: true }) anchorRef: ElementRef;
@@ -217,6 +220,28 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
 
     // Trigger on hiding popover
     public onHidden() {
+        console.log("onHidden popover");
+        this.onStableSubscription?.unsubscribe();
+        this.onStableSubscription = null;
+
+        this.deRegister?.();
+
+        const popoverContainer  = document.querySelector(`.${this.popoverContainerCls}`) as HTMLElement;
+        if (popoverContainer) {
+            popoverContainer.removeEventListener('click', this.stopPropagationHandler);
+            popoverContainer.onmouseenter = null;
+            popoverContainer.onmouseleave = null;
+            popoverContainer.onclick = null;
+
+            const popoverStartBtn: HTMLElement = popoverContainer.querySelector('.popover-start');
+            const popoverEndBtn: HTMLElement = popoverContainer.querySelector('.popover-end');
+            popoverStartBtn.onkeydown = null;
+            popoverEndBtn.onkeydown = null;
+        }
+
+        this.anchorRef.nativeElement.onmouseenter = null;
+        this.anchorRef.nativeElement.onmouseleave = null;
+
         if (!this.isChildPopover() || this.isClosingProgrammatically) {
             this.invokeEventCallback('hide', {$event: {type: 'hide'}});
             this.isOpen = false;
@@ -232,6 +257,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
     }
 
     private adjustPopoverArrowPosition(popoverElem, popoverLeftShift) {
+        this.onStableSubscription?.unsubscribe();
         this.bsPopoverDirective._popover._ngZone.onStable.subscribe(() => {
             popoverElem.find('.popover-arrow').css('left', popoverLeftShift + 'px');
         });
@@ -272,6 +298,10 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         }
     }
 
+    private stopPropagationHandler (event: Event) {
+        event.stopPropagation();
+    }
+
     // Trigger on showing popover
     public onShown() {
         const root = findRootContainer(this.$element);
@@ -298,9 +328,7 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
             popoverContainer.setAttribute('data-popover-id', this.widgetId);
 
             // Add click event listener to stop propagation
-            popoverContainer.addEventListener('click', (event: Event) => {
-                event.stopPropagation();
-            });
+            popoverContainer.addEventListener('click', this.stopPropagationHandler);
         }
         setCSSFromObj(popoverContainer, {
             height: this.popoverheight,
@@ -325,10 +353,12 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         setTimeout(() => {
             this.anchorRef.nativeElement.removeAttribute('aria-describedby');
         });
-        const deRegister = this.eventManager.addEventListener(popoverContainer, 'keydown.esc', () => {
+
+        this.deRegister?.();
+        this.deRegister = this.eventManager.addEventListener(popoverContainer, 'keydown.esc', () => {
             this.isOpen = false;
             this.setFocusToPopoverLink();
-            deRegister();
+            this.deRegister();
         });
         const popoverStartBtn: HTMLElement = popoverContainer.querySelector('.popover-start');
         const popoverEndBtn: HTMLElement = popoverContainer.querySelector('.popover-end');
@@ -459,7 +489,9 @@ export class PopoverComponent extends StylableComponent implements OnInit, After
         this.bsPopoverDirective.hide();
     }
 
-    OnDestroy() {
+    ngOnDestroy() {
+        super.ngOnDestroy();
+        console.log("Popover Destoy");
         if (this.documentClickHandler) {
             document.removeEventListener('click', this.documentClickHandler, true);
         }

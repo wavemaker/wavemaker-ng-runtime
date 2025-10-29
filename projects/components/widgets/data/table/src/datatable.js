@@ -1042,7 +1042,8 @@ $.widget('wm.datatable', {
                 'value': '',
                 'event': null
             },
-            compiledCellTemplates: {}
+            compiledCellTemplates: {},
+            throttledScrollHandler: null
         });
         // TODO: Variable loading status is getting updated before dataset update. This is resulting in loader going off before data is rendered.
         // Need to update code with suitable fix. For now 250ms is added as workaround
@@ -3152,10 +3153,20 @@ $.widget('wm.datatable', {
             $colgroup = headerTemplate.colgroup,
             self = this,
             $header;
+
+        var self = this; // Ensure self is defined in this scope
+
+        // Create a throttled handler
+        this.throttledScrollHandler = _.throttle(function (scrollLeft) {
+            self.gridHeaderElement.parent().prop('scrollLeft', scrollLeft);
+        }, 50); // 50ms throttle, adjust as needed
+
         /*On scroll of the content table, scroll the header*/
-        this.gridElement.parent().scroll(function () {
-            self.gridHeaderElement.parent().prop('scrollLeft', this.scrollLeft);
-        });
+        this.gridElement.parent().off('scroll.datatable') // Clear previous
+            .on('scroll.datatable', function () {
+                self.throttledScrollHandler(this.scrollLeft);
+            });
+
         if (!this.options.showHeader) {
             this.tableContainer.append($colgroup);
             this.gridHeaderElement.hide();
@@ -3633,7 +3644,16 @@ $.widget('wm.datatable', {
     },
 
     _destroy: function () {
-        this.element.text('');
+        console.log('destroy table');
+        this.element.empty('');
         window.clearTimeout(this.refreshGridTimeout);
+
+        // Also add the scroll listener cleanup (see next point)
+        if (this.gridElement) {
+            this.gridElement.parent().off('scroll.datatable');
+        }
+        if (this.throttledScrollHandler && this.throttledScrollHandler.cancel) {
+            this.throttledScrollHandler.cancel();
+        }
     }
 });

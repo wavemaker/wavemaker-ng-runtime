@@ -65,7 +65,7 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName === 'click') {
-            this.eventManager.addEventListener(
+            return this.eventManager.addEventListener(
                 node,
                 eventName,
                 e => {
@@ -77,8 +77,9 @@ export class RadiosetComponent extends DatasetAwareFormComponent {
                 }
             );
         } else if (!includes(['change'], eventName)) {
-            super.handleEvent(node, eventName, callback, locals);
+            return super.handleEvent(node, eventName, callback, locals);
         }
+        return () => {}
     }
 
     onPropertyChange(key, nv, ov?) {

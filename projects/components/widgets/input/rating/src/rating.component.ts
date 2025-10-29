@@ -74,8 +74,9 @@ export class RatingComponent extends DatasetAwareFormComponent {
     // Change event is registered from the template, Prevent the framework from registering one more event
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
         if (eventName !== 'change' && eventName !== 'blur') {
-            super.handleEvent(this.ratingEl.nativeElement, eventName, eventCallback, locals);
+            return super.handleEvent(this.ratingEl.nativeElement, eventName, eventCallback, locals);
         }
+        return () => {}
     }
 
     // This function returns the rating widget dataset containing the index, value and label

@@ -238,8 +238,9 @@ export class DateComponent extends BaseDateTimeComponent {
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (!includes(['blur', 'focus', 'change', 'click'], eventName)) {
-            super.handleEvent(node, eventName, callback, locals);
+            return super.handleEvent(node, eventName, callback, locals);
         }
+        return () => {}
     }
 
     /**

@@ -346,8 +346,9 @@ export class SearchComponent extends DatasetAwareFormComponent implements OnInit
 
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any) {
         if (!includes(['blur', 'focus', 'select', 'submit', 'change'], eventName)) {
-            super.handleEvent(node, eventName, eventCallback, locals);
+            return super.handleEvent(node, eventName, eventCallback, locals);
         }
+        return () => {}
     }
 
     // highlight the characters in the dropdown matching the query.

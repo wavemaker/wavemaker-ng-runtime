@@ -22,7 +22,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
 };
 
 @Component({
-    standalone: true, 
+    standalone: true,
     selector: 'div[wmTabPane]',
     templateUrl: './tab-pane.component.html',
     providers: [
@@ -131,8 +131,9 @@ export class TabPaneComponent extends StylableComponent implements OnInit, After
     // select event is called manually
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName !== 'select') {
-            super.handleEvent(this.nativeElement, eventName, callback, locals);
+            return super.handleEvent(this.nativeElement, eventName, callback, locals);
         }
+        return ()=>{}
     }
 
     onPropertyChange(key: string, nv: any, ov?: any) {

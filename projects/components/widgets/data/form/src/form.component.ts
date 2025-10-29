@@ -538,8 +538,9 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     // change and blur events are added from the template
     protected handleEvent(node: HTMLElement, eventName: string, callback: Function, locals: any) {
         if (eventName !== 'submit') {
-            super.handleEvent(this.nativeElement, eventName, callback, locals);
+            return super.handleEvent(this.nativeElement, eventName, callback, locals);
         }
+
     }
 
     private updateFieldSource() {

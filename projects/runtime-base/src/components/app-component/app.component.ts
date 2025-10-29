@@ -193,7 +193,7 @@ export class AppComponent implements DoCheck, AfterViewInit, OnDestroy {
         });
         setTimeout(() => {
             this.app.dynamicComponentContainerRef = this.dynamicComponentContainerRef;
-            this.overrideRouterOutlet();
+            //this.overrideRouterOutlet();
         }, 10);
     }
 
