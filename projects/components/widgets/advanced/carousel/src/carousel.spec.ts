@@ -7,7 +7,7 @@ import { App, setPipeProvider, AbstractI18nService } from '@wm/core';
 import { LabelDirective } from '@wm/components/basic';
 import { WmComponentsModule } from '@wm/components/base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
-import 'libraries/scripts/swipey/swipey.jquery.plugin.js';
+import 'projects/swipey/src/swipey.jquery.plugin.js';
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 import { Subject } from 'rxjs';
 

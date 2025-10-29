@@ -52,6 +52,10 @@ export class LazyLoadDirective implements OnDestroy {
     }
 
     ngOnDestroy() {
-        this.unSubscribeFn();
+        if (this.unSubscribeFn) {
+            this.unSubscribeFn();
+        }
+        // Clear the ViewContainerRef to prevent memory leaks
+        this.viewContainer.clear();
     }
 }

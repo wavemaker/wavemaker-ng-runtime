@@ -1,4 +1,4 @@
-import { Attribute, ComponentFactoryResolver, Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
+import { Attribute, ComponentFactoryResolver, Directive, ElementRef, Inject, Injector, OnDestroy, Self, ViewContainerRef } from '@angular/core';
 import { App, $invokeWatchers, noop, ComponentType, CustomWidgetRefProvider } from '@wm/core';
 import { WidgetRef } from "../../framework/types";
 
@@ -9,7 +9,7 @@ declare const _;
   standalone: true,
     selector: '[customWidgetContainer][widgetname]'
 })
-export class CustomWidgetContainerDirective {
+export class CustomWidgetContainerDirective implements OnDestroy {
 
     constructor(
         @Self() @Inject(WidgetRef) public componentInstance,
@@ -27,5 +27,10 @@ export class CustomWidgetContainerDirective {
                 this.elRef.nativeElement.appendChild(instanceRef.location.nativeElement);
             }
         });
+    }
+
+    ngOnDestroy() {
+        // Clear the ViewContainerRef to prevent memory leaks
+        this.vcRef.clear();
     }
 }

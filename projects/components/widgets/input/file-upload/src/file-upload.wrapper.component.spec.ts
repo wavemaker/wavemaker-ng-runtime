@@ -384,10 +384,15 @@ describe('Fileupload Component', () => {
 
         it('should remove focus event listener', () => {
             const removeEventListenerSpy = jest.spyOn(window, 'removeEventListener');
+            
+            // Manually set up the bound function as onFileElemClick would
+            const mockBoundFunction = jest.fn();
+            wmComponent['disableDropZoneBound'] = mockBoundFunction;
 
             wmComponent.disableDropZone();
 
-            expect(removeEventListenerSpy).toHaveBeenCalledWith('focus', wmComponent.disableDropZone);
+            expect(removeEventListenerSpy).toHaveBeenCalledWith('focus', mockBoundFunction);
+            expect(wmComponent['disableDropZoneBound']).toBeNull();
         });
     });
 

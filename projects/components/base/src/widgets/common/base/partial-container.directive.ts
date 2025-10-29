@@ -1,4 +1,4 @@
-import { Attribute, ComponentFactoryResolver, Directive, ElementRef, Inject, Injector, Self, ViewContainerRef } from '@angular/core';
+import { Attribute, ComponentFactoryResolver, Directive, ElementRef, Inject, Injector, OnDestroy, Self, ViewContainerRef } from '@angular/core';
 
 import { debounceTime, filter } from 'rxjs/operators';
 
@@ -11,7 +11,7 @@ import {debounce} from "lodash-es";
   standalone: true,
     selector: '[partialContainer]'
 })
-export class PartialContainerDirective {
+export class PartialContainerDirective implements OnDestroy {
 
     private contentInitialized = false;
     private $target;
@@ -92,5 +92,10 @@ export class PartialContainerDirective {
             .subscribe(() => this.renderPartial(componentInstance.content));
         // reload the partial content on partial param change
         componentInstance.registerDestroyListener(() => subscription.unsubscribe());
+    }
+
+    ngOnDestroy() {
+        // Clear the ViewContainerRef to prevent memory leaks
+        this.vcRef.clear();
     }
 }

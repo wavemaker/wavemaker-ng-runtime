@@ -99,5 +99,9 @@ export class PrefabDirective extends StylableComponent implements OnDestroy {
 
     ngOnDestroy() {
         this.invokeEventCallback('destroy', { widget: this });
+        
+        // CRITICAL FIX: Call super.ngOnDestroy() to unwatch all watchers
+        // Without this, all watchers in prefabs remain in memory
+        super.ngOnDestroy();
     }
 }

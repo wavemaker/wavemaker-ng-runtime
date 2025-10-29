@@ -221,7 +221,7 @@ describe('wm-wizard: Component Specific Tests', () => {
             // Check if classes and styles are removed correctly
             expect(mockCurrentSubtitle.removeClass).toHaveBeenCalledWith('readmore_subtitle');
             expect(mockReadMore.css).toHaveBeenCalledWith('display', 'block');
-            expect(mockDocument.off).toHaveBeenCalledWith('mouseup');
+            expect(mockDocument.off).toHaveBeenCalledWith('mouseup', mouseupHandler);
         });
     });
 

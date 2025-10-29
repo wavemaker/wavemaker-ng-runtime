@@ -1,4 +1,4 @@
-import { AfterContentInit, AfterViewInit, Directive, ElementRef, Injector } from '@angular/core';
+import { AfterContentInit, AfterViewInit, Directive, ElementRef, Injector, OnDestroy } from '@angular/core';
 
 import { SearchComponent } from './search.component';
 
@@ -8,8 +8,9 @@ declare const $;
   standalone: true,
     selector: '[scrollable]'
 })
-export class ScrollableDirective implements AfterContentInit, AfterViewInit {
+export class ScrollableDirective implements AfterContentInit, AfterViewInit, OnDestroy {
     private elementRef: ElementRef;
+    private scrollHandler;
 
     constructor(inj: Injector, private searchRef: SearchComponent) {
         this.elementRef = inj.get(ElementRef);
@@ -17,7 +18,8 @@ export class ScrollableDirective implements AfterContentInit, AfterViewInit {
 
     ngAfterContentInit() {
         // add the scroll event listener on the ul element.
-        this.elementRef.nativeElement.addEventListener('scroll', this.notifyParent.bind(this));
+        this.scrollHandler = this.notifyParent.bind(this);
+        this.elementRef.nativeElement.addEventListener('scroll', this.scrollHandler);
         this.searchRef.dropdownEl = $(this.elementRef.nativeElement);
         (this.searchRef as any).onDropdownOpen();
     }
@@ -32,5 +34,12 @@ export class ScrollableDirective implements AfterContentInit, AfterViewInit {
 
     private notifyParent(evt: Event) {
         this.searchRef.onScroll(this.elementRef.nativeElement, evt);
+    }
+
+    ngOnDestroy() {
+        // Remove scroll event listener to prevent memory leak
+        if (this.scrollHandler) {
+            this.elementRef.nativeElement.removeEventListener('scroll', this.scrollHandler);
+        }
     }
 }

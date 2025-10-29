@@ -736,8 +736,20 @@ export class CalendarComponent extends StylableComponent implements AfterContent
     }
 
     ngOnDestroy() {
+        // Destroy FullCalendar instance if it exists and has destroy method
+        if (this.$fullCalendar && typeof this.$fullCalendar.destroy === 'function') {
+            try {
+                this.$fullCalendar.destroy();
+            } catch (e) {
+                // Suppress errors if calendar is in inconsistent state
+                console.warn('FullCalendar destroy error:', e);
+            }
+        }
+        // Unsubscribe from locale change subscription
         if(this.cancelLocaleChangeSubscription) {
             this.cancelLocaleChangeSubscription();
         }
+        // Call parent class cleanup to prevent memory leaks
+        super.ngOnDestroy();
     }
 }

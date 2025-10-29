@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { WmComponentsModule } from "@wm/components/base";
-import {Component, Inject, Injector, OnInit, Optional} from '@angular/core';
+import {Component, Inject, Injector, OnDestroy, OnInit, Optional} from '@angular/core';
 
 import {DataSource, validateDataSourceCtx} from '@wm/core';
 import { IWidgetConfig, provideAsWidgetRef, StylableComponent, styler, ImagePipe } from '@wm/components/base';
@@ -21,7 +21,7 @@ const WIDGET_CONFIG: IWidgetConfig = {widgetType: 'wm-spinner', hostClass: DEFAU
     ],
     exportAs: 'wmSpinner'
 })
-export class SpinnerComponent extends StylableComponent implements OnInit {
+export class SpinnerComponent extends StylableComponent implements OnInit, OnDestroy {
     static initializeProps = registerProps();
 
     public iconclass = '';
@@ -34,6 +34,7 @@ export class SpinnerComponent extends StylableComponent implements OnInit {
     private _spinnerMessages;
     public showCaption = true;
     public type: any;
+    private dataSourceSubscription;
 
     public get spinnerMessages() {
         return this._spinnerMessages;
@@ -46,7 +47,7 @@ export class SpinnerComponent extends StylableComponent implements OnInit {
 
     private listenOnDataSource() {
         const variables = split(this.servicevariabletotrack, ',');
-        this.getAppInstance().subscribe('toggle-variable-state', data => {
+        this.dataSourceSubscription = this.getAppInstance().subscribe('toggle-variable-state', data => {
             const name = data.variable.execute(DataSource.Operation.GET_NAME);
             if (includes(variables, name) && validateDataSourceCtx(data.variable, this.getViewParent())) {
                 this.widget.show = data.active;
@@ -80,5 +81,13 @@ export class SpinnerComponent extends StylableComponent implements OnInit {
             this.widget.show = false;
             this.listenOnDataSource();
         }
+    }
+
+    ngOnDestroy() {
+        // Unsubscribe from data source subscription to prevent memory leak
+        if (this.dataSourceSubscription) {
+            this.dataSourceSubscription();
+        }
+        super.ngOnDestroy();
     }
 }

@@ -83,7 +83,9 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
         // this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
         this.viewParent = this.containerWidget.viewParent;
 
-        if (this.viewParent.registerFragment) {
+        // DEFENSIVE FIX: Check if viewParent exists before calling registerFragment
+        // containerWidget.viewParent might be null if the container was destroyed
+        if (this.viewParent && this.viewParent.registerFragment) {
             this.viewParent.registerFragment();
         }
 
@@ -103,10 +105,11 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
             this.pageParams = this.containerWidget.partialParams;
         });
 
-        if(this.spa) {
-            this.pageDirective = this.injector ? this.injector.get(SpaPageDirective) : inject(SpaPageDirective);
+        if (this.spa) {
+            // Resolve optionally because Common/app-level partials can initialize before a page exists
+            this.pageDirective = this.injector ? this.injector.get(SpaPageDirective, null) : (inject as any)(SpaPageDirective, { optional: true });
         } else {
-            this.pageDirective = this.injector ? this.injector.get(PageDirective) : inject(PageDirective);
+            this.pageDirective = this.injector ? this.injector.get(PageDirective, null) : (inject as any)(PageDirective, { optional: true });
         }
         if (this.pageDirective) {
             this.registerDestroyListener(this.pageDirective.subscribe('attach', data => this.ngOnAttach(data.refreshData)));
@@ -206,7 +209,7 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
 
     private loadScripts() {
         return new Promise<void>((resolve) => {
-            const scriptsRequired = this.partialDirective.$element.attr('scripts-to-load');
+            const scriptsRequired = this.partialDirective?.$element.attr('scripts-to-load');
             if (scriptsRequired) {
                 this.scriptLoaderService
                     .load(...scriptsRequired.split(','))
@@ -248,7 +251,28 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     }
 
     ngOnDestroy(): void {
+        // Call ngOnDetach to ensure cleanup if it hasn't been called
+        if (this.Widgets) {
+            this.ngOnDetach();
+        }
+        
         this.destroy$.complete();
+        // Complete all subjects to prevent memory leaks
+        if (this.viewInit$ && !this.viewInit$.closed) {
+            this.viewInit$.complete();
+        }
+        if (this.fragmentsLoaded$ && !this.fragmentsLoaded$.closed) {
+            this.fragmentsLoaded$.complete();
+        }
+        
+        // CRITICAL FIX: Set Widgets to empty object instead of null
+        // This prevents "Cannot set properties of null" errors when async child widgets
+        // try to register after parent is destroyed. The empty object will be GC'd with the parent.
+        this.Widgets = Object.create(null);
+        this.Variables = Object.create(null);
+        this.Actions = Object.create(null);
+        this.viewParent = null;
+        this.containerWidget = null;
     }
 
     ngOnAttach(refreshData) {
@@ -264,6 +288,12 @@ export abstract class BasePartialComponent extends FragmentMonitor implements Af
     ngOnDetach() {
         this.mute();
         each(this.Widgets, w => w && w.ngOnDetach && w.ngOnDetach());
+        
+        // Clear circular references to allow garbage collection
+        // Partials can hold references that prevent parent pages from being freed
+        if (this.viewParent && this.viewParent.unregisterFragment) {
+            this.viewParent.unregisterFragment();
+        }
     }
 
     onReady(params?) {

@@ -55,7 +55,7 @@ export class DateComponent extends BaseDateTimeComponent {
     public hint: string;
     public arialabel: string;
 
-    private deregisterEventListener;
+    protected deregisterEventListener;
     private isCurrentDate;
     private focusTrap;
     private showdateformatasplaceholder = false;

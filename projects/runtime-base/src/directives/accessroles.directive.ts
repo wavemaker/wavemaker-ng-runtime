@@ -1,4 +1,4 @@
-import {Directive, Inject, Injector, Input, Optional, TemplateRef, ViewContainerRef} from '@angular/core';
+import {Directive, Inject, Injector, Input, OnDestroy, Optional, TemplateRef, ViewContainerRef} from '@angular/core';
 
 import {SecurityService} from '@wm/security';
 import {extend, get, includes, split, trim} from "lodash-es";
@@ -13,7 +13,7 @@ enum USER_ROLE {
   standalone: true,
     selector: '[accessroles]'
 })
-export class AccessrolesDirective {
+export class AccessrolesDirective implements OnDestroy {
 
     private processed = false;
     private readonly isUserAuthenticated;
@@ -107,5 +107,10 @@ export class AccessrolesDirective {
         } else {
             this.viewContainerRef.clear();
         }
+    }
+
+    ngOnDestroy() {
+        // Clear the ViewContainerRef to prevent memory leaks
+        this.viewContainerRef.clear();
     }
 }

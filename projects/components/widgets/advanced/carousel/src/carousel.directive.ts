@@ -39,6 +39,7 @@ export class CarouselDirective extends StylableComponent implements AfterContent
     private navigationClass;
     private fieldDefs;
     private interval;
+    private slidesChangesSubscription;
 
     public animationinterval;
     public animation;
@@ -83,7 +84,7 @@ export class CarouselDirective extends StylableComponent implements AfterContent
     }
 
     private setupHandlers() {
-        this.slides.changes.subscribe( slides => {
+        this.slidesChangesSubscription = this.slides.changes.subscribe( slides => {
             this.triggerAnimation(slides);
         });
         this.slides.setDirty();
@@ -103,6 +104,10 @@ export class CarouselDirective extends StylableComponent implements AfterContent
 
     ngOnDestroy() {
         this.stopAnimation();
+        // Unsubscribe from slides.changes to prevent memory leak
+        if (this.slidesChangesSubscription) {
+            this.slidesChangesSubscription.unsubscribe();
+        }
         super.ngOnDestroy();
     }
 
