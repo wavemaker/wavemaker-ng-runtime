@@ -207,7 +207,9 @@ export const getImageUrl = (urlString, shouldEncode?, defaultUrl?) => {
         } else {
             urlString =   ( defaultUrl || 'resources/images/imagelists/default-image.png' );
         }
-        urlString = _WM_APP_PROJECT.isPreview ? urlString : (isValidWebURL(urlString) || urlString.startsWith(_WM_APP_PROJECT.cdnUrl) ? urlString : _WM_APP_PROJECT.cdnUrl + urlString );
+    }
+    if (urlString && !_WM_APP_PROJECT.isPreview && !isValidWebURL(urlString) && !urlString.startsWith(_WM_APP_PROJECT.cdnUrl)) {
+        urlString = (_WM_APP_PROJECT.cdnUrl || '') + urlString;
     }
 
     urlString = shouldEncode ? encodeUrl(urlString) : urlString;
