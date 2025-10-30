@@ -294,7 +294,7 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
      */
     protected hightlightToday(newDate) {
         if(this.datavalue) return;
-        const activeMonth = $(`.bs-datepicker-head .current`).first().text();
+        const activeMonth = $(`.bs-datepicker-head .current span`).first().text().trim();
         const activeYear =  $(".bs-datepicker-head .current").eq(1).text();
         const month = new Date(newDate).toLocaleString('default', { month: 'long' });
         const year = newDate.getFullYear().toString();
@@ -303,6 +303,9 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
             filter($(`span:contains(${toDay})`).not('.is-other-month'), (obj) => {
                 if ($(obj).text() === toDay) {
                     $(obj).addClass('current-date text-info');
+                    $(obj).off('mouseenter.dateHover').on('mouseenter.dateHover', () => {
+                      setTimeout(()=>{ this.hightlightToday(new Date())})
+                    });
                 }
             });
         }
@@ -382,8 +385,8 @@ export abstract class BaseDateTimeComponent extends BaseFormCustomComponent impl
                     this.activeDate = newDate;
                 }
             });
-            if (newDate.getDate() === new Date().getDate() && newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
-                this.hightlightToday(newDate);
+            if (newDate.getMonth() === new Date().getMonth() && newDate.getFullYear() === new Date().getFullYear()) {
+                this.hightlightToday(new Date());
             }
         });
 
