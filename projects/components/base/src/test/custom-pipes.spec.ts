@@ -96,7 +96,8 @@ describe('ToDate pipe', () => {
         customPipeManager = TestBed.inject(CustomPipeManager);
         i18nService = TestBed.inject(AbstractI18nService);
         datePipe = TestBed.inject(DatePipe);
-        pipe = TestBed.runInInjectionContext(() => new ToDatePipe(datePipe, i18nService, customPipeManager));
+        const app = TestBed.inject(App);
+        pipe = new ToDatePipe(datePipe, i18nService, customPipeManager, app);
     });
 
     it('create an instance', () => {

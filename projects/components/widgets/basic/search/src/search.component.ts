@@ -7,6 +7,7 @@ import {
     Attribute,
     Component,
     ElementRef,
+    forwardRef,
     Inject,
     Injector,
     OnInit,
@@ -70,9 +71,9 @@ const WIDGET_CONFIG = { widgetType: 'wm-search', hostClass: 'input-group' };
     selector: '[wmSearch]',
     templateUrl: './search.component.html',
     providers: [
-        provideAs(SearchComponent, NG_VALUE_ACCESSOR, true),
-        provideAs(SearchComponent, NG_VALIDATORS, true),
-        provideAsWidgetRef(SearchComponent)
+        provideAs(forwardRef(() => SearchComponent), NG_VALUE_ACCESSOR, true),
+        provideAs(forwardRef(() => SearchComponent), NG_VALIDATORS, true),
+        provideAsWidgetRef(forwardRef(() => SearchComponent))
     ]
 })
 export class SearchComponent extends DatasetAwareFormComponent implements OnInit, AfterViewInit, AfterViewChecked {

@@ -34,8 +34,15 @@ export class PartialContainerDirective implements OnDestroy {
             prefabName = this.componentInstance.viewParent.prefabName;
         }
 
-        const componentFactory = await this.partialRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL, {prefab: prefabName});
-        if (componentFactory) {
+        try {
+            const componentFactory = await this.partialRefProvider.getComponentFactoryRef(nv, ComponentType.PARTIAL, {prefab: prefabName});
+            
+            // DEFENSIVE FIX: Check if componentFactory is valid before using
+            if (!componentFactory) {
+                console.error(`Failed to load partial: ${nv}, prefab: ${prefabName}`);
+                return;
+            }
+            
             const instanceRef = this.vcRef.createComponent(componentFactory, 0, this.inj);
             if (instanceRef && instanceRef['instance'] && prefabName) {
                 // @ts-ignore
@@ -49,6 +56,8 @@ export class PartialContainerDirective implements OnDestroy {
             this.$target.appendChild(instanceRef.location.nativeElement);
             this.contentInitialized = true;
             setTimeout(() => this.onLoadSuccess(), 200);
+        } catch (error) {
+            console.error(`Error rendering partial ${nv}:`, error);
         }
     }
 

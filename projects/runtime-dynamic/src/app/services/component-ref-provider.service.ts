@@ -316,11 +316,18 @@ export class ComponentRefProviderService extends ComponentRefProvider {
                 const componentDef = getDynamicComponent(componentName, componentType, markup, styles, script, JSON.stringify(variables));
                 const moduleDef = getDynamicModule(componentDef);
 
-                componentFactoryRef = this.compiler
-                    .compileModuleAndAllComponentsSync(moduleDef)
-                    .componentFactories
+                const compiled = this.compiler.compileModuleAndAllComponentsSync(moduleDef);
+                componentFactoryRef = compiled.componentFactories
                     .filter(factory => // @ts-ignore
                         factory.componentType === componentDef)[0];
+                
+                // DEFENSIVE FIX: Check if component factory was found
+                if (!componentFactoryRef) {
+                    console.error(`Failed to compile component: ${componentName} (type: ${componentType}). No matching factory found.`);
+                    console.error('Available factories:', compiled.componentFactories.map(f => f.selector));
+                    return null;
+                }
+                
                 const updatedComponentName = (options && options['prefab']) ? options['prefab'] + componentName : componentName;
                 componentFactoryRefCache.get(componentType).set(updatedComponentName, componentFactoryRef);
 

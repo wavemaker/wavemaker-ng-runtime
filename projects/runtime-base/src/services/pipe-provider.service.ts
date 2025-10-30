@@ -34,7 +34,7 @@ import {
     ToNumberPipe,
     TrustAsPipe
 } from '@wm/components/base';
-import {AbstractI18nService, CustomPipeManager, getSessionStorageItem} from '@wm/core';
+import {AbstractI18nService, App, CustomPipeManager, getSessionStorageItem} from '@wm/core';
 import {DomSanitizer} from "@angular/platform-browser";
 
 @Injectable({
@@ -87,7 +87,7 @@ export class PipeProvider {
             this.preparePipeMeta(CurrencyPipe, 'currency', true, [this._locale]),
             this.preparePipeMeta(DatePipe, 'date', true, [this._locale]),
             this.preparePipeMeta(ToDatePipe, 'toDate', true, [
-                new DatePipe(this._locale), undefined, this.injector.get(CustomPipeManager)
+                new DatePipe(this._locale), this.i18service, this.injector.get(CustomPipeManager), this.injector.get(App)
             ]),
             this.preparePipeMeta(ToNumberPipe, 'toNumber', true, [
                 new DecimalPipe(this._locale),

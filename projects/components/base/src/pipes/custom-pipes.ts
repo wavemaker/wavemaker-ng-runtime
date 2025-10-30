@@ -39,7 +39,10 @@ export class TrailingZeroDecimalPipe implements PipeTransform {
     name: 'toDate'
 })
 export class ToDatePipe extends WmPipe implements PipeTransform {
-    private app = inject(App);
+    // CRITICAL FIX: Accept App as constructor parameter instead of using inject()
+    // inject() fails when pipe is created by PipeProvider outside injection context
+    private app: App;
+    
     // This method calls the custom formatter fn after applying the exisitng date pattern
     returnFn(data, args, variables) {
         if (this.isCustomPipe) {
@@ -54,18 +57,18 @@ export class ToDatePipe extends WmPipe implements PipeTransform {
         let timestamp;
         // 'null' is to be treated as a special case, If user wants to enter null value, empty string will be passed to the backend
         if (data === 'null' || data === '') {
-            return this.returnFn('', arguments, this.app.Variables);
+            return this.returnFn('', arguments, this.app?.Variables);
         }
         if (!isDefined(data)) {
-            return this.returnFn('',arguments, this.app.Variables);
+            return this.returnFn('',arguments, this.app?.Variables);
         }
         timestamp = getEpochValue(data);
         if (timestamp) {
             if (format === 'timestamp') {
-                return this.returnFn(timestamp, arguments, this.app.Variables);
+                return this.returnFn(timestamp, arguments, this.app?.Variables);
             }
             if (format === 'UTC') {
-                return this.returnFn(new Date(timestamp).toISOString(), arguments, this.app.Variables);
+                return this.returnFn(new Date(timestamp).toISOString(), arguments, this.app?.Variables);
             }
             let formattedVal;
             const timeZone = this.i18nService ? this.i18nService.getTimezone(compInstance) : timezone;
@@ -74,13 +77,15 @@ export class ToDatePipe extends WmPipe implements PipeTransform {
             } else {
                 formattedVal = this.datePipe.transform(timestamp, format);
             }
-            return this.returnFn(formattedVal, arguments, this.app.Variables);
+            return this.returnFn(formattedVal, arguments, this.app?.Variables);
         }
-        return this.returnFn('', arguments,this.app.Variables);
+        return this.returnFn('', arguments,this.app?.Variables);
     }
 
-    constructor(private datePipe: DatePipe, private i18nService: AbstractI18nService, protected customPipeManager: CustomPipeManager) {
+    constructor(private datePipe: DatePipe, private i18nService: AbstractI18nService, protected customPipeManager: CustomPipeManager, app?: App) {
         super('toDate', customPipeManager);
+        // CRITICAL FIX: Accept App via constructor to avoid NG0203 injection context error
+        this.app = app || inject(App);
     }
 }
 
