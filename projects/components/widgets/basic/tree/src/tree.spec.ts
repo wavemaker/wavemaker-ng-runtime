@@ -7,7 +7,7 @@ import { App, setPipeProvider, AbstractI18nService } from "@wm/core";
 import { TrustAsPipe } from '../../../../base';
 import { MockAbstractI18nService } from 'projects/components/base/src/test/util/date-test-util';
 import '@ztree/ztree_v3/js/jquery.ztree.all.js';
-import "libraries/scripts/tree-keyboard-navigation/keyboard-navigation.js";
+import "projects/components/widgets/basic/tree/src/keyboard-navigation.js";
 import { mockApp } from 'projects/components/base/src/test/util/component-test-util';
 
 

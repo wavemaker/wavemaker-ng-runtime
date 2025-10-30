@@ -1330,6 +1330,11 @@ export class FormComponent extends StylableComponent implements OnDestroy, After
     }
 
     ngOnDestroy() {
+        // Clear dynamic form view container to prevent view leaks
+        if (this.dynamicFormRef) {
+            this.dynamicFormRef.clear();
+        }
+        
         // on form destroy, removing this form from the parentForm too.
         const controls = this.parentForm && get(this.parentForm, 'ngform.controls');
         if (controls) {

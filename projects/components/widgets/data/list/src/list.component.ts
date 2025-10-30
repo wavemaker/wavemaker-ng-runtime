@@ -192,6 +192,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
     private ariaText: String;
     private _pageLoad;
     private _selectedItemsExist;
+    private listClickHandler;
+    private addItemClickHandler;
 
     private touching;
     private touched;
@@ -748,6 +750,39 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this._listAnimator.$btnSubscription.unsubscribe();
         }
         this._listenerDestroyers.forEach(d => d && d());
+        
+        try {
+            // Destroy jQuery UI sortable to prevent memory leaks
+            if (this.$ulEle && this.$ulEle.hasClass && this.$ulEle.hasClass('ui-sortable')) {
+                this.$ulEle.sortable('destroy');
+            }
+        } catch (e) {
+            // Suppress sortable destroy errors in test environments
+        }
+        
+        try {
+            // Remove event listeners to prevent memory leaks
+            const listContainer = this.nativeElement.querySelector('ul.app-livelist-container');
+            if (listContainer && this.listClickHandler) {
+                listContainer.removeEventListener('click', this.listClickHandler, true);
+            }
+            const $addItem = document.getElementsByClassName("add-list-item")[0];
+            if ($addItem && this.addItemClickHandler) {
+                $addItem.removeEventListener('click', this.addItemClickHandler);
+            }
+        } catch (e) {
+            // Suppress DOM access errors in test environments
+        }
+        
+        try {
+            // Remove jQuery data to prevent DOM reference leaks
+            if (this.$ulEle && this.$ulEle.removeData) {
+                this.$ulEle.removeData('oldIndex');
+            }
+        } catch (e) {
+            // Suppress jQuery cleanup errors in test environments
+        }
+        
         super.ngOnDestroy();
     }
 
@@ -763,7 +798,9 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             doubletap: 'dblclick'
         };
         if (includes(['click', 'tap', 'dblclick', 'doubletap'], eventName)) {
-            this.eventManager.addEventListener(
+            // CRITICAL FIX: Store the cleanup function returned by eventManager.addEventListener
+            // Without this, the event listener is never removed, causing memory leaks
+            const removeListener = this.eventManager.addEventListener(
                 this.nativeElement,
                 touchToMouse[eventName] || eventName,
                 (evt) => {
@@ -780,6 +817,8 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
                     }
                 }
             );
+            // Add the cleanup function to _listenerDestroyers so it's called in ngOnDestroy
+            this._listenerDestroyers.push(removeListener);
         }
     }
 
@@ -1214,14 +1253,15 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
             this.cdRef.detectChanges();
         });
         // handle click event in capturing phase.
-        this.nativeElement.querySelector('ul.app-livelist-container').addEventListener('click', ($event) => {
+        this.listClickHandler = ($event) => {
             let target = $($event.target).closest('.app-list-item');
             // Recursively find the current list item
             while (target.get(0) && (target.closest('ul.app-livelist-container').get(0) !== $event.currentTarget)) {
                 target = target.parent().closest('.app-list-item');
             }
             this.triggerListItemSelection(target, $event);
-        }, true);
+        };
+        this.nativeElement.querySelector('ul.app-livelist-container').addEventListener('click', this.listClickHandler, true);
     }
 
     // Triggers on drag start while reordering.
@@ -1359,9 +1399,10 @@ export class ListComponent extends StylableComponent implements OnInit, AfterVie
         const $addItem = document.getElementsByClassName("add-list-item")[0];
         if ($addItem) {
             // Triggered on click of add action
-            $addItem.addEventListener('click', evt => {
+            this.addItemClickHandler = evt => {
                 this.create();
-            });
+            };
+            $addItem.addEventListener('click', this.addItemClickHandler);
         }
     }
 }

@@ -7,6 +7,8 @@ import {
     Component,
     ContentChildren, HostBinding, Inject,
     Injector,
+    NgZone,
+    OnDestroy,
     OnInit,
     Optional,
     QueryList
@@ -52,7 +54,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(TabsComponent)
     ]
 })
-export class TabsComponent extends StylableComponent implements AfterContentInit, OnInit, AfterViewInit {
+export class TabsComponent extends StylableComponent implements AfterContentInit, OnInit, AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
 
     public defaultpaneindex: number;
@@ -76,6 +78,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
     public type;
     public nodatamessage;
     public autoActivation:boolean;
+    private panesChangesSubscription;
 
     @HostBinding('attr.icon-position') iconposition: string = '';
 
@@ -87,6 +90,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         @Attribute('transition') _transition: string,
         @Attribute('tabsposition') _tabsPosition: string,
         statePersistence: StatePersistence,
+        private ngZone: NgZone,
         @Inject('EXPLICIT_CONTEXT') @Optional() explicitContext: any
     ) {
         // handle to the promise resolver
@@ -262,7 +266,7 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         // this.setTabsLeftPosition(this.getPaneIndexByRef(this.activeTab), this.panes.length);
         if (this.canSlide()) {
             if (!this.tabsAnimator) {
-                this.tabsAnimator = new TabsAnimator(this);
+                this.tabsAnimator = new TabsAnimator(this, this.ngZone);
                 this.tabsAnimator.setGesturesEnabled(this.canSlide());
             }
             this.tabsAnimator.transitionTabIntoView();
@@ -473,11 +477,19 @@ export class TabsComponent extends StylableComponent implements AfterContentInit
         this.promiseResolverFn();
         super.ngAfterContentInit();
         this.setTabsPosition();
-        this.panes.changes.subscribe( slides => {
+        this.panesChangesSubscription = this.panes.changes.subscribe( slides => {
             if (this.panes.length) {
                 this.selectDefaultPaneByIndex(this.defaultpaneindex || 0);
             }
         });
+    }
+
+    ngOnDestroy() {
+        // Unsubscribe from panes.changes to prevent memory leak
+        if (this.panesChangesSubscription) {
+            this.panesChangesSubscription.unsubscribe();
+        }
+        super.ngOnDestroy();
     }
 
     ngAfterViewInit() {

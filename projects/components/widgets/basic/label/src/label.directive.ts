@@ -20,6 +20,14 @@ const WIDGET_CONFIG: IWidgetConfig = {
     displayType: DISPLAY_TYPE.INLINE_BLOCK
 };
 
+// Move insertZWSP outside to avoid recreating it on every property change
+const insertZWSP = (value: any): string => {
+    if (typeof value !== 'string') return value;
+    return value.replace(/\d{5,}/g, (match) => {
+        return match.replace(/(.{9})(?=.)/g, '$1\u200B');
+    });
+};
+
 @Directive({
   standalone: true,
     selector: '[wmLabel]',
@@ -43,12 +51,6 @@ export class LabelDirective extends StylableComponent {
             // Check for trustPipe safe values
             let bindContent = this.nativeElement.getAttribute('caption.bind');
             let safeValue = bindContent ? nv && bindContent.includes('trustAs:') : false;
-            const insertZWSP = (value: any): string => {
-                if (typeof value !== 'string') return value;
-                return value.replace(/\d{5,}/g, (match) => {
-                    return match.replace(/(.{9})(?=.)/g, '$1\u200B');
-                });
-            };
             if (isObject(nv) && !safeValue) {
                 setProperty(this.nativeElement, 'textContent', JSON.stringify(nv));
             } else if (isObject(nv) && safeValue) {

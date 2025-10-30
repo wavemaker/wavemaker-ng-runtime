@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { PrefabDirective } from '@wm/components/prefab';
 import { PrefabManagerService } from '../services/prefab-manager.service';
 import { PrefabDirective as PrefabLoader } from '../directives/prefab.directive';
@@ -15,15 +15,16 @@ const PREFAB = 'PREFAB';
         </div>
     `
 })
-export class PrefabPreviewComponent implements AfterViewInit {
+export class PrefabPreviewComponent implements AfterViewInit, OnDestroy {
     private config: any;
     private previewMode: boolean;
+    private windowMessageHandler;
 
     @ViewChild(PrefabDirective, { static: true }) prefabInstance;
 
     constructor(private prefabManager: PrefabManagerService) {
 
-        window.addEventListener('message', e => {
+        this.windowMessageHandler = e => {
             const context = e.data && e.data.context;
 
             if (context !== PREFAB) {
@@ -42,7 +43,8 @@ export class PrefabPreviewComponent implements AfterViewInit {
             } else if (action === 'invoke-script') {
                 this.invokeScript(payload);
             }
-        });
+        };
+        window.addEventListener('message', this.windowMessageHandler);
     }
 
     postMessage(action, payload?: any) {
@@ -110,6 +112,13 @@ export class PrefabPreviewComponent implements AfterViewInit {
     ngAfterViewInit() {
         this.setupEventListeners();
         this.postMessage('init');
+    }
+
+    ngOnDestroy() {
+        // Remove window message listener to prevent memory leak
+        if (this.windowMessageHandler) {
+            window.removeEventListener('message', this.windowMessageHandler);
+        }
     }
 }
 

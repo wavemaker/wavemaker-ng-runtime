@@ -64,5 +64,7 @@ export class ShowInDeviceDirective implements OnDestroy {
 
     ngOnDestroy() {
         window.removeEventListener('resize', this.onResize);
+        // Clear the ViewContainerRef to prevent memory leaks
+        this.viewContainerRef.clear();
     }
 }

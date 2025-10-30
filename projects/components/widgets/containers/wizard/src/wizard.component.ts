@@ -18,6 +18,7 @@ import {
     ContentChildren,
     Inject,
     Injector,
+    OnDestroy,
     OnInit,
     Optional,
     QueryList,
@@ -49,7 +50,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
     ],
     exportAs: 'wmWizard'
 })
-export class WizardComponent extends StylableComponent implements OnInit, AfterContentInit, AfterViewInit, AfterViewChecked {
+export class WizardComponent extends StylableComponent implements OnInit, AfterContentInit, AfterViewInit, AfterViewChecked, OnDestroy {
     static initializeProps = registerProps();
 
     @ContentChildren(WizardStepComponent) steps: QueryList<WizardStepComponent>;
@@ -62,6 +63,8 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     public class;
     public name;
     private readonly promiseResolverFn: Function;
+    private stepsChangesSubscription;
+    private documentMouseUpHandler;
     public actionsalignment: any;
     public cancelable: any;
     public enablenext: any;
@@ -549,17 +552,24 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
     public readMoreSubtitle(){
         $(".current .subtitle-wrapper").addClass("readmore_subtitle");
         $(".current .read_more").css("display","none");
-        $(document).on("mouseup",function(e:any)
-        {
+        
+        // Clean up previous handler if exists
+        if (this.documentMouseUpHandler) {
+            $(document).off("mouseup", this.documentMouseUpHandler);
+        }
+        
+        this.documentMouseUpHandler = (e:any) => {
             var container = $(".subtitle-wrapper");
             // if the target of the click isn't the container nor a descendant of the container
             if (!container.is(e.target) && container.has(e.target).length === 0)
             {
                 $(".current .subtitle-wrapper").removeClass("readmore_subtitle");
                 $(".current .read_more").css("display","block");
-                $(document).off("mouseup");
+                $(document).off("mouseup", this.documentMouseUpHandler);
+                this.documentMouseUpHandler = null;
             }
-        });
+        };
+        $(document).on("mouseup", this.documentMouseUpHandler);
     }
 
     private _isFirstStep(stepRef: WizardStepComponent) {
@@ -619,7 +629,7 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         this.wizContext.disableNext = () => !this.enableNext;
         this.wizContext.disablePrevious = () => !this.enablePrev;
         this.wizContext.disableDone = () => !this.enableDone;
-        this.steps.changes.subscribe( slides => {
+        this.stepsChangesSubscription = this.steps.changes.subscribe( slides => {
             if (this.steps.length > 1 && this.type === 'dynamic' && this._isFirstLoad) {
                 this.setDefaultStep(this.getStepRefByIndex(this.defaultstepindex));
                 this._isFirstLoad = false;
@@ -742,5 +752,20 @@ export class WizardComponent extends StylableComponent implements OnInit, AfterC
         const index = this.steps.toArray().findIndex(step =>
             this.nativeElement.querySelector(`li[data-stepid="${step.widgetId}"]`)?.classList.contains("current"));
         return index >= 0 ? index : this.getActiveStepIndex();
+    }
+
+    ngOnDestroy() {
+        // Unsubscribe from steps.changes to prevent memory leak
+        if (this.stepsChangesSubscription) {
+            this.stepsChangesSubscription.unsubscribe();
+        }
+        
+        // Clean up jQuery document mouseup listener
+        if (this.documentMouseUpHandler) {
+            $(document).off("mouseup", this.documentMouseUpHandler);
+            this.documentMouseUpHandler = null;
+        }
+        
+        super.ngOnDestroy();
     }
 }

@@ -5,6 +5,7 @@ import {
     ContentChildren,
     Inject,
     Injector,
+    OnDestroy,
     Optional,
     QueryList,
     ViewChild
@@ -28,7 +29,7 @@ const WIDGET_INFO = {widgetType: 'wm-login', hostClass: 'app-login'};
         provideAsWidgetRef(LoginComponent)
     ]
 })
-export class LoginComponent extends StylableComponent implements AfterViewInit {
+export class LoginComponent extends StylableComponent implements AfterViewInit, OnDestroy {
     static initializeProps = registerProps();
     loginBtnCmp: ButtonComponent;
 
@@ -37,6 +38,8 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
     @ViewChild(MessageComponent, { static: true }) messageCmp: MessageComponent;
 
     loginMessage: { type?: string; caption?: any; show?: boolean; };
+    private loginBtnClickHandler;
+    private formSubmitHandler;
     errormessage: any;
     eventsource;
 
@@ -72,20 +75,21 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
     }
 
     initLoginButtonActions() {
-        this.loginBtnCmp.getNativeElement().addEventListener('click', event => {
-
+        this.loginBtnClickHandler = event => {
             // if no event is attached to the onSubmit of login widget or loginButton inside it, invoke default login action
             if (!this.nativeElement.hasAttribute('submit.event') && !this.loginBtnCmp.getNativeElement().hasAttribute('click.event') && !this.loginBtnCmp.getNativeElement().hasAttribute('tap.event')) {
                 this.doLogin();
             }
-        });
+        };
+        this.loginBtnCmp.getNativeElement().addEventListener('click', this.loginBtnClickHandler);
     }
 
     ngAfterViewInit() {
         super.ngAfterViewInit();
 
         // suppresses the default form submission (in browsers like Firefox)
-        this.formCmp.getNativeElement().addEventListener('submit', e => e.preventDefault());
+        this.formSubmitHandler = e => e.preventDefault();
+        this.formCmp.getNativeElement().addEventListener('submit', this.formSubmitHandler);
 
         // get login button component
         this.buttonComponents.forEach(cmp => {
@@ -97,5 +101,16 @@ export class LoginComponent extends StylableComponent implements AfterViewInit {
                 this.initLoginButtonActions();
             }
         });
+    }
+
+    ngOnDestroy() {
+        // Remove event listeners to prevent memory leaks
+        if (this.loginBtnCmp && this.loginBtnClickHandler) {
+            this.loginBtnCmp.getNativeElement().removeEventListener('click', this.loginBtnClickHandler);
+        }
+        if (this.formCmp && this.formSubmitHandler) {
+            this.formCmp.getNativeElement().removeEventListener('submit', this.formSubmitHandler);
+        }
+        super.ngOnDestroy();
     }
 }

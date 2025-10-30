@@ -94,7 +94,9 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
         // this.viewParent = (this.viewContainerRef as any).parentInjector._lView[8];
         this.viewParent = this.containerWidget.viewParent;
 
-        if (this.viewParent.registerFragment) {
+        // DEFENSIVE FIX: Check if viewParent exists before calling registerFragment
+        // containerWidget.viewParent might be null if the container was destroyed
+        if (this.viewParent && this.viewParent.registerFragment) {
             this.viewParent.registerFragment();
         }
 
@@ -376,6 +378,17 @@ export abstract class BaseCustomWidgetComponent extends FragmentMonitor implemen
 
     ngOnDestroy(): void {
         this.destroy$.complete();
+        // Complete viewInit$ subject to prevent memory leak
+        if (this.viewInit$ && !this.viewInit$.closed) {
+            this.viewInit$.complete();
+        }
+        
+        // CRITICAL FIX: Set Widgets to empty object instead of null
+        // This prevents "Cannot set properties of null" errors when async child widgets
+        // try to register after parent is destroyed. The empty object will be GC'd with the parent.
+        this.Widgets = Object.create(null);
+        this.Variables = Object.create(null);
+        this.Actions = Object.create(null);
     }
 
     ngOnAttach(refreshData) {

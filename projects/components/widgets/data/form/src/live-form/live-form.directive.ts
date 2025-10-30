@@ -1,4 +1,4 @@
-import { Directive, Inject, Optional, Self, Attribute, HostListener } from '@angular/core';
+import { Directive, Inject, Optional, Self, Attribute, HostListener, OnDestroy } from '@angular/core';
 
 import { $appDigest, AbstractDialogService, DataSource, DataType, debounce, getClonedObject, getFiles, getValidDateObject, isDateTimeType, isDefined, isEmptyObject } from '@wm/core';
 import { ALLFIELDS, applyFilterOnField, fetchRelatedFieldData, getDistinctValuesForField, isDataSetWidget, Live_Operations, parseValueByType, performDataOperation, ToDatePipe } from '@wm/components/base';
@@ -21,7 +21,7 @@ const getValidTime = val => {
   standalone: true,
     selector: '[wmLiveForm]'
 })
-export class LiveFormDirective {
+export class LiveFormDirective implements OnDestroy {
     static  initializeProps = registerLiveFormProps();
     private _triggeredByUser: boolean;
     private _debouncedSavePrevDataValues = debounce(() => {
@@ -499,5 +499,29 @@ export class LiveFormDirective {
         });
 
 
+    }
+
+    ngOnDestroy() {
+        // CRITICAL FIX: Clear all bound function references to prevent memory leaks
+        // These bound functions create strong references preventing garbage collection
+        if (this.form) {
+            this.form.cancel = null;
+            this.form.reset = null;
+            this.form.delete = null;
+            this.form.save = null;
+            this.form.saveAndNew = null;
+            this.form.saveAndView = null;
+            this.form.setPrimaryKey = null;
+            this.form.constructDataObject = null;
+            this.form.changeDataObject = null;
+            this.form.setFormData = null;
+            this.form.findOperationType = null;
+            this.form.clearData = null;
+            this.form.onFieldDefaultValueChange = null;
+            this.form.onDataSourceChange = null;
+            this.form.onFieldValueChange = null;
+            this.form.submitForm = null;
+            this.form.registerFormFields = null;
+        }
     }
 }

@@ -494,7 +494,10 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
      * Components can override this method to execute custom logic before invoking the user callback
      */
     protected handleEvent(node: HTMLElement, eventName: string, eventCallback: Function, locals: any, meta?: string) {
-        this.eventManager.addEventListener(
+        // CRITICAL FIX: Store the cleanup function returned by eventManager.addEventListener
+        // This is the BASE component - ALL widgets inherit this method
+        // Without storing cleanup, every event listener in every component leaks memory
+        const removeListener = this.eventManager.addEventListener(
             node,
             eventName,
             e => {
@@ -506,6 +509,8 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
                 }
             }
         );
+        // Register cleanup to be called in ngOnDestroy
+        this.registerDestroyListener(removeListener);
     }
 
     /**
@@ -851,5 +856,16 @@ export abstract class BaseComponent implements OnDestroy, OnInit, AfterViewInit,
         this.propertyChange.complete();
         this.destroy.complete();
         this.isAttached = false;
+        
+        // CRITICAL FIX: Clear all references to enable garbage collection
+        // Without clearing these, components remain in memory even after destruction
+        // This prevents the "$0" DevTools reference issue where detached elements retain memory
+        (this as any).viewParent = null;
+        this.context = null;
+        this.viewContainerRef = null;
+        this.viewParentApp = null;
+        (this as any).eventManager = null;
+        // Clear event handlers map
+        this.eventHandlers.clear();
     }
 }

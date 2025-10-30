@@ -8,6 +8,7 @@ interface CachedData<T> {
 export class LRUCache<T> {
     private cache = new Map<string, CachedData<T>>();
     private evictQueue: [string] = [''];
+    private evictionIntervalId: any;
 
     constructor(
         private maxSize = 100,
@@ -19,7 +20,8 @@ export class LRUCache<T> {
                     console.warn(`Cache age ${this.maxAge}s is very less. Keep it atleast 30s.`);
                 }
                 this.maxAge = this.maxAge * 1000;
-                setInterval(() => {
+                // CRITICAL FIX: Store interval ID so it can be cleared
+                this.evictionIntervalId = setInterval(() => {
                     const max = Date.now() - this.maxAge;
                     const expiredData = this.evictQueue.filter(k => {
                         return this.cache.get(k).lastAccessedTime <= max;
@@ -92,5 +94,15 @@ export class LRUCache<T> {
 
     public clear() {
         this.evict(this.evictQueue.length);
+    }
+    
+    public destroy() {
+        // CRITICAL FIX: Clear the eviction interval to prevent memory leaks
+        // Without this, the setInterval keeps running and holds references to this cache
+        if (this.evictionIntervalId) {
+            clearInterval(this.evictionIntervalId);
+            this.evictionIntervalId = null;
+        }
+        this.clear();
     }
 }

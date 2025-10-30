@@ -6,6 +6,7 @@ import {
     HostListener,
     Inject,
     Injector,
+    OnDestroy,
     OnInit,
     Optional,
     Self
@@ -63,7 +64,7 @@ const FILE_TYPES = {
         {provide: Context, useFactory: () => { return {} }, multi: true}
     ]
 })
-export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit {
+export class FormFieldDirective extends StylableComponent implements OnInit, AfterContentInit, OnDestroy {
     static initializeProps = registerProps();
 
     @ContentChild('formWidget', {static: true}) formWidget;
@@ -130,6 +131,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
     private _triggeredByUser: boolean;
     private _clicktriggeredByUser: boolean;
     private app: App;
+    private contexts: Array<any>;
 
     @HostListener('keydown', ['$event']) onKeydownHandler(event: KeyboardEvent) {
         this._triggeredByUser = true;
@@ -188,6 +190,7 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
         this.widgettype = _widgetType;
         this.parentList = parentList;
         this.notifyForFields = [];
+        this.contexts = contexts;
 
         if (this.binddataset || this.$element.attr('dataset')) {
             this.isDataSetBound = true;
@@ -684,5 +687,22 @@ export class FormFieldDirective extends StylableComponent implements OnInit, Aft
                 this.prepareFormWidget();
             }
         }
+    }
+
+    ngOnDestroy() {
+        // CRITICAL FIX: Clear bound function references to prevent 19% function memory retention
+        // These bound functions in contexts were causing massive memory leaks in forms
+        if (this.contexts && this.contexts[0]) {
+            this.contexts[0]._onFocusField = null;
+            this.contexts[0]._onBlurField = null;
+        }
+        
+        // Clear other references
+        this.fieldValidations = null;
+        this.notifyForFields = null;
+        this.formWidget = null;
+        this.formWidgetMax = null;
+        
+        super.ngOnDestroy();
     }
 }

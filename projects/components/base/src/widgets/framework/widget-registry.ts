@@ -18,9 +18,24 @@ export const getById = (widgetId: string) => registryById.get(widgetId);
  */
 export const register = (widget: any, viewParent: any, widgetId: string, name?: string): () => void => {
     let registered = false;
+    
+    // CRITICAL FIX: Don't register widget if viewParent or viewParent.Widgets is null/undefined
+    // This prevents orphaned widgets that can't be cleaned up
+    // Return early cleanup function to prevent memory leaks
+    // Note: Object.create(null) creates an empty but truthy object, so this check allows it
+    if (!viewParent || viewParent.Widgets === null || viewParent.Widgets === undefined) {
+        // Silently handle this case - it's expected when async children initialize after parent destroy
+        // The widget will be GC'd along with its references since we return a cleanup function
+        return () => {
+            registryById.delete(widgetId);
+        };
+    }
+    
     registryById.set(widgetId, widget);
+    
     if (name) {
-        if (isDefined(viewParent.Widgets)) {
+        // Double-check Widgets still exists (might be nulled between checks)
+        if (isDefined(viewParent.Widgets) && viewParent.Widgets) {
             registered = true;
             viewParent.Widgets[name] = widget;
         }
@@ -29,7 +44,8 @@ export const register = (widget: any, viewParent: any, widgetId: string, name?: 
     // Unregister method.
     return () => {
         registryById.delete(widgetId);
-        if (registered) {
+        // DEFENSIVE FIX: Check if viewParent and Widgets still exist during cleanup
+        if (registered && viewParent && viewParent.Widgets) {
             viewParent.Widgets[name] = undefined;
         }
     };
@@ -39,7 +55,8 @@ export const register = (widget: any, viewParent: any, widgetId: string, name?: 
  * Deregisters the oldname in widgets registry and sets new name
  */
 export const renameWidget = (viewParent: any, widget: any, nv: string, ov?: string) => {
-    if (!isDefined(viewParent.Widgets)) {
+    // DEFENSIVE FIX: Check if viewParent exists before accessing Widgets
+    if (!viewParent || !isDefined(viewParent.Widgets)) {
         return;
     }
     if (ov) {

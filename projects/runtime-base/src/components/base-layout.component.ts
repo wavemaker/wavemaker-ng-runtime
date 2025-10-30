@@ -39,6 +39,10 @@ export abstract class BaseLayoutComponent implements AfterViewInit, OnDestroy {
         };
         this.routerOutlet.detach = () => {
             const componentRef = oDetach.call(this.routerOutlet);
+            // Call ngOnDetach to ensure proper cleanup of the component being detached
+            if (componentRef && componentRef.instance && componentRef.instance.ngOnDetach) {
+                componentRef.instance.ngOnDetach();
+            }
             return componentRef;
         };
     }

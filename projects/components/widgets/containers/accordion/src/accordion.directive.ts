@@ -1,4 +1,4 @@
-import { AfterContentInit, ContentChildren, Directive, forwardRef, Inject, Injector, Optional, QueryList } from '@angular/core';
+import { AfterContentInit, ContentChildren, Directive, forwardRef, Inject, Injector, OnDestroy, Optional, QueryList } from '@angular/core';
 import { DynamicComponentRefProvider, noop, StatePersistence } from '@wm/core';
 import {
     APPLY_STYLES_TYPE,
@@ -27,7 +27,7 @@ const WIDGET_CONFIG: IWidgetConfig = {
         provideAsWidgetRef(AccordionDirective)
     ]
 })
-export class AccordionDirective extends StylableComponent implements AfterContentInit {
+export class AccordionDirective extends StylableComponent implements AfterContentInit, OnDestroy {
     static initializeProps = registerProps();
 
     public defaultpaneindex: number;
@@ -43,6 +43,7 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     private dynamicPaneIndex;
     private dynamicPanes;
     public fieldDefs;
+    private panesChangesSubscription;
 
     @ContentChildren(forwardRef(() => AccordionPaneComponent)) panes: QueryList<AccordionPaneComponent>;
 
@@ -250,10 +251,18 @@ export class AccordionDirective extends StylableComponent implements AfterConten
     ngAfterContentInit() {
         super.ngAfterContentInit();
         this.promiseResolverFn();
-        this.panes.changes.subscribe(slides => {
+        this.panesChangesSubscription = this.panes.changes.subscribe(slides => {
             if (this.panes.length) {
                 this.expandPane(this.defaultpaneindex);
             }
         });
+    }
+
+    ngOnDestroy() {
+        // Unsubscribe from panes.changes to prevent memory leak
+        if (this.panesChangesSubscription) {
+            this.panesChangesSubscription.unsubscribe();
+        }
+        super.ngOnDestroy();
     }
 }

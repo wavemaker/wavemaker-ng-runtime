@@ -1,4 +1,4 @@
-import {Attribute, Directive, ElementRef, Inject, Injector, OnInit, Optional} from '@angular/core';
+import {Attribute, Directive, ElementRef, Inject, Injector, OnDestroy, OnInit, Optional} from '@angular/core';
 
 import { addClass, noop } from '@wm/core';
 import {PROP_TYPE, provideAs, provideAsWidgetRef, register, StylableComponent, styler} from '@wm/components/base';
@@ -28,7 +28,7 @@ declare const _;
     ],
     exportAs: 'wmWidgetContainer'
 })
-export class CustomWidgetContainerDirective extends DatasetAwareFormComponent implements OnInit {
+export class CustomWidgetContainerDirective extends DatasetAwareFormComponent implements OnInit, OnDestroy {
     static initializeProps = registerProps();
 
     widgetType: string;
@@ -168,5 +168,16 @@ export class CustomWidgetContainerDirective extends DatasetAwareFormComponent im
         if(this.formControl && modifiedKey === 'datavalue'){
             this.updateDataValue(value);
         }
+    }
+
+    ngOnDestroy() {
+        // Complete subjects to prevent observable leaks
+        if (this.configSubject && !this.configSubject.closed) {
+            this.configSubject.complete();
+        }
+        if (this.onErroSubject && !this.onErroSubject.closed) {
+            this.onErroSubject.complete();
+        }
+        super.ngOnDestroy();
     }
 }

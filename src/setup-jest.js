@@ -69,7 +69,7 @@ import "jquery-ui/ui/widgets/resizable.js";
 import "jquery-ui/ui/widgets/sortable.js";
 import "jquery-ui/ui/widgets/draggable.js";
 import "jquery-ui/ui/widgets/droppable.js";
-import "libraries/scripts/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js";
+import "./projects/jquery.ui.touch-punch/jquery.ui.touch-punch.min.js";
 import "moment-timezone/builds/moment-timezone.min.js";
 import "iscroll/build/iscroll.js";
 import "tabbable/dist/index.umd.min.js";

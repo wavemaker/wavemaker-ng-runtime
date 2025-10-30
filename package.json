@@ -109,14 +109,10 @@
         "yargs": "^18.0.0"
     },
     "optionalDependencies": {
-        "@lmdb/lmdb-linux-x64": "3.4.2",
-        "@rollup/rollup-darwin-arm64": "4.46.2",
-        "@rollup/rollup-linux-x64-gnu": "4.46.2",
+        "@lmdb/lmdb-linux-x64": "3.0.13",
+        "@rollup/rollup-darwin-arm64": "^4.52.5",
+        "@rollup/rollup-linux-x64-gnu": "4.9.5",
         "@rollup/rollup-win32-x64": "4.9.5"
-    },
-    "engines": {
-        "node": "22.18.0",
-        "npm": "10.9.3"
     },
     "engineStrict": true
 }

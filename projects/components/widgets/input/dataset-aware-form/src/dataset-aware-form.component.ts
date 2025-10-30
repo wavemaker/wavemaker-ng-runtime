@@ -248,7 +248,9 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         });
 
         this.displayValue = this.multiple ? displayValues : displayValues[0] || '';
-        if(this.viewParent.containerWidget && this.viewParent.containerWidget._isCustom)
+        // DEFENSIVE FIX: Check if viewParent exists (might be null if component destroyed)
+        // This method can be called via debounced function after ngOnDestroy
+        if(this.viewParent && this.viewParent.containerWidget && this.viewParent.containerWidget._isCustom)
             this.viewParent.containerWidget.displayValue = this.displayValue.length ? this.displayValue : '';
     }
 
@@ -364,5 +366,17 @@ export abstract class DatasetAwareFormComponent extends BaseFormCustomComponent 
         if(this.cancelLocaleChangeSubscription) {
             this.cancelLocaleChangeSubscription();
         }
+        // Complete Subjects to prevent memory leaks
+        if (this.dataset$ && !this.dataset$.closed) {
+            this.dataset$.complete();
+        }
+        if (this.datavalue$ && !this.datavalue$.closed) {
+            this.datavalue$.complete();
+        }
+        
+        // CRITICAL FIX: Call super.ngOnDestroy() to unwatch all watchers
+        // Dataset-aware form widgets (select, checkbox, radioset, etc.) have many watchers
+        // Without this, all watchers registered via registerDestroyListener remain in memory
+        super.ngOnDestroy();
     }
 }

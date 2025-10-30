@@ -57,6 +57,28 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
 
         this.appManager.loadAppVariables()
             .then(async () => {
+                // Properly destroy old page component before creating new one
+                if (this.instance && this.instance.ngOnDetach) {
+                    this.instance.ngOnDetach();
+                }
+                
+                // CRITICAL FIX: Remove manually appended DOM nodes from previous page
+                // This prevents detached DOM nodes from staying in memory
+                while ($target.firstChild) {
+                    $target.removeChild($target.firstChild);
+                }
+                
+                // Clear App.activePage reference to allow old page to be garbage collected
+                // This is critical because App is a singleton service
+                if (this.app.activePage) {
+                    this.app.activePage = null;
+                }
+                
+                // Clear previous components to prevent memory leaks
+                if (this.vcRef.length > 0) {
+                    this.vcRef.clear();
+                }
+                
                 const pageComponentFactoryRef = await this.componentRefProvider.getComponentFactoryRef(pageName, ComponentType.PAGE);
                 if (pageComponentFactoryRef) {
                     const componentRef = this.vcRef.createComponent(pageComponentFactoryRef, 0, this.injector);
@@ -64,9 +86,6 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
                     $target.appendChild(componentRef.location.nativeElement);
                 } else {
                     BasePageComponent.clear();
-                }
-                if (this.vcRef.length > 1) {
-                    this.vcRef.remove(1);
                 }
             });
     }
@@ -96,10 +115,32 @@ export class PageWrapperComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy() {
+        // Clean up old page instance reference
+        if (this.instance && this.instance.ngOnDetach) {
+            this.instance.ngOnDetach();
+        }
+        
+        // Remove all DOM children to prevent memory leaks
+        const $target = this.getTargetNode();
+        while ($target.firstChild) {
+            $target.removeChild($target.firstChild);
+        }
+        
+        // Clear App.activePage reference
+        if (this.app.activePage) {
+            this.app.activePage = null;
+        }
+        
+        // Clear ViewContainerRef
         this.vcRef.clear();
+        
+        // Unsubscribe from route params
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
+        
+        // Clear instance reference
+        this.instance = null;
     }
 
     ngOnAttach() {

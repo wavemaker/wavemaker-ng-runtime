@@ -1,4 +1,4 @@
-import {Attribute, Component, Inject, Injector, OnInit, Optional, ViewEncapsulation} from '@angular/core';
+import {Attribute, Component, Inject, Injector, OnDestroy, OnInit, Optional, ViewEncapsulation} from '@angular/core';
 import { APPLY_STYLES_TYPE, getEvaluatedData, getOrderedDataset, provideAsWidgetRef, StylableComponent, styler } from '@wm/components/base';
 import { registerProps } from './tree.props';
 import { $parseEvent, getClonedObject } from "@wm/core";
@@ -18,7 +18,7 @@ const defaultTreeIconClass = 'plus-minus';
     ],
     encapsulation: ViewEncapsulation.None
 })
-export class TreeComponent extends StylableComponent implements OnInit {
+export class TreeComponent extends StylableComponent implements OnInit, OnDestroy {
     static initializeProps = registerProps();
 
     private nodes: Array<any>;
@@ -366,5 +366,14 @@ export class TreeComponent extends StylableComponent implements OnInit {
     private deselectById(value?) {
         this.selecteditem = {};
         this.selectById();
+    }
+
+    ngOnDestroy() {
+        // Remove jQuery event handlers to prevent memory leaks
+        const treeElements = $('ul[name="' + this.name + '"] li span.button.switch');
+        if (treeElements.length) {
+            treeElements.off('click');
+        }
+        super.ngOnDestroy();
     }
 }
