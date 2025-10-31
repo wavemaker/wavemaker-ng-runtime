@@ -112,6 +112,13 @@ export class CaptionPositionDirective implements AfterViewInit, OnInit, OnDestro
     ngAfterViewInit() {
         this.compositeEle = this.nativeEl;
         const widget = this.nativeEl.widget;
+        
+        // DEFENSIVE FIX: Check if widget exists before accessing $attrs
+        // During component destruction or async initialization, widget can be undefined
+        if (!widget || !widget.$attrs) {
+            return;
+        }
+        
         let captionPosition: string = widget.$attrs.get('captionposition');
         if (widget.form) {
             captionPosition = widget.form.$attrs.get('captionposition');

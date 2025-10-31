@@ -1431,7 +1431,9 @@ export const closePopover = (element) => {
     if (!element.closest('.app-popover').length) {
         const popoverElements = document.querySelectorAll('.app-popover-wrapper');
         forEach(popoverElements, (ele) => {
-            if (ele.widget.isOpen) {
+            // DEFENSIVE FIX: Check if widget exists before accessing isOpen
+            // During component destruction, ele.widget can be undefined/null
+            if (ele.widget && ele.widget.isOpen) {
                 ele.widget.isOpen = false;
             }
         });

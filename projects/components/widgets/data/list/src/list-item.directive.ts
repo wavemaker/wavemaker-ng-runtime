@@ -88,7 +88,11 @@ export class ListItemDirective implements OnInit, AfterViewInit, OnDestroy {
                 this.widgetMap.set(comp, widget);
             }
 
-            result[comp.widget.name] = widget;
+            // DEFENSIVE FIX: Check if comp.widget exists before accessing .name
+            // During component destruction, widget reference may be nullified while DOM still exists
+            if (widget && comp.widget && comp.widget.name) {
+                result[comp.widget.name] = widget;
+            }
             return result;
         }, {});
     }
