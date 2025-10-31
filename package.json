@@ -39,7 +39,7 @@
         "@wavemaker/custom-widgets-m3": "file:.yalc/@wavemaker/custom-widgets-m3",
         "@wavemaker/focus-trap": "1.0.1",
         "@wavemaker/foundation-css": "file:.yalc/@wavemaker/foundation-css",
-        "@wavemaker/nvd3": "1.8.14",
+        "@wavemaker/nvd3": "1.8.15",
         "@wavemaker/variables": "file:.yalc/@wavemaker/variables",
         "@ztree/ztree_v3": "3.5.48",
         "acorn": "^8.15.0",
